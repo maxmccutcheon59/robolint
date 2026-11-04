@@ -9,3 +9,4 @@ build/
 robolint-audit/
 *.html
 !src/**/*.html
+!space_static/index.html
