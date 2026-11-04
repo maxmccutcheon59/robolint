@@ -34,6 +34,8 @@ robolint report: demo_ds
 
 [![Data quality scores for 18 public LeRobot datasets](docs/audit-scores.png)](AUDIT.md)
 
+**Try it in your browser:** the [robolint Space](https://huggingface.co/spaces/maxmccutcheon59/robolint) checks any public LeRobot dataset without installing anything (experimental; no camera checks).
+
 ## Why
 
 Robot data is expensive to collect and easy to get subtly wrong. A follower arm unplugs mid-session and you record minutes of actions with no motion. USB bandwidth drops camera frames and video drifts out of sync with actions. A teleop glitch makes a joint jump 150° in one step. An episode is uploaded twice. None of these crash training. They just make the policy worse, and nobody notices.
