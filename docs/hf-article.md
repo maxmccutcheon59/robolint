@@ -8,7 +8,7 @@ Robot data is expensive to collect and easy to get subtly wrong. None of the pro
 
 ![Data quality scores for 18 public LeRobot datasets](https://raw.githubusercontent.com/maxmccutcheon59/robolint/main/docs/audit-scores.png)
 
-Every number here is reproducible. Try any dataset in the browser on the [robolint Space](https://huggingface.co/spaces/maxmccutcheon59/robolint), or run the full audit:
+Every finding is browsable per dataset on the [robolint Space](https://huggingface.co/spaces/maxmccutcheon59/robolint), and every number is reproducible with the command-line tool:
 
 ```bash
 pip install "robolint[all] @ git+https://github.com/maxmccutcheon59/robolint.git"
