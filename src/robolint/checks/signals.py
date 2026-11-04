@@ -1,0 +1,216 @@
+"""Action and state signal quality: NaNs, dead or frozen episodes, glitches, idle padding."""
+
+from __future__ import annotations
+
+from collections.abc import Iterator
+from dataclasses import dataclass
+
+import numpy as np
+
+from ..dataset import Dataset
+from ..findings import Finding, Severity
+from . import Config
+
+E, W, I = Severity.ERROR, Severity.WARNING, Severity.INFO
+KEYS = ("action", "observation.state")
+
+
+@dataclass
+class DimStats:
+    lo: np.ndarray  # true min per dimension
+    hi: np.ndarray  # true max per dimension
+    rng: np.ndarray  # robust range (0.5th-99.5th percentile) per dimension
+    step_scale: np.ndarray  # high quantile of per-step |change| per dimension
+    names: list[str]
+
+    @property
+    def active(self) -> np.ndarray:
+        return self.rng > 1e-9
+
+    def gripper_mask(self) -> np.ndarray:
+        return (
+            np.array(["gripper" in n.lower() for n in self.names], dtype=bool)
+            if self.names
+            else np.zeros(len(self.rng), bool)
+        )
+
+
+def _as2d(a: np.ndarray) -> np.ndarray:
+    return a.reshape(-1, 1) if a.ndim == 1 else a
+
+
+def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
+    arrays = [_as2d(ep.frames[key]) for ep in ds.episodes if key in ep.frames and ep.length]
+    if not arrays:
+        return None
+    d = arrays[0].shape[1]
+    arrays = [a for a in arrays if a.shape[1] == d]
+    allv = np.concatenate(arrays).astype(np.float64)
+    finite_rows = np.all(np.isfinite(allv), axis=1)
+    allv = allv[finite_rows]
+    if len(allv) == 0:
+        return None
+    steps = [np.abs(np.diff(a[np.all(np.isfinite(a), axis=1)], axis=0)) for a in arrays if len(a) > 1]
+    steps = [s for s in steps if len(s)]
+    if steps:
+        st = np.concatenate(steps)
+        moving = st[np.any(st > 0, axis=1)]
+        scale = np.quantile(moving, cfg.spike_quantile, axis=0) if len(moving) else np.zeros(d)
+    else:
+        scale = np.zeros(d)
+    names = ds.feature_names(key)
+    if len(names) != d:
+        names = [f"{key}[{i}]" for i in range(d)]
+    return DimStats(
+        lo=allv.min(axis=0),
+        hi=allv.max(axis=0),
+        rng=np.quantile(allv, 0.995, axis=0) - np.quantile(allv, 0.005, axis=0),
+        step_scale=scale,
+        names=names,
+    )
+
+
+def _longest_run(mask: np.ndarray) -> int:
+    if not mask.any():
+        return 0
+    padded = np.concatenate(([0], mask.astype(np.int8), [0]))
+    edges = np.flatnonzero(np.diff(padded))
+    return int((edges[1::2] - edges[::2]).max())
+
+
+def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
+    stats = {k: dataset_stats(ds, k, cfg) for k in KEYS}
+    fps = ds.fps or 30.0
+    a_st, s_st = stats["action"], stats["observation.state"]
+
+    for ep in ds.episodes:
+        if ep.length < 2:
+            continue
+        clean: dict[str, bool] = {}
+        for key in KEYS:
+            if key not in ep.frames:
+                continue
+            arr = _as2d(ep.frames[key])
+            bad = int(np.size(arr) - np.count_nonzero(np.isfinite(arr)))
+            clean[key] = bad == 0
+            if bad:
+                yield Finding(
+                    "NONFINITE_VALUES",
+                    E,
+                    f"'{key}' contains {bad} NaN/inf values",
+                    ep.index,
+                    {"key": key, "count": bad},
+                )
+
+        action_dead = False
+        if a_st is not None and clean.get("action"):
+            a = _as2d(ep.frames["action"]).astype(np.float64)
+            if a.shape[1] == len(a_st.rng):
+                act = a_st.active
+                ep_rng = a.max(axis=0) - a.min(axis=0)
+                tol_dead = cfg.dead_tol * a_st.rng
+                if act.any() and np.all(ep_rng[act] < tol_dead[act]):
+                    action_dead = True
+                    yield Finding(
+                        "DEAD_EPISODE",
+                        E,
+                        "the commanded actions never meaningfully change: the robot does not move",
+                        ep.index,
+                    )
+                else:
+                    yield from _gripper(ep.index, ep_rng, a_st, cfg)
+                    if len(a) >= 2 * fps:  # too short to judge padding meaningfully
+                        yield from _idle(ep.index, a, a_st, cfg)
+                    yield from _spikes(ep.index, a, a_st, cfg)
+
+        if s_st is not None and clean.get("observation.state"):
+            s = _as2d(ep.frames["observation.state"]).astype(np.float64)
+            if s.shape[1] == len(s_st.rng):
+                act = s_st.active
+                s_rng = s.max(axis=0) - s.min(axis=0)
+                state_frozen = act.any() and np.all(s_rng[act] < cfg.dead_tol * s_st.rng[act])
+                if state_frozen and not action_dead and a_st is not None and clean.get("action"):
+                    yield Finding(
+                        "STATE_FROZEN",
+                        E,
+                        "actions change but the measured state never does: the follower robot was likely disconnected or not recording",
+                        ep.index,
+                    )
+                elif not state_frozen and a_st is not None and clean.get("action") and a_st.names == s_st.names:
+                    a = _as2d(ep.frames["action"]).astype(np.float64)
+                    yield from _limits(ep.index, s, a, s_st, fps, cfg)
+
+
+def _gripper(ep: int, ep_rng: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
+    g = st.gripper_mask() & st.active
+    if g.any() and np.all(ep_rng[g] < cfg.gripper_tol * st.rng[g]):
+        yield Finding("GRIPPER_NEVER_ACTUATES", W, "the gripper never opens or closes in this episode", ep)
+
+
+def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
+    tol = np.where(st.active, cfg.move_tol * st.rng, np.inf)
+    n = len(a)
+    from_start = np.any(np.abs(a - a[0]) > tol, axis=1)
+    from_end = np.any(np.abs(a - a[-1]) > tol, axis=1)
+    if not from_start.any():
+        return
+    lead = int(np.argmax(from_start))
+    tail = n - 1 - int(np.flatnonzero(from_end)[-1]) if from_end.any() else 0
+    frac = (lead + tail) / n
+    if frac >= cfg.idle_info:
+        sev = W if frac >= cfg.idle_warn else I
+        yield Finding(
+            "IDLE_PADDING",
+            sev,
+            f"{frac * 100:.0f}% of the episode is idle ({lead} frames before motion starts, {tail} after it ends)",
+            ep,
+            {"idle_fraction": round(frac, 3), "lead_frames": lead, "tail_frames": tail},
+        )
+
+
+def _spikes(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
+    thr = np.maximum(cfg.spike_multiplier * st.step_scale, cfg.spike_min_range * st.rng)
+    thr = np.where(st.active & (thr > 0), thr, np.inf)
+    jumps = np.abs(np.diff(a, axis=0)) > thr
+    rows = np.flatnonzero(jumps.any(axis=1))
+    if not len(rows):
+        return
+    # A glitch usually jumps away and straight back: count jumps a few frames apart as one event.
+    events = [int(rows[0]) + 1]
+    for r in rows[1:]:
+        if r + 1 - events[-1] > 3:
+            events.append(int(r) + 1)
+    dims = sorted({st.names[j] for j in np.flatnonzero(jumps.any(axis=0))})
+    n = len(events)
+    yield Finding(
+        "ACTION_SPIKE",
+        W,
+        f"{n} sudden action {'jump' if n == 1 else 'jumps'} (likely teleoperation glitches) in {', '.join(dims)}",
+        ep,
+        {"count": n, "frames": events[:20], "dims": dims},
+    )
+
+
+def _limits(ep: int, s: np.ndarray, a: np.ndarray, st: DimStats, fps: float, cfg: Config) -> Iterator[Finding]:
+    """The arm sits at its extreme while the command keeps pushing past it: a hard stop or bad calibration."""
+    need = int(cfg.limit_seconds * fps)
+    margin = 0.005 * st.rng
+    push = 0.02 * st.rng
+    pinned = []
+    skip = st.gripper_mask()
+    for j in range(s.shape[1]):
+        if not st.active[j] or skip[j]:
+            continue
+        low = (s[:, j] <= st.lo[j] + margin[j]) & (a[:, j] < s[:, j] - push[j])
+        high = (s[:, j] >= st.hi[j] - margin[j]) & (a[:, j] > s[:, j] + push[j])
+        if _longest_run(low) >= need or _longest_run(high) >= need:
+            pinned.append(st.names[j])
+    if pinned:
+        yield Finding(
+            "JOINT_AT_LIMIT",
+            W,
+            f"commanded past its limit for {cfg.limit_seconds:g}s+ while the arm stays pinned "
+            f"(hard stop or calibration problem): {', '.join(pinned)}",
+            ep,
+            {"joints": pinned},
+        )

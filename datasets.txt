@@ -1,0 +1,32 @@
+# Public LeRobot datasets for the first robolint audit.
+# Run: robolint audit --from-file datasets.txt --out audit/
+# Add --videos to also check cameras (much bigger download).
+
+# LeRobot reference datasets (real SO-100/SO-101 teleoperation)
+lerobot/svla_so101_pickplace
+lerobot/svla_so100_pickplace
+lerobot/svla_so100_sorting
+lerobot/svla_so100_stacking
+
+# Simulation benchmarks
+lerobot/pusht
+lerobot/aloha_sim_transfer_cube_human
+lerobot/aloha_sim_insertion_human
+lerobot/aloha_sim_transfer_cube_scripted
+lerobot/aloha_sim_insertion_scripted
+lerobot/libero
+
+# Community-recorded datasets (where problems are most likely)
+jchandru08/so100_press_red_button
+kmg0620/so101_bomb_pick_place_v1
+Embodied-AI-6/dataset
+SO-101-robot-learning/so101_pick_place
+imstevenpmwork/omx_sentry_1
+EPITECH-LILLE/eval_training
+recast-robotics/rollout_dagger_r1_s2_b0_20260915_121327
+brandonyang/artem-pour-water
+
+# Large real-robot datasets: spot-check with --max-episodes 300
+# cadene/droid_1.0.1
+# adityx23/icl-dataset
+# lerobot/abc_130k_v3_smoke
