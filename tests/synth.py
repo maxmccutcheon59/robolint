@@ -97,12 +97,23 @@ def make_dataset(
         if "idle" in f:
             k = int(n * 0.45)
             a[:k] = a[k]
+        if "hold" in f:  # controller updates every 4th frame and holds in between (sample-and-hold)
+            a = a[(np.arange(n) // 4) * 4]
         if "spike" in f:
             a[n // 2, 1] += 150.0
-        if "hard_limit" in f:
-            a[n // 2 :, 1] = -95.0  # operator keeps pushing past the joint's reach
+        if "rest_limit" in f:  # arm rests on its hard stop before the take; leader reads slightly past it
+            k = int(n * 0.3)
+            a[:k] = a[k]
+            a[:k, 1] = -95.0
+        if "one_arm_rest" in f:  # bimanual-style: this joint rests on its stop all episode, others work
+            a[:, 1] = -95.0
+        if "binary_gripper" in f:  # on/off gripper command with quick toggles
+            a[:, 5] = np.where((np.arange(n) // 7) % 3 == 0, 1.0, -1.0)
+            a[n // 2, 5] = -a[n // 2 - 1, 5]  # a one-frame toggle
+        if "hard_limit" in f:  # operator keeps pushing past the joint's reach, mid-task
+            a[n // 2 :, 1] = -95.0 + 5.0 * np.sin(np.arange(n - n // 2) / 5.0)
         s = np.vstack([a[:2], a[:-2]]) + rng.normal(0, 0.05, a.shape)
-        if "hard_limit" in f or "rest_limit" in f:
+        if "hard_limit" in f or "rest_limit" in f or "one_arm_rest" in f:
             s[:, 1] = np.maximum(s[:, 1], -85.0)  # follower stops at its hard limit
         if "state_frozen" in f:
             s = np.tile(s[0], (n, 1))

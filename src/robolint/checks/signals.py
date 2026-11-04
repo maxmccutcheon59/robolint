@@ -22,6 +22,7 @@ class DimStats:
     rng: np.ndarray  # robust range (0.5th-99.5th percentile) per dimension
     step_scale: np.ndarray  # high quantile of |value - rolling median| per dimension
     names: list[str]
+    discrete: np.ndarray  # dims that only take a handful of values (e.g. a binary gripper command)
 
     @property
     def active(self) -> np.ndarray:
@@ -68,20 +69,23 @@ def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
     resid = [outlier_residual(a[np.all(np.isfinite(a), axis=1)].astype(np.float64)) for a in arrays]
     resid = [r for r in resid if len(r)]
     if resid:
-        rr = np.concatenate(resid)
-        nz = rr[np.any(rr > 0, axis=1)]
-        scale = np.quantile(nz, cfg.spike_quantile, axis=0) if len(nz) else np.zeros(d)
+        # Quantile over every frame: in held/stepped signals almost all residuals are zero, and a
+        # quantile over only the non-zero ones would let a lone glitch set its own threshold.
+        scale = np.quantile(np.concatenate(resid), cfg.spike_quantile, axis=0)
     else:
         scale = np.zeros(d)
     names = ds.feature_names(key)
     if len(names) != d:
         names = [f"{key}[{i}]" for i in range(d)]
+    sample = allv[:: max(1, len(allv) // 200_000)]
+    discrete = np.array([len(np.unique(sample[:, j])) <= 4 for j in range(d)], dtype=bool)
     return DimStats(
         lo=allv.min(axis=0),
         hi=allv.max(axis=0),
         rng=np.quantile(allv, 0.995, axis=0) - np.quantile(allv, 0.005, axis=0),
         step_scale=scale,
         names=names,
+        discrete=discrete,
     )
 
 
@@ -101,6 +105,10 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     for ep in ds.episodes:
         if ep.length < 2:
             continue
+        # Episodes whose frames are duplicated (merged recordings) are already errors; their
+        # interleaved signals would only produce misleading motion findings.
+        fi = ep.frames.get("frame_index")
+        corrupt = fi is not None and len(np.unique(fi)) < len(fi)
         clean: dict[str, bool] = {}
         for key in KEYS:
             if key not in ep.frames:
@@ -132,7 +140,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                         "the commanded actions never meaningfully change: the robot does not move",
                         ep.index,
                     )
-                else:
+                elif not corrupt:
                     yield from _gripper(ep.index, ep_rng, a_st, cfg)
                     if len(a) >= 2 * fps:  # too short to judge padding meaningfully
                         yield from _idle(ep.index, a, a_st, cfg)
@@ -151,7 +159,13 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                         "actions change but the measured state never does: the follower robot was likely disconnected or not recording",
                         ep.index,
                     )
-                elif not state_frozen and a_st is not None and clean.get("action") and a_st.names == s_st.names:
+                elif (
+                    not state_frozen
+                    and not corrupt
+                    and a_st is not None
+                    and clean.get("action")
+                    and a_st.names == s_st.names
+                ):
                     a = _as2d(ep.frames["action"]).astype(np.float64)
                     lead, tail = idle_bounds(a, a_st, cfg)
                     # Resting on a hard stop before/after a take is normal; judge only the active part.
@@ -197,7 +211,7 @@ def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding
 
 def _spikes(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
     thr = np.maximum(cfg.spike_multiplier * st.step_scale, cfg.spike_min_range * st.rng)
-    thr = np.where(st.active & (thr > 0), thr, np.inf)
+    thr = np.where(st.active & ~st.discrete & (thr > 0), thr, np.inf)  # on/off channels toggle by design
     jumps = outlier_residual(a) > thr
     rows = np.flatnonzero(jumps.any(axis=1))
     if not len(rows):
@@ -218,26 +232,47 @@ def _spikes(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Findi
     )
 
 
+def _runs(mask: np.ndarray) -> list[tuple[int, int]]:
+    padded = np.concatenate(([0], mask.astype(np.int8), [0]))
+    edges = np.flatnonzero(np.diff(padded))
+    return list(zip(edges[::2].tolist(), edges[1::2].tolist(), strict=True))
+
+
 def _limits(ep: int, s: np.ndarray, a: np.ndarray, st: DimStats, fps: float, cfg: Config) -> Iterator[Finding]:
-    """The arm sits at its extreme while the command keeps pushing past it: a hard stop or bad calibration."""
+    """The arm sits at its extreme while the command is past it.
+
+    Command moving inside the limit run -> the operator is pushing into a hard stop mid-task (warning).
+    Command static -> leader and follower calibrations disagree at a rest pose (info)."""
     need = int(cfg.limit_seconds * fps)
     margin = 0.005 * st.rng
     push = 0.02 * st.rng
-    pinned = []
+    pushed, offset = [], []
     skip = st.gripper_mask()
     for j in range(s.shape[1]):
         if not st.active[j] or skip[j]:
             continue
         low = (s[:, j] <= st.lo[j] + margin[j]) & (a[:, j] < s[:, j] - push[j])
         high = (s[:, j] >= st.hi[j] - margin[j]) & (a[:, j] > s[:, j] + push[j])
-        if _longest_run(low) >= need or _longest_run(high) >= need:
-            pinned.append(st.names[j])
-    if pinned:
+        long_runs = [(b, e) for b, e in _runs(low) + _runs(high) if e - b >= need]
+        if not long_runs:
+            continue
+        moving = any(np.ptp(a[b:e, j]) > 2 * cfg.move_tol * st.rng[j] for b, e in long_runs)
+        (pushed if moving else offset).append(st.names[j])
+    if pushed:
         yield Finding(
             "JOINT_AT_LIMIT",
             W,
-            f"commanded past its limit for {cfg.limit_seconds:g}s+ while the arm stays pinned "
-            f"(hard stop or calibration problem): {', '.join(pinned)}",
+            f"pushed past its limit for {cfg.limit_seconds:g}s+ during the task while the arm stays pinned "
+            f"(hard stop): {', '.join(pushed)}",
             ep,
-            {"joints": pinned},
+            {"joints": pushed},
+        )
+    if offset:
+        yield Finding(
+            "CALIBRATION_OFFSET",
+            I,
+            f"at rest the command sits past what the arm can reach (leader/follower calibration mismatch): "
+            f"{', '.join(offset)}",
+            ep,
+            {"joints": offset},
         )

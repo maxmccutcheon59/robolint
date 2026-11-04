@@ -262,3 +262,27 @@ def test_resting_on_hard_stop_while_idle_is_not_flagged(tmp_path):
     # Real case: SO-100 arms rest on the shoulder stop before each take; that is not a fault.
     r = lint(make_dataset(tmp_path / "ds", n_eps=8, faults={3: ["rest_limit"]}))
     assert not [f for f in r.findings if f.code == "JOINT_AT_LIMIT"]
+
+
+def test_fixture_faults_actually_change_the_data(tmp_path):
+    """Guard against vacuous tests: every fault name used above must alter the generated actions."""
+    import numpy as np
+
+    base = lint(make_dataset(tmp_path / "base", n_eps=2, seed=1)).dataset.episodes[0].frames["action"]
+    for fault in ["hold", "rest_limit", "one_arm_rest", "binary_gripper", "hard_limit", "spike", "idle"]:
+        ds = lint(make_dataset(tmp_path / fault, n_eps=2, seed=1, faults={0: [fault]})).dataset
+        assert not np.allclose(ds.episodes[0].frames["action"], base), fault
+
+
+def test_binary_gripper_toggles_are_not_glitches(tmp_path):
+    # Real case: LIBERO's on/off gripper command was flagged as glitching.
+    r = lint(make_dataset(tmp_path / "ds", n_eps=8, faults={i: ["binary_gripper"] for i in range(8)}))
+    assert not [f for f in r.findings if f.code == "ACTION_SPIKE"]
+
+
+def test_joint_resting_on_stop_while_others_work_is_calibration_info(tmp_path):
+    # Real case: a bimanual SO-100 dataset; the left shoulder rests on its stop while the other arm works.
+    r = lint(make_dataset(tmp_path / "ds", n_eps=8, faults={3: ["one_arm_rest"]}))
+    assert not [f for f in r.findings if f.code == "JOINT_AT_LIMIT"]
+    hits = [f for f in r.findings if f.code == "CALIBRATION_OFFSET"]
+    assert {f.episode for f in hits} == {3} and all(f.severity == Severity.INFO for f in hits)
