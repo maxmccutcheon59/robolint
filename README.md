@@ -43,6 +43,8 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 | **Video** (`--videos`) | missing or unreadable files, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, fps and resolution mismatches |
 | **Metadata** | declared vs actual episode/frame counts, missing features, shape mismatches, vague task descriptions that can't condition a VLA policy |
 
+See [AUDIT.md](AUDIT.md) for an audit of 18 public datasets.
+
 Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; each distinct **warning** costs 15 points; **info** costs 2. The dataset score is the average episode score, minus small penalties for dataset-level problems. Roughly: the share of your data you can actually train on.
 
 Supports LeRobot **v2.x** (per-episode files) and **v3.x** (chunked files) layouts.
