@@ -6,6 +6,8 @@ Robot data is expensive to collect and easy to get subtly wrong. None of the pro
 
 **Short version:** the simulation benchmarks are clean. Real-robot teleoperation data is where things break, including in official reference datasets, and 3 of the 8 community datasets have structural problems serious enough that we would not train on them as published.
 
+![Data quality scores for 18 public LeRobot datasets](docs/audit-scores.png)
+
 Every number here is reproducible:
 
 ```bash
@@ -79,7 +81,7 @@ Idle frames are not wrong, but in large amounts they bias a policy toward hesita
 
 ### What was clean
 
-The simulation datasets (PushT, ALOHA sim, LIBERO with 1,693 episodes) and the DAgger rollouts from recast-robotics came back essentially clean. The problems concentrate in real-robot teleoperation data and in how datasets are assembled and uploaded.
+The simulation datasets (PushT, ALOHA sim, LIBERO with 1,693 episodes) came back essentially clean, as did the DAgger rollouts from recast-robotics (whose robot setup isn't documented). The problems concentrate in real-robot teleoperation data and in how datasets are assembled and uploaded.
 
 ## How the audit was run
 

@@ -1,5 +1,8 @@
 # robolint
 
+[![CI](https://github.com/maxmccutcheon59/robolint/actions/workflows/ci.yml/badge.svg)](https://github.com/maxmccutcheon59/robolint/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Quality checks for robot learning datasets.** Point it at any [LeRobot](https://github.com/huggingface/lerobot) dataset, local or on the Hugging Face Hub, and find out which episodes will quietly hurt your policy before you spend GPU hours training on them.
 
 ```bash
@@ -27,6 +30,10 @@ robolint report: demo_ds
 
 *(Output from a test dataset with deliberately injected faults.)*
 
+**New: [What's broken in public robot learning data](AUDIT.md)**, an audit of 18 public LeRobot datasets.
+
+[![Data quality scores for 18 public LeRobot datasets](docs/audit-scores.png)](AUDIT.md)
+
 ## Why
 
 Robot data is expensive to collect and easy to get subtly wrong. A follower arm unplugs mid-session and you record minutes of actions with no motion. USB bandwidth drops camera frames and video drifts out of sync with actions. A teleop glitch makes a joint jump 150° in one step. An episode is uploaded twice. None of these crash training. They just make the policy worse, and nobody notices.
@@ -43,7 +50,7 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 | **Video** (`--videos`) | missing or unreadable files, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, fps and resolution mismatches |
 | **Metadata** | declared vs actual episode/frame counts, missing features, shape mismatches, vague task descriptions that can't condition a VLA policy |
 
-See [AUDIT.md](AUDIT.md) for an audit of 18 public datasets.
+
 
 Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; each distinct **warning** costs 15 points; **info** costs 2. The dataset score is the average episode score, minus small penalties for dataset-level problems. Roughly: the share of your data you can actually train on.
 
