@@ -20,7 +20,7 @@ class DimStats:
     lo: np.ndarray  # true min per dimension
     hi: np.ndarray  # true max per dimension
     rng: np.ndarray  # robust range (0.5th-99.5th percentile) per dimension
-    step_scale: np.ndarray  # high quantile of per-step |change| per dimension
+    step_scale: np.ndarray  # high quantile of |value - rolling median| per dimension
     names: list[str]
 
     @property
@@ -39,6 +39,21 @@ def _as2d(a: np.ndarray) -> np.ndarray:
     return a.reshape(-1, 1) if a.ndim == 1 else a
 
 
+SPIKE_WINDOW = 5  # frames; a glitch sticks out from the median of its neighbours
+
+
+def outlier_residual(a: np.ndarray) -> np.ndarray:
+    """|value - rolling median|. Large for one- or two-frame spikes that snap back; zero for
+    steps, ramps and sample-and-hold signals, which are normal motion rather than glitches."""
+    n = len(a)
+    if n < SPIKE_WINDOW:
+        return np.zeros_like(a)
+    h = SPIKE_WINDOW // 2
+    padded = np.concatenate([np.repeat(a[:1], h, axis=0), a, np.repeat(a[-1:], h, axis=0)])
+    windows = np.lib.stride_tricks.sliding_window_view(padded, SPIKE_WINDOW, axis=0)
+    return np.abs(a - np.partition(windows, h, axis=-1)[..., h])
+
+
 def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
     arrays = [_as2d(ep.frames[key]) for ep in ds.episodes if key in ep.frames and ep.length]
     if not arrays:
@@ -50,12 +65,12 @@ def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
     allv = allv[finite_rows]
     if len(allv) == 0:
         return None
-    steps = [np.abs(np.diff(a[np.all(np.isfinite(a), axis=1)], axis=0)) for a in arrays if len(a) > 1]
-    steps = [s for s in steps if len(s)]
-    if steps:
-        st = np.concatenate(steps)
-        moving = st[np.any(st > 0, axis=1)]
-        scale = np.quantile(moving, cfg.spike_quantile, axis=0) if len(moving) else np.zeros(d)
+    resid = [outlier_residual(a[np.all(np.isfinite(a), axis=1)].astype(np.float64)) for a in arrays]
+    resid = [r for r in resid if len(r)]
+    if resid:
+        rr = np.concatenate(resid)
+        nz = rr[np.any(rr > 0, axis=1)]
+        scale = np.quantile(nz, cfg.spike_quantile, axis=0) if len(nz) else np.zeros(d)
     else:
         scale = np.zeros(d)
     names = ds.feature_names(key)
@@ -138,7 +153,10 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                     )
                 elif not state_frozen and a_st is not None and clean.get("action") and a_st.names == s_st.names:
                     a = _as2d(ep.frames["action"]).astype(np.float64)
-                    yield from _limits(ep.index, s, a, s_st, fps, cfg)
+                    lead, tail = idle_bounds(a, a_st, cfg)
+                    # Resting on a hard stop before/after a take is normal; judge only the active part.
+                    if lead < len(a) - tail:
+                        yield from _limits(ep.index, s[lead : len(a) - tail], a[lead : len(a) - tail], s_st, fps, cfg)
 
 
 def _gripper(ep: int, ep_rng: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
@@ -147,15 +165,24 @@ def _gripper(ep: int, ep_rng: np.ndarray, st: DimStats, cfg: Config) -> Iterator
         yield Finding("GRIPPER_NEVER_ACTUATES", W, "the gripper never opens or closes in this episode", ep)
 
 
-def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
+def idle_bounds(a: np.ndarray, st: DimStats, cfg: Config) -> tuple[int, int]:
+    """Frames of idle lead-in and tail (command not yet / no longer moving)."""
     tol = np.where(st.active, cfg.move_tol * st.rng, np.inf)
     n = len(a)
     from_start = np.any(np.abs(a - a[0]) > tol, axis=1)
     from_end = np.any(np.abs(a - a[-1]) > tol, axis=1)
     if not from_start.any():
-        return
+        return n, 0
     lead = int(np.argmax(from_start))
     tail = n - 1 - int(np.flatnonzero(from_end)[-1]) if from_end.any() else 0
+    return lead, tail
+
+
+def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
+    n = len(a)
+    lead, tail = idle_bounds(a, st, cfg)
+    if lead >= n:
+        return
     frac = (lead + tail) / n
     if frac >= cfg.idle_info:
         sev = W if frac >= cfg.idle_warn else I
@@ -171,15 +198,15 @@ def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding
 def _spikes(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
     thr = np.maximum(cfg.spike_multiplier * st.step_scale, cfg.spike_min_range * st.rng)
     thr = np.where(st.active & (thr > 0), thr, np.inf)
-    jumps = np.abs(np.diff(a, axis=0)) > thr
+    jumps = outlier_residual(a) > thr
     rows = np.flatnonzero(jumps.any(axis=1))
     if not len(rows):
         return
-    # A glitch usually jumps away and straight back: count jumps a few frames apart as one event.
-    events = [int(rows[0]) + 1]
+    # neighbouring outlier frames belong to the same glitch
+    events = [int(rows[0])]
     for r in rows[1:]:
-        if r + 1 - events[-1] > 3:
-            events.append(int(r) + 1)
+        if r - events[-1] > 3:
+            events.append(int(r))
     dims = sorted({st.names[j] for j in np.flatnonzero(jumps.any(axis=0))})
     n = len(events)
     yield Finding(

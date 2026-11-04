@@ -242,3 +242,23 @@ def test_quick_patterns_select_only_needed_files(tmp_path, version):
         assert len(data) == 4  # episodes 0..3
     else:
         assert "data/chunk-000/file-000.parquet" in pats
+
+
+def test_sample_and_hold_actions_are_not_glitches(tmp_path):
+    # Real case: a dataset whose controller updates every 4th frame was flagged with hundreds of "jumps".
+    root = make_dataset(tmp_path / "ds", n_eps=10, faults={i: ["hold"] for i in range(10)})
+    r = lint(root)
+    assert not [f for f in r.findings if f.code == "ACTION_SPIKE"]
+
+
+def test_spike_detected_inside_sample_and_hold_data(tmp_path):
+    faults = {i: ["hold"] for i in range(10)}
+    faults[6] = ["hold", "spike"]
+    r = lint(make_dataset(tmp_path / "ds", n_eps=10, faults=faults))
+    assert {f.episode for f in r.findings if f.code == "ACTION_SPIKE"} == {6}
+
+
+def test_resting_on_hard_stop_while_idle_is_not_flagged(tmp_path):
+    # Real case: SO-100 arms rest on the shoulder stop before each take; that is not a fault.
+    r = lint(make_dataset(tmp_path / "ds", n_eps=8, faults={3: ["rest_limit"]}))
+    assert not [f for f in r.findings if f.code == "JOINT_AT_LIMIT"]

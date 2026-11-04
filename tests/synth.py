@@ -102,7 +102,7 @@ def make_dataset(
         if "hard_limit" in f:
             a[n // 2 :, 1] = -95.0  # operator keeps pushing past the joint's reach
         s = np.vstack([a[:2], a[:-2]]) + rng.normal(0, 0.05, a.shape)
-        if "hard_limit" in f:
+        if "hard_limit" in f or "rest_limit" in f:
             s[:, 1] = np.maximum(s[:, 1], -85.0)  # follower stops at its hard limit
         if "state_frozen" in f:
             s = np.tile(s[0], (n, 1))

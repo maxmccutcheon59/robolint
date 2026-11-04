@@ -119,7 +119,8 @@ def _duplicates(ds: Dataset, cfg: Config) -> Iterator[Finding]:
             yield Finding(
                 "DUPLICATE_EPISODE",
                 W,
-                f"actions are nearly identical to episode {eps[i]}: likely a duplicated or replayed recording",
+                f"actions are nearly identical to episode {eps[i]}: a duplicated recording, or a scripted demo "
+                "repeated with the same setup",
                 eps[j],
-                {"duplicate_of": eps[i]},
+                {"duplicate_of": eps[i], "mean_abs_diff": round(float(dist[list(cand).index(j)]), 5)},
             )

@@ -48,6 +48,22 @@ HELP: dict[str, str] = {
     "TASK_EMPTY": "Empty task descriptions.",
     "TASKS_MISSING": "No task descriptions at all.",
     "TASK_INDEX_UNKNOWN": "Frames reference tasks that do not exist.",
+    "EPISODE_TASK_EMPTY": "Episode has no task description, so it cannot train a language-conditioned policy.",
+    "GLOBAL_INDEX_DUPLICATES": "Frames share global indices: data from different recordings was merged under the same numbers.",
+    "GLOBAL_INDEX_GAPS": "Global frame indices skip values: frames or episodes are missing.",
+    "EPISODE_INDEX_GAPS": "Episode numbers skip values: episodes were deleted or never uploaded.",
+    "FRAME_INDEX_OFFSET": "frame_index does not start at 0.",
+    "TIMESTAMP_OFFSET": "Episode timestamps do not start at 0.",
+    "TIMESTAMP_NONFINITE": "Timestamps contain NaN or infinite values.",
+    "EMPTY_EPISODE": "Episode contains no frames.",
+    "NO_EPISODES": "Dataset contains no episodes.",
+    "NO_ACTIONS": "No action column: the dataset cannot train a policy.",
+    "NO_TIMESTAMPS": "No timestamp column: timing cannot be verified.",
+    "FPS_MISSING": "No valid fps in info.json.",
+    "METADATA_INCOMPLETE": "Episode metadata files are missing.",
+    "OLD_FORMAT": "Dataset predates LeRobot v2.",
+    "PARTIAL_CHECK": "Quick mode: only part of the dataset was checked.",
+    "VIDEO_SKIPPED": "Video checks need PyAV installed.",
 }
 
 _ANSI = {Severity.ERROR: "\033[31m", Severity.WARNING: "\033[33m", Severity.INFO: "\033[36m"}
