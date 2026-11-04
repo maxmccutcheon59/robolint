@@ -1,0 +1,61 @@
+# Second robolint audit: real-world LeRobot datasets from companies, labs and the community.
+# Run: robolint audit --from-file datasets-community.txt --max-episodes 300 --out audit2
+# (--max-episodes keeps huge datasets to a quick spot-check of their first 300 episodes)
+
+# Companies and startups
+recast-robotics/rollout_dagger_r1_s2_b0_20260915_121327
+configinc/HABIT
+BitRobot/HIW-500-LeRobot
+unitreerobotics/G1_WBT_Inspire_Plastic_Box_Parts
+AivexRoboticsGroup/robomind_agilex-processed
+yaak-ai/L2D
+
+# Research labs
+lerobot/FineART
+allenai/MolmoAct2-BimanualYAM-Dataset
+allenai/fetchman-data
+EgoSteer/EgoSteer-RealWorld
+zekaiwang/trex_dataset
+behavior-1k/2025-challenge-demos
+LeCAR-Lab/Wanda
+sii-rhos-ai/vifailback-dataset-lerobot
+lerobot/abc_130k_v3_smoke
+lerobot/high_quality_folding
+cadene/droid_1.0.1
+cadene/agibot_alpha_v30
+
+# RoboCOIN multi-robot collection
+RoboCOIN/Agilex_Cobot_Magic_heat_burger
+RoboCOIN/Agilex_Cobot_Magic_place_towel_flat
+RoboCOIN/Agilex_Cobot_Magic_connect_block
+RoboCOIN/Agilex_Cobot_Magic_heat_sandwich
+RoboCOIN/Agilex_Cobot_Magic_move_object
+RoboCOIN/Agilex_Cobot_Magic_storage_towel
+RoboCOIN/Agilex_Cobot_Magic_make_sandwiche
+RoboCOIN/Unitree_G1edu_u3_place_bread
+RoboCOIN/AI2_Alphabot_2_insert_hose_into_hole
+RoboCOIN/AI2_Alphabot_2_insert_water_pipe
+RoboCOIN/AI2_Alphabot_2_stamp_document
+RoboCOIN/AI2_Alphabot_2_package_fruit
+RoboCOIN/Galaxea_R1_Lite_classify_object_green_tablecloth
+RoboCOIN/Galbot_G1_load_floor_trash_3
+RoboCOIN/Galbot_G1_use_dryer
+RoboCOIN/Airbot_MMK2_organize_plate
+
+# Community recordings (SO-100/SO-101, YAM, ALOHA-style)
+Embodied-AI-6/blue_so101_color_blocks_10ep_v1_20260526_175604
+robot-learning-group47/eval2_bgr_g
+omkarmayekar555/robot-learning-tutorial-data
+mliu48/telearms-yam-cube-v4
+nurtayev-d/seasondish-shake-ag-1000ep
+adityx23/icl-dataset
+brandonyang/artem-pour-water
+jnogga/droid_success
+Joocjun/GR1-Tabletop-Merged-1000x24
+GT-111/agibotworld_alpha_v3_eef
+kmg0620/so101_bomb_pick_place_v1
+jchandru08/so100_press_red_button
+Embodied-AI-6/dataset
+SO-101-robot-learning/so101_pick_place
+EPITECH-LILLE/eval_training
+imstevenpmwork/omx_sentry_1

@@ -38,6 +38,12 @@ code{background:var(--code);border-radius:4px;padding:1px 5px;font-size:13px}
   <p class="muted">Quality checks for robot learning datasets in <a href="https://github.com/huggingface/lerobot">LeRobot</a> format: dropped frames, dead episodes, teleop glitches, merged recordings, broken metadata.
   <a href="https://github.com/maxmccutcheon59/robolint">GitHub</a> · <a href="https://github.com/maxmccutcheon59/robolint/blob/main/AUDIT.md">Audit write-up</a></p>
 
+  <div class="card" style="margin-top:18px">
+    <strong>Training on your own robot data?</strong>
+    <span class="muted">Send me a dataset (public or private) and I'll check it with robolint and walk you through what's broken: free for early teams.</span>
+    <div style="margin-top:8px"><a href="mailto:MaxMcCutcheon1@outlook.com?subject=robolint%20audit%20request">Request an audit</a> · Max McCutcheon</div>
+  </div>
+
   <h2>Audit results: 18 public datasets</h2>
   <p class="muted">Results of the November 2026 audit, run with the robolint command-line tool. Pick a dataset to see what was found.</p>
   <div class="card">
@@ -145,7 +151,9 @@ for (const r of data.results) pick.append(el("option", { value: r.source }, `${r
 const show = () => render(document.getElementById("audit"), data.results.find(r => r.source === pick.value));
 pick.addEventListener("change", show);
 const want = new URLSearchParams(location.search).get("dataset");
+const DEFAULT = "lerobot/svla_so100_stacking";
 if (want && data.results.some(r => r.source === want)) pick.value = want;
+else if (data.results.some(r => r.source === DEFAULT)) pick.value = DEFAULT;
 show();
 
 // ---- Live check in the browser (experimental)
