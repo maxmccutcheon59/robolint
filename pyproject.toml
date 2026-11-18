@@ -1,21 +1,32 @@
 [build-system]
-requires = ["hatchling>=1.24"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "robolint"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Quality checks for robot learning datasets (LeRobot format): dropped frames, dead episodes, teleop glitches, frozen cameras, duplicates."
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Max McCutcheon", email = "MaxMcCutcheon1@outlook.com" }]
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "pyarrow>=14"]
 keywords = ["robotics", "lerobot", "dataset", "data-quality", "imitation-learning", "robot-learning"]
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Quality Assurance",
 ]
 
 [project.optional-dependencies]
@@ -29,9 +40,18 @@ robolint = "robolint.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/maxmccutcheon59/robolint"
+Repository = "https://github.com/maxmccutcheon59/robolint"
+Issues = "https://github.com/maxmccutcheon59/robolint/issues"
+
+[tool.hatch.version]
+path = "src/robolint/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/robolint"]
+
+# Keep the sdist to the package, tests, and docs it needs (no Space app or audit lists).
+[tool.hatch.build.targets.sdist]
+include = ["/src/robolint", "/tests", "/README.md", "/LICENSE", "/pyproject.toml"]
 
 [tool.ruff]
 line-length = 120
