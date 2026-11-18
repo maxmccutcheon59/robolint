@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -205,10 +206,77 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def _inside(root: Path, p: Path) -> bool:
+def _within(parent: str, child: str) -> bool:
+    """True if absolute path `child` equals or sits below absolute path `parent` (no I/O)."""
     try:
-        return p.resolve().is_relative_to(root.resolve())
-    except (OSError, RuntimeError):
+        return os.path.commonpath([parent, child]) == parent
+    except ValueError:  # different drives on Windows, or mixed abs/rel
+        return False
+
+
+_MAX_LINK_HOPS = 8
+
+
+def hub_blob_dirs(snapshot: Path) -> tuple[Path, ...] | None:
+    """Blob folders a Hugging Face cache snapshot may legitimately link into.
+
+    huggingface_hub downloads to <cache>/datasets--<org>--<name>/snapshots/<rev>/... and
+    stores each file as a relative symlink into that repo's blobs/ folder. Newer releases
+    (2.x) add a second hop from the repo's blobs/ into a cache-wide <cache>/blobs/ folder.
+    Returns None when `snapshot` does not have that layout.
+    """
+    real = Path(os.path.realpath(snapshot))
+    repo_dir = real.parent.parent
+    if real.parent.name != "snapshots" or not repo_dir.name.startswith("datasets--"):
+        return None
+    dirs = tuple(Path(os.path.realpath(d)) for d in (repo_dir / "blobs", repo_dir.parent / "blobs") if d.is_dir())
+    return dirs or None
+
+
+def _inside(root: Path, p: Path, hub_blobs: tuple[Path, ...] | None = None) -> bool:
+    """Path-safety check for files the dataset metadata points us at.
+
+    Always: the path, taken literally, must stay under root (no "..", no absolute paths
+    smuggled in through metadata templates).
+
+    Local datasets: the fully resolved file must be under the resolved root, so symlinks
+    that leave the dataset folder are refused.
+
+    Hub downloads (hub_blobs given): additionally accept the Hub cache's own symlinks, but
+    only if every hop of the link chain lands inside one of the cache's blob folders, the
+    chain is short, the folders between root and the file are real (not links out), and
+    the final target is a regular file. A link to /etc/passwd, out of the cache, or a chain
+    that detours outside the blob folders is refused.
+    """
+    try:
+        root_abs = os.path.abspath(root)
+        p_abs = os.path.abspath(p)
+        if not _within(root_abs, p_abs):
+            return False
+        root_real = os.path.realpath(root)
+        real = os.path.realpath(p)
+        if _within(root_real, real):
+            return True
+        if not hub_blobs:
+            return False
+        allowed = [os.path.realpath(b) for b in hub_blobs]
+        # Directories inside the snapshot must not themselves be links out of it.
+        if not _within(root_real, os.path.realpath(os.path.dirname(p_abs))):
+            return False
+        cur = p_abs
+        for hop in range(_MAX_LINK_HOPS + 1):
+            if not os.path.islink(cur):
+                break
+            if hop == _MAX_LINK_HOPS:
+                return False  # chain too long
+            target = os.readlink(cur)
+            if os.path.isabs(target):
+                return False  # Hub cache links are always relative
+            cur = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(cur)), target))
+            if not any(_within(b, cur) for b in allowed):
+                return False  # this hop leaves the cache's blob folders
+        return cur == real and any(_within(b, real) for b in allowed) and os.path.isfile(real)
+    except (OSError, RuntimeError, ValueError):
         return False
 
 
@@ -237,7 +305,9 @@ def _column_to_numpy(col: pa.ChunkedArray) -> np.ndarray | None:
     return None
 
 
-def _load_frames(root: Path, max_episodes: int | None = None) -> tuple[dict[str, np.ndarray], set[str]]:
+def _load_frames(
+    root: Path, max_episodes: int | None = None, hub_blobs: tuple[Path, ...] | None = None
+) -> tuple[dict[str, np.ndarray], set[str]]:
     files = sorted((root / "data").rglob("*.parquet"))
     if not files:
         raise DatasetError(f"no parquet files under {root / 'data'}")
@@ -245,7 +315,7 @@ def _load_frames(root: Path, max_episodes: int | None = None) -> tuple[dict[str,
     all_names: set[str] = set()
     seen_eps: set[int] = set()
     for f in files:
-        if not _inside(root, f):
+        if not _inside(root, f, hub_blobs):
             continue
         try:
             schema = pq.read_schema(f)
@@ -324,7 +394,13 @@ def _load_episode_meta(root: Path) -> dict[int, dict[str, Any]]:
 
 
 def _video_refs(
-    root: Path, info: dict[str, Any], ep: int, row: dict[str, Any], video_keys: list[str], major: int
+    root: Path,
+    info: dict[str, Any],
+    ep: int,
+    row: dict[str, Any],
+    video_keys: list[str],
+    major: int,
+    hub_blobs: tuple[Path, ...] | None = None,
 ) -> list[VideoRef]:
     template = info.get("video_path")
     if not isinstance(template, str):
@@ -354,12 +430,23 @@ def _video_refs(
                 ref = VideoRef(key=key, path=root / rel)
         except (KeyError, IndexError, ValueError):
             continue
-        if _inside(root, ref.path):
+        if _inside(root, ref.path, hub_blobs):
             refs.append(ref)
     return refs
 
 
-def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = None) -> Dataset:
+def load_dataset(
+    root: Path,
+    *,
+    source: str = "",
+    max_episodes: int | None = None,
+    hub_blobs: tuple[Path, ...] | None = None,
+) -> Dataset:
+    """Load a dataset from a local folder.
+
+    Pass hub_blobs (from hub_blob_dirs) only for folders that resolve_source downloaded from
+    the Hub; it lets the Hub cache's symlinks into its blob store through the path check.
+    """
     root = Path(root)
     info_path = root / "meta" / "info.json"
     if not info_path.exists():
@@ -368,7 +455,7 @@ def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = Non
     if not isinstance(info, dict):
         raise DatasetError("meta/info.json is not a JSON object")
 
-    columns, all_columns = _load_frames(root, max_episodes)
+    columns, all_columns = _load_frames(root, max_episodes, hub_blobs)
     if "episode_index" not in columns:
         raise DatasetError("data has no episode_index column")
 
@@ -407,7 +494,7 @@ def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = Non
                 frames={k: v[s:e] for k, v in sorted_cols.items()},
                 length_meta=int(length_meta) if isinstance(length_meta, (int, float)) else None,
                 tasks=[str(t) for t in ep_tasks],
-                videos=_video_refs(root, info, int(ep), row, video_keys, major),
+                videos=_video_refs(root, info, int(ep), row, video_keys, major, hub_blobs),
             )
         )
     if not meta:
