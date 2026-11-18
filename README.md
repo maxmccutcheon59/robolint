@@ -1,7 +1,7 @@
 # robolint
 
 [![CI](https://github.com/maxmccutcheon59/robolint/actions/workflows/ci.yml/badge.svg)](https://github.com/maxmccutcheon59/robolint/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/maxmccutcheon59/robolint/blob/main/LICENSE)
 
 **Quality checks for robot learning datasets.** Point it at any [LeRobot](https://github.com/huggingface/lerobot) dataset, local or on the Hugging Face Hub, and find out which episodes will quietly hurt your policy before you spend GPU hours training on them.
 
@@ -30,9 +30,9 @@ robolint report: demo_ds
 
 *(Output from a test dataset with deliberately injected faults.)*
 
-**New: [What's broken in public robot learning data](AUDIT.md)**, an audit of 18 public LeRobot datasets.
+**New: [What's broken in public robot learning data](https://github.com/maxmccutcheon59/robolint/blob/main/AUDIT.md)**, an audit of 18 public LeRobot datasets.
 
-[![Data quality scores for 18 public LeRobot datasets](docs/audit-scores.png)](AUDIT.md)
+[![Data quality scores for 18 public LeRobot datasets](https://raw.githubusercontent.com/maxmccutcheon59/robolint/main/docs/audit-scores.png)](https://github.com/maxmccutcheon59/robolint/blob/main/AUDIT.md)
 
 **Try it in your browser:** the [robolint Space](https://huggingface.co/spaces/maxmccutcheon59/robolint) checks any public LeRobot dataset without installing anything (experimental; no camera checks).
 
