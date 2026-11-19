@@ -55,7 +55,7 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 
 
 
-Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; each distinct **warning** costs 15 points; **info** costs 2. The dataset score is the average episode score, minus small penalties for dataset-level problems. A heuristic summary: 100 minus penalties per issue, not a measure of usable data.
+Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; a **warning** keeps 85% of the score and **info** 98%. The dataset score is the average episode score, scaled down by dataset-level problems. The score is a summary of how many issues were found and how serious they are, not a measure of usable data or a prediction of training results; see [Scoring](#scoring).
 
 Supports LeRobot **v2.x** (per-episode files) and **v3.x** (chunked files) layouts.
 
@@ -176,6 +176,35 @@ A smaller cache trades memory for time spent re-reading columns.
 
 The findings and scores are identical before and after at every size, and on 69 synthetic
 datasets covering every fault robolint detects (`benchmarks/corpus.py`, `benchmarks/compare.py`).
+
+## Scoring
+
+Each finding has a weight between 0 and 1 and keeps (1 − weight) of what it applies to. Each code
+counts once per episode, at its worst severity.
+
+| Finding about | error | warning | info |
+|---|---|---|---|
+| one episode | 1.0 (episode scores 0) | 0.15 | 0.02 |
+| the whole dataset | 0.15 | 0.05 | 0 |
+
+An episode starts at 100 and is multiplied by (1 − weight) for each finding, so one warning gives
+85, two give 72.25, and warnings never add up to the 0 of an error. The dataset score is the
+average episode score multiplied the same way by each dataset-level finding. A dataset-level
+error, which is mostly metadata that no longer matches the data, costs as much as a warning on
+every episode. `NO_ACTIONS` and `NO_EPISODES` leave nothing to train on, so they score the dataset
+0. The JSON report lists the weights used (`score_weights`).
+
+The weights are a judgment, not a measurement: nobody has yet shown how much each kind of issue
+costs a trained policy. Change them to match what matters for your data, with `--weight` (CLI)
+or `Config(score_weights=ScoreWeights(...))` (Python):
+
+```bash
+robolint check ./my_dataset --weight warning=0.25 --weight IDLE_PADDING=0.05 --weight dataset-error=0.3
+```
+
+On the 18-dataset audit, this scoring changes no grade; the 5 datasets with dataset-level
+findings move by 0.6 to 7.4 points (`benchmarks/audit_scores.py` recomputes them from the
+published findings).
 
 ## Exit codes
 

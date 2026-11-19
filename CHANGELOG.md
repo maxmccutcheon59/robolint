@@ -3,6 +3,19 @@
 ## Unreleased
 
 ### Changed
+- **Scoring is consistent and its weights can be changed.** Each finding now keeps (1 − weight) of
+  the score instead of subtracting fixed points. Episode findings: error 1.0, warning 0.15, info
+  0.02, so one warning still gives 85, but warnings stack toward 0 without reaching it (before, 7
+  warnings scored 0, the same as an error). Dataset-level findings now scale the dataset score:
+  error 0.15, warning 0.05. Before, a dataset-level error cost a flat 10 points, less than a
+  single warning costs its episode. `NO_ACTIONS` and `NO_EPISODES` score the dataset 0. Weights
+  are set with `--weight KEY=W` (CLI) or `Config.score_weights` (`ScoreWeights`), and the JSON
+  report lists them under `score_weights`. On the 18-dataset audit no grade changes; recomputed
+  from the published findings (`benchmarks/audit_scores.py`): EPITECH-LILLE/eval_training 36.6 to
+  40.9 (F), kmg0620/so101_bomb_pick_place_v1 55.3 to 52.4 (F), jchandru08/so100_press_red_button
+  55.5 to 54.9 (F), SO-101-robot-learning/so101_pick_place 78.5 to 71.1 (C),
+  imstevenpmwork/omx_sentry_1 82.0 to 80.8 (B). The other 13 are unchanged. Episode scores can now
+  have decimals (72.25).
 - **Large datasets no longer need to fit in memory.** The loader reads each data file once, one
   column at a time, to validate it and record which rows belong to which episode; episode columns
   are then decoded when a check first reads them, with at most `--cache-mb` (default 512 MB) of

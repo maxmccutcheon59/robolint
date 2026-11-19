@@ -11,7 +11,7 @@ from . import __version__
 from .api import lint
 from .checks import Config
 from .dataset import DatasetError
-from .findings import Severity
+from .findings import ScoreWeights, Severity
 from .report import audit_markdown, write_exclude, write_html, write_json, write_text
 
 
@@ -24,6 +24,14 @@ def _common(p: argparse.ArgumentParser) -> None:
         "--cache-mb",
         type=float,
         help="decoded frame data kept in memory, in MB (default 512); larger datasets are streamed from disk",
+    )
+    p.add_argument(
+        "--weight",
+        action="append",
+        metavar="KEY=W",
+        help="change how much of the score a finding takes (0 to 1): KEY is error, warning or info "
+        "(episode findings), dataset-error, dataset-warning or dataset-info, or a finding code "
+        "such as IDLE_PADDING; repeatable",
     )
     k = p.add_argument_group("columns (found automatically unless given)")
     k.add_argument(
@@ -53,8 +61,22 @@ def _dim(v: str) -> str | int:
     return int(v) if v.lstrip("-").isdigit() else v
 
 
+def _weights(items: list[str] | None) -> ScoreWeights:
+    overrides: dict[str, float] = {}
+    for item in items or ():
+        key, sep, value = item.partition("=")
+        try:
+            overrides[key] = float(value)
+        except ValueError:
+            raise ValueError(f"--weight expects KEY=W with a number W, got {item!r}") from None
+        if not sep:
+            raise ValueError(f"--weight expects KEY=W, got {item!r}")
+    return ScoreWeights().with_overrides(overrides)
+
+
 def _config(args: argparse.Namespace) -> Config:
     return Config(
+        score_weights=_weights(args.weight),
         action_keys=tuple(args.action_key or ()),
         state_keys=tuple(args.state_key or ()),
         gripper_dims=tuple(_dim(v) for v in args.gripper or ()),
@@ -95,6 +117,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _cmd_check(args: argparse.Namespace) -> int:
     try:
+        cfg = _config(args)
+    except ValueError as e:
+        print(f"robolint: {e}", file=sys.stderr)
+        return 2
+    try:
         result = lint(
             args.source,
             videos=args.videos,
@@ -102,7 +129,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
             cache_dir=args.cache_dir,
             max_episodes=args.max_episodes,
             cache_mb=args.cache_mb,
-            config=_config(args),
+            config=cfg,
         )
     except DatasetError as e:
         print(f"robolint: {e}", file=sys.stderr)
@@ -133,6 +160,11 @@ def _cmd_audit(args: argparse.Namespace) -> int:
     if not sources:
         print("robolint audit: no datasets given", file=sys.stderr)
         return 2
+    try:
+        cfg = _config(args)
+    except ValueError as e:
+        print(f"robolint audit: {e}", file=sys.stderr)
+        return 2
     out: Path = args.out
     (out / "reports").mkdir(parents=True, exist_ok=True)
     summary = []
@@ -147,7 +179,7 @@ def _cmd_audit(args: argparse.Namespace) -> int:
                 cache_dir=args.cache_dir,
                 max_episodes=args.max_episodes,
                 cache_mb=args.cache_mb,
-                config=_config(args),
+                config=cfg,
             )
         except Exception as e:  # noqa: BLE001 - keep going across many datasets
             msg = str(e).replace("|", "/").replace("\n", " ")[:200]

@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ..dataset import Dataset
-from ..findings import Finding
+from ..findings import Finding, ScoreWeights
 
 
 @dataclass
@@ -72,6 +72,8 @@ class Config:
     sync_tol_frames: float = 3.0
     sync_mad_factor: float = 5.0
     sync_margin: float = 0.1
+    # Scoring (see ScoreWeights and the README's "Scoring" section)
+    score_weights: ScoreWeights = field(default_factory=ScoreWeights)
 
 
 CheckFn = Callable[[Dataset, Config], Iterable[Finding]]

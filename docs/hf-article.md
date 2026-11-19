@@ -39,7 +39,9 @@ robolint audit --from-file datasets.txt --out audit
 | lerobot/libero | 1,693 | 100 (A) | 0 | 2 minor glitches |
 | recast-robotics/rollout_dagger_r1_s2_b0_20260915_121327 | 10 | 100 (A) | 0 | none |
 
-An **error** means the episode is unusable for training as published. The score is a heuristic summary: 100 minus penalties per issue, not a measure of usable data (see [scoring](https://github.com/maxmccutcheon59/robolint#what-it-checks)). Video streams were not checked in this audit.
+An **error** means the episode is unusable for training as published. The score is a heuristic summary of how many issues were found and how serious they are, not a measure of usable data (see [scoring](https://github.com/maxmccutcheon59/robolint#scoring)). Video streams were not checked in this audit.
+
+*Scores above are from robolint 0.1.x. The next release scores dataset-level problems differently: no grade changes, and five scores move (EPITECH-LILLE/eval_training 40.9, kmg0620/so101_bomb_pick_place_v1 52.4, jchandru08/so100_press_red_button 54.9, SO-101-robot-learning/so101_pick_place 71.1, imstevenpmwork/omx_sentry_1 80.8).*
 
 ## Findings
 

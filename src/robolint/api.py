@@ -11,7 +11,7 @@ from typing import Any
 from . import __version__
 from .checks import Config, all_checks
 from .dataset import Dataset, hub_blob_dirs, load_dataset, resolve_source
-from .findings import Finding, Scores, Severity, score
+from .findings import Finding, Scores, ScoreWeights, Severity, score
 
 
 @dataclass
@@ -23,6 +23,7 @@ class Result:
     videos_checked: bool
     seconds: float
     extra: dict[str, Any] = field(default_factory=dict)
+    weights: ScoreWeights = field(default_factory=ScoreWeights)
 
     @property
     def dataset_findings(self) -> list[Finding]:
@@ -62,6 +63,7 @@ class Result:
             },
             "score": self.scores.dataset_score,
             "grade": self.scores.grade,
+            "score_weights": self.weights.to_dict(),
             "episodes": {
                 "clean": self.scores.clean_episodes,
                 "with_warnings": self.scores.episodes_with_warnings,
@@ -118,7 +120,7 @@ def lint(
     for check in all_checks(include_video=videos):
         findings.extend(check(ds, cfg))
     findings.sort(key=lambda f: (f.episode if f.episode is not None else -1, -int(f.severity), f.code))
-    scores = score(findings, [ep.index for ep in ds.episodes])
+    scores = score(findings, [ep.index for ep in ds.episodes], cfg.score_weights)
     return Result(
         source=str(source),
         dataset=ds,
@@ -126,4 +128,5 @@ def lint(
         scores=scores,
         videos_checked=videos,
         seconds=time.perf_counter() - t0,
+        weights=cfg.score_weights,
     )
