@@ -1,6 +1,6 @@
 """robolint: quality checks for robot learning datasets (LeRobot format)."""
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from .api import Result, lint  # noqa: E402
 from .checks import Config  # noqa: E402

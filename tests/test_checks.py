@@ -309,3 +309,47 @@ def test_smaller_objects_are_not_mistaken_for_missed_grasps(tmp_path):
     small = {i: ["small_object"] for i in (1, 5, 9)}
     r = lint(make_dataset(tmp_path / "ds", n_eps=12, grasp_object=True, faults={**small, 6: ["missed_grasp"]}))
     assert {f.episode for f in r.findings if f.code == "FAILED_GRASP"} == {6}
+
+
+def test_rest_poses_and_open_width_are_not_grasps(tmp_path):
+    # Real teleop takes start and end with the gripper resting fully closed on nothing, and operators
+    # open by different amounts. Neither is a missed grasp (both were false positives on SO-100 and ALOHA data).
+    faults = {i: ["pick_place"] for i in range(12)}
+    r = lint(make_dataset(tmp_path / "ds", n_eps=12, faults=faults))
+    assert not {"FAILED_GRASP", "REGRASP"} & {f.code for f in r.findings}
+
+
+def test_missed_grasp_is_found_between_rest_poses(tmp_path):
+    faults = {i: ["pick_place"] for i in range(12)}
+    faults[7] = ["pick_place_missed"]
+    r = lint(make_dataset(tmp_path / "ds", n_eps=12, faults=faults))
+    assert {f.episode for f in r.findings if f.code == "FAILED_GRASP"} == {7}
+    assert not [f for f in r.findings if f.code == "REGRASP"]
+
+
+def test_rest_after_soft_grasp_is_not_a_miss(tmp_path):
+    # Operators often hold the object without squeezing the leader fully closed, so the grasp never
+    # reaches the "held closed" band; the gripper then goes back to rest closed on nothing at the end.
+    # That final rest is not a grasp (it was 21 false FAILED_GRASP on svla_so100_stacking).
+    # Gentle grasps barely hold the follower off the command (svla_so100_stacking eps 43, 48).
+    faults = {i: ["pick_place"] for i in range(12)}
+    for i in (8, 9):
+        faults[i].append("soft_grasp")
+    for i in (10, 11):
+        faults[i].append("gentle_grasp")
+    r = lint(make_dataset(tmp_path / "ds", n_eps=12, faults=faults))
+    assert not {"FAILED_GRASP", "REGRASP"} & {f.code for f in r.findings}
+
+
+def test_bimanual_grippers_pair_by_name():
+    import numpy as np
+
+    from robolint.checks.signals import DimStats, _gripper_pairs
+
+    def st(names):
+        z = np.zeros(len(names))
+        return DimStats(z, z, z, z, names, z.astype(bool))
+
+    a = st(["left_waist", "left_gripper", "right_waist", "right_gripper"])
+    s = st(["right_gripper", "right_waist", "left_gripper", "left_waist"])
+    assert _gripper_pairs(a, s) == [(1, 2), (3, 0)]
