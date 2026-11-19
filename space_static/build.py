@@ -6,6 +6,10 @@ where path/to/audit is the folder written by `robolint audit` (it holds reports/
 
 Writes space_static/results.json (precomputed audit results) and copies the pure-Python
 robolint package into space_static/robolint/ so the in-browser live check can import it.
+
+    python space_static/build.py --help-only
+refreshes only the check descriptions ("help") in the existing results.json from
+robolint.report.HELP, leaving the saved audit results untouched.
 """
 
 from __future__ import annotations
@@ -48,5 +52,16 @@ def main(audit_dir: str) -> None:
     print(f"{len(results)} datasets -> results.json; {len(files)} package files copied")
 
 
+def refresh_help() -> None:
+    path = HERE / "results.json"
+    out = json.loads(path.read_text(encoding="utf-8"))
+    out["help"] = HELP
+    path.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
+    print(f"help text refreshed in results.json ({len(HELP)} check codes); results unchanged")
+
+
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "audit")
+    if sys.argv[1:] == ["--help-only"]:
+        refresh_help()
+    else:
+        main(sys.argv[1] if len(sys.argv) > 1 else "audit")

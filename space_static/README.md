@@ -26,5 +26,6 @@ The files here are generated from the robolint repo:
 
 ```bash
 python space_static/build.py path/to/audit   # writes results.json and copies the robolint package
+python space_static/build.py --help-only     # refreshes only the check descriptions in results.json
 hf upload maxmccutcheon59/robolint space_static . --repo-type space
 ```
