@@ -24,4 +24,4 @@ A controlled study on a simulated pick-and-place task. It is a first test of the
 
 **Limits.** A toy 2D task, a simple policy, fault rates chosen to resemble community data, and real run-to-run variance (paired standard deviation 5 to 10 points). The next step is the same comparison with a real policy (ACT or diffusion) on LeRobot sim tasks, and validating the failed-grasp check on real datasets.
 
-Reproduce: `python study.py` (about 10 minutes on 2 CPU cores), then `python chart.py`.
+Reproduce: `OMP_NUM_THREADS=1 python study.py` (under 2 minutes on 8 CPU cores; without `OMP_NUM_THREADS=1` the parallel workers each start a full set of BLAS threads and the run can be many times slower), then `python chart.py`.

@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.1.2 (2026-11-19)
+
+### Added
+- **`FAILED_GRASP` (error) and `REGRASP` (info).** For each gripper, robolint compares where the
+  follower settles when the gripper is commanded closed. If the dataset's grasps usually stop on an
+  object, a grasp that closes all the way on nothing is a missed grasp. If an episode's last grasp
+  missed, it gets `FAILED_GRASP` (likely a failed demonstration). If it missed and then grasped,
+  it gets `REGRASP` (a recovery).
+- `studies/filtering_bc/`: a simulated study of whether dropping robolint errors trains a better
+  behavior-cloning policy.
+
+### Fixed (before first release of the grasp check)
+- **Rest poses read as grasps.** Holds from the first frame, and a final close on nothing after
+  the episode already held an object or closed and reopened, are the gripper at rest, not grasps.
+  Without this, ALOHA sim datasets got `REGRASP` on every episode.
+- **Open side read as the grasp side.** Operators open the gripper by different amounts. A side
+  now counts as grasping only if the follower is actually held short of the command. Without
+  this, SO-100/SO-101 episodes that opened fully were flagged `FAILED_GRASP`.
+- **Bimanual pairing.** Action and state grippers are paired by name when both list the same
+  gripper names, instead of by position.
+
+### Limits
+- Recall on real failed demonstrations is not yet measured. No public dataset we audited labels
+  its failed demos. On the 18-dataset audit, 5 episodes are flagged: 4 are confirmed recoveries
+  (`REGRASP`) and 1 is ambiguous.
+- The check only runs on dimensions whose names contain "gripper", present in both `action` and
+  `observation.state`. Unnamed grippers (for example LIBERO) are skipped without a message. It
+  also assumes the commanded and measured gripper positions use the same units.
+
 ## 0.1.1 (2026-11-19)
 
 Correctness release. Upgrade if you use robolint as a quality gate: 0.1.0 could report a
