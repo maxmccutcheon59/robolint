@@ -29,7 +29,6 @@ from pathlib import Path
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-
 import sim
 
 HERE = Path(__file__).resolve().parent
@@ -160,12 +159,12 @@ def write_lerobot(eps: list[dict], root: Path) -> None:
 
 class MLP:
     def __init__(self, sizes: list[int], rng: np.random.Generator):
-        self.W = [rng.normal(0, np.sqrt(2 / a), (a, b)) for a, b in zip(sizes[:-1], sizes[1:])]
+        self.W = [rng.normal(0, np.sqrt(2 / a), (a, b)) for a, b in zip(sizes[:-1], sizes[1:], strict=True)]
         self.b = [np.zeros(b) for b in sizes[1:]]
 
     def forward(self, x):
         hs = [x]
-        for i, (W, b) in enumerate(zip(self.W, self.b)):
+        for i, (W, b) in enumerate(zip(self.W, self.b, strict=True)):
             x = x @ W + b
             if i < len(self.W) - 1:
                 x = np.maximum(x, 0)
@@ -187,7 +186,7 @@ class MLP:
                 gb.insert(0, grad.sum(0))
                 if i:
                     grad = (grad @ self.W[i].T) * (hs[i] > 0)
-            for j, (p, gr) in enumerate(zip(params, gW + gb)):
+            for j, (p, gr) in enumerate(zip(params, gW + gb, strict=True)):
                 m[j] = 0.9 * m[j] + 0.1 * gr
                 v[j] = 0.999 * v[j] + 0.001 * gr * gr
                 p -= lr * (m[j] / (1 - 0.9**t)) / (np.sqrt(v[j] / (1 - 0.999**t)) + 1e-8)
