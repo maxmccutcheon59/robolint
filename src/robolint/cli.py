@@ -19,6 +19,11 @@ def _common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--revision", help="Hub revision (branch, tag, or commit)")
     p.add_argument("--cache-dir", help="where to cache Hub downloads")
     p.add_argument("--max-episodes", type=int, help="only check the first N episodes (quick look)")
+    p.add_argument(
+        "--cache-mb",
+        type=float,
+        help="decoded frame data kept in memory, in MB (default 512); larger datasets are streamed from disk",
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -60,6 +65,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
             revision=args.revision,
             cache_dir=args.cache_dir,
             max_episodes=args.max_episodes,
+            cache_mb=args.cache_mb,
         )
     except DatasetError as e:
         print(f"robolint: {e}", file=sys.stderr)
@@ -103,6 +109,7 @@ def _cmd_audit(args: argparse.Namespace) -> int:
                 revision=args.revision,
                 cache_dir=args.cache_dir,
                 max_episodes=args.max_episodes,
+                cache_mb=args.cache_mb,
             )
         except Exception as e:  # noqa: BLE001 - keep going across many datasets
             msg = str(e).replace("|", "/").replace("\n", " ")[:200]

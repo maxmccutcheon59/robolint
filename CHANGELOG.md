@@ -2,7 +2,24 @@
 
 ## Unreleased
 
+### Changed
+- **Large datasets no longer need to fit in memory.** The loader reads each data file once, one
+  column at a time, to validate it and record which rows belong to which episode; episode columns
+  are then decoded when a check first reads them, with at most `--cache-mb` (default 512 MB) of
+  decoded data kept. Dataset-wide statistics, the grasp and lag checks, and the global index check
+  were rewritten to stream over episodes. Quantiles stay exact (two passes: a sample locates a
+  narrow band around each answer, then only the values in the band are kept), and correlations
+  are merged chunk by chunk. On a 10M-frame, 14-dimensional dataset peak memory drops from
+  7.3 GB to 1.1 GB (0.72 GB with `--cache-mb 128`) with identical findings; see the README's
+  "Large datasets" section.
+- `Episode.frames` is now a read-only mapping whose arrays are decoded on first use. Code that
+  modified those arrays in place must copy them first.
+
 ### Added
+- `--cache-mb` (CLI) and `cache_mb=` (`lint()`, `load_dataset()`): memory budget for decoded frames.
+- `benchmarks/`: `scale.py` (peak memory and time at any size, optionally against an older
+  checkout and with a given `--cache-mb`), `corpus.py` (synthetic datasets covering every fault) and `compare.py` (diff two
+  source trees' findings and scores on those datasets).
 - **`STATE_LAG_OUTLIER` (warning) and `STATE_LAG` (info).** For joints whose measured position
   follows the command, robolint cross-correlates smoothed action and state velocities to estimate
   how many frames the state trails the action in each episode. `STATE_LAG` reports the dataset's

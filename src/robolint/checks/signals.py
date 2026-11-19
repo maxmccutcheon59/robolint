@@ -9,6 +9,7 @@ import numpy as np
 
 from ..dataset import Dataset
 from ..findings import Finding, Severity
+from ..stream import Moments, QuantileStream
 from . import Config
 
 E, W, I = Severity.ERROR, Severity.WARNING, Severity.INFO
@@ -56,46 +57,136 @@ def outlier_residual(a: np.ndarray) -> np.ndarray:
 
 
 def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
-    """Per-dimension statistics of `key` across the dataset (computed once per dataset and config)."""
+    """Per-dimension statistics of `key` across the dataset (computed once per dataset and config).
+
+    Action and state statistics are computed together, in the same passes over the data.
+    """
     cache = ds.__dict__.setdefault("_dim_stats_cache", {})
     ck = (key, cfg.spike_quantile)
     if ck not in cache:
-        cache[ck] = _dataset_stats(ds, key, cfg)
+        keys = [key] + [k for k in KEYS if k != key and (k, cfg.spike_quantile) not in cache]
+        for k, st in _dataset_stats(ds, keys, cfg).items():
+            cache[(k, cfg.spike_quantile)] = st
     return cache[ck]
 
 
-def _dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
-    arrays = [_as2d(ep.frames[key]) for ep in ds.episodes if key in ep.frames and ep.length]
-    if not arrays:
-        return None
-    d = arrays[0].shape[1]
-    arrays = [a for a in arrays if a.shape[1] == d]
-    allv = np.concatenate(arrays).astype(np.float64)
-    finite_rows = np.all(np.isfinite(allv), axis=1)
-    allv = allv[finite_rows]
-    if len(allv) == 0:
-        return None
-    resid = [outlier_residual(a[np.all(np.isfinite(a), axis=1)].astype(np.float64)) for a in arrays]
-    resid = [r for r in resid if len(r)]
-    if resid:
+DISCRETE_SAMPLE = 200_000  # rows looked at to decide whether a dimension only takes a handful of values
+
+
+class _StatsAcc:
+    """Streaming statistics of one key's finite rows, fed one episode at a time."""
+
+    def __init__(self, cfg: Config, max_rows: int, exact_rows: int | None) -> None:
+        self.cfg, self.max_rows, self.exact_rows = cfg, max_rows, exact_rows
+        self.d: int | None = None
+        self.n = 0
+
+    def start(self, d: int) -> None:
+        self.d = d
+        self.lo = np.full(d, np.inf)
+        self.hi = np.full(d, -np.inf)
+        self.values = QuantileStream([0.005, 0.995], self.max_rows, exact_rows=self.exact_rows)
         # Quantile over every frame: in held/stepped signals almost all residuals are zero, and a
         # quantile over only the non-zero ones would let a lone glitch set its own threshold.
-        scale = np.quantile(np.concatenate(resid), cfg.spike_quantile, axis=0)
-    else:
-        scale = np.zeros(d)
-    names = ds.feature_names(key)
-    if len(names) != d:
-        names = [f"{key}[{i}]" for i in range(d)]
-    sample = allv[:: max(1, len(allv) // 200_000)]
-    discrete = np.array([len(np.unique(sample[:, j])) <= 4 for j in range(d)], dtype=bool)
-    return DimStats(
-        lo=allv.min(axis=0),
-        hi=allv.max(axis=0),
-        rng=np.quantile(allv, 0.995, axis=0) - np.quantile(allv, 0.005, axis=0),
-        step_scale=scale,
-        names=names,
-        discrete=discrete,
-    )
+        self.resid = QuantileStream([self.cfg.spike_quantile], self.max_rows, exact_rows=self.exact_rows)
+        self.discrete: np.ndarray | None = None
+
+    def add(self, fin: np.ndarray) -> None:
+        self.n += len(fin)
+        if len(fin):
+            self.lo = np.minimum(self.lo, fin.min(axis=0))
+            self.hi = np.maximum(self.hi, fin.max(axis=0))
+        self.values.add(fin)
+        self.resid.add(outlier_residual(fin))
+
+    def end_first(self) -> bool:
+        """True if a second pass over the data is needed."""
+        if self.n == 0:
+            return False
+        assert self.d is not None
+        if self.values.exact:
+            allv = np.concatenate(self.values._chunks)
+            sample = allv[:: max(1, len(allv) // DISCRETE_SAMPLE)]
+            self.discrete = np.array([len(np.unique(sample[:, j])) <= 4 for j in range(self.d)], dtype=bool)
+        else:
+            # Same rows as above (every k-th finite row), gathered on the second pass.
+            self._k = max(1, self.n // DISCRETE_SAMPLE)
+            self._pos = 0
+            self._uniq: list[set[float]] = [set() for _ in range(self.d)]
+        self._v_more = self.values.needs_second_pass()
+        self._r_more = self.resid.needs_second_pass()
+        return self._v_more or self._r_more or self.discrete is None
+
+    def add_second(self, fin: np.ndarray) -> None:
+        if self.discrete is None:
+            rows = fin[np.arange((-self._pos) % self._k, len(fin), self._k)]
+            self._pos += len(fin)
+            for j, u in enumerate(self._uniq):
+                if len(u) <= 4 and len(rows):
+                    u.update(np.unique(rows[:, j]).tolist())
+        if self._v_more:
+            self.values.add_second(fin)
+        if self._r_more:
+            self.resid.add_second(outlier_residual(fin))
+
+    def end_second(self) -> bool:
+        """True if done; False if the second pass must run again (a quantile band was too narrow)."""
+        if self.discrete is None:
+            self.discrete = np.array([len(u) <= 4 for u in self._uniq], dtype=bool)
+        if self._v_more:
+            self._v_more = self.values.result() is None
+        if self._r_more:
+            self._r_more = self.resid.result() is None
+        return not (self._v_more or self._r_more)
+
+    def stats(self, names: list[str]) -> DimStats | None:
+        if self.n == 0 or self.d is None:
+            return None
+        q = self.values.result()
+        r = self.resid.result()
+        assert q is not None and r is not None and self.discrete is not None
+        if len(names) != self.d:
+            names = []
+        return DimStats(lo=self.lo, hi=self.hi, rng=q[1] - q[0], step_scale=r[0], names=names, discrete=self.discrete)
+
+
+def _finite_rows(ds: Dataset, keys: list[str], accs: dict[str, _StatsAcc]) -> Iterator[tuple[str, np.ndarray]]:
+    for ep in ds.episodes:
+        if not ep.length:
+            continue
+        for key in keys:
+            if key not in ep.frames:
+                continue
+            a = _as2d(ep.frames[key])
+            acc = accs[key]
+            if acc.d is None:
+                acc.start(a.shape[1])
+            if a.shape[1] != acc.d:
+                continue
+            yield key, a[np.all(np.isfinite(a), axis=1)].astype(np.float64)
+
+
+def _dataset_stats(
+    ds: Dataset, keys: list[str], cfg: Config, exact_rows: int | None = None
+) -> dict[str, DimStats | None]:
+    """Statistics of several keys in shared passes over the data: one pass when the dataset is
+    small, two (rarely three) when it is large, holding only a sample of it in memory."""
+    max_rows = ds.total_frames
+    accs = {k: _StatsAcc(cfg, max_rows, exact_rows) for k in keys}
+    for key, fin in _finite_rows(ds, keys, accs):
+        accs[key].add(fin)
+    todo = [k for k in keys if accs[k].end_first()]
+    while todo:
+        for key, fin in _finite_rows(ds, todo, accs):
+            accs[key].add_second(fin)
+        todo = [k for k in todo if not accs[k].end_second()]
+    out = {}
+    for key, acc in accs.items():
+        names = ds.feature_names(key)
+        if acc.d is not None and len(names) != acc.d:
+            names = [f"{key}[{i}]" for i in range(acc.d)]
+        out[key] = acc.stats(names)
+    return out
 
 
 def _longest_run(mask: np.ndarray) -> int:
@@ -110,9 +201,9 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     stats = {k: dataset_stats(ds, k, cfg) for k in KEYS}
     fps = ds.fps or 30.0
     a_st, s_st = stats["action"], stats["observation.state"]
-    grasp_eps: list[tuple[int, np.ndarray, np.ndarray]] = []  # healthy episodes for the grasp check
+    grasp_eps: list[int] = []  # positions in ds.episodes of healthy episodes, for the grasp check
 
-    for ep in ds.episodes:
+    for pos, ep in enumerate(ds.episodes):
         if ep.length < 2:
             continue
         # Episodes whose frames are duplicated (merged recordings) are already errors; their
@@ -172,7 +263,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                 elif not state_frozen and not corrupt and a_st is not None and clean.get("action"):
                     a = _as2d(ep.frames["action"]).astype(np.float64)
                     if not action_dead and a.shape[1] == len(a_st.rng):
-                        grasp_eps.append((ep.index, a, s))
+                        grasp_eps.append(pos)
                     if a_st.names == s_st.names:
                         lead, tail = idle_bounds(a, a_st, cfg)
                         # Resting on a hard stop before/after a take is normal; judge only the active part.
@@ -182,7 +273,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                             )
 
     if a_st is not None and s_st is not None:
-        yield from _grasps(grasp_eps, a_st, s_st, fps, cfg)
+        yield from _grasps(ds, grasp_eps, a_st, s_st, fps, cfg)
 
 
 def _gripper(ep: int, ep_rng: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
@@ -313,9 +404,7 @@ def _closed_and_reopened(cmd: np.ndarray, lo: float, hi: float, side: float, dep
     return any(e - b >= min_len for b, e in _runs(bump >= depth))
 
 
-def _grasps(
-    eps: list[tuple[int, np.ndarray, np.ndarray]], a_st: DimStats, s_st: DimStats, fps: float, cfg: Config
-) -> Iterator[Finding]:
+def _grasps(ds: Dataset, eps: list[int], a_st: DimStats, s_st: DimStats, fps: float, cfg: Config) -> Iterator[Finding]:
     """Grasps that closed on nothing.
 
     When a gripper closes on an object, the object blocks it and the follower stops partway.
@@ -324,60 +413,103 @@ def _grasps(
     usually stops short of the farthest settling point (the dataset holds objects), a settle
     at that farthest point is a grasp on nothing. An episode whose last grasp missed is very
     likely a failed demonstration; one that missed and then grasped is a recovery.
+
+    `eps` are positions in ds.episodes. Episodes are read twice, gripper columns only, so the
+    check needs no copy of the whole dataset in memory.
     """
     pairs = _gripper_pairs(a_st, s_st)
     if not pairs or len(eps) < 5:
         return
     min_len = max(3, int(cfg.grasp_hold_seconds * fps))
-    for ja, js in pairs:
-        a_lo, a_hi, s_rng = a_st.lo[ja], a_st.hi[ja], s_st.rng[js]
-        if a_hi - a_lo <= 1e-9 or s_rng <= 1e-9:
-            continue
-        # does the follower's reading rise or fall when the command rises?
-        a_all = np.concatenate([a[:, ja] for _, a, _ in eps])
-        s_all = np.concatenate([s[:, js] for _, _, s in eps])
-        if np.std(a_all) <= 1e-12 or np.std(s_all) <= 1e-12:
-            continue
-        sign = 1.0 if np.corrcoef(a_all, s_all)[0, 1] >= 0 else -1.0
-        # Held segments per side: (episode, start, end, settle position, follower minus command, lead?).
-        # "lead" = held from the first frame: the rest pose before the gripper has moved, never a grasp.
-        segs: dict[float, list[tuple[int, int, int, float, float, bool]]] = {1.0: [], -1.0: []}
-        for ep, a, s in eps:
-            c = (a[:, ja] - a_lo) / (a_hi - a_lo)
+    pairs = [(ja, js) for ja, js in pairs if a_st.hi[ja] - a_st.lo[ja] > 1e-9 and s_st.rng[js] > 1e-9]
+    if not pairs:
+        return
+
+    def load(pos: int) -> tuple[int, np.ndarray, np.ndarray]:
+        ep = ds.episodes[pos]
+        a = _as2d(ep.frames["action"]).astype(np.float64)
+        s = _as2d(ep.frames["observation.state"]).astype(np.float64)
+        return ep.index, a, s
+
+    # Pass 1: does the follower's reading rise or fall when the command rises, and the held segments.
+    # Held segments per side: (episode, start, end, settle position, follower minus command, lead?).
+    # "lead" = held from the first frame: the rest pose before the gripper has moved, never a grasp.
+    moments = [Moments() for _ in pairs]
+    segs: list[dict[float, list[tuple[int, int, int, float, float, bool]]]] = [{1.0: [], -1.0: []} for _ in pairs]
+    lengths: dict[int, int] = {}
+    for pos in eps:
+        ep, a, s = load(pos)
+        lengths[ep] = len(a)
+        for p, (ja, js) in enumerate(pairs):
+            moments[p].add(a[:, ja], s[:, js])
+            c = (a[:, ja] - a_st.lo[ja]) / (a_st.hi[ja] - a_st.lo[ja])
             for side, held in ((1.0, c > 0.8), (-1.0, c < 0.2)):
                 for b, e in _runs(held):
                     if e - b >= min_len:
                         tail = slice(b + (e - b) // 2, e)
                         med_s = float(np.median(s[tail, js]))
-                        segs[side].append((ep, b, e, med_s, float(np.median(s[tail, js] - a[tail, ja])), b == 0))
-        by_index = {ep: a for ep, a, _ in eps}
-        for side in (1.0, -1.0):
-            if sum(1 for g in segs[side] if not g[5]) < 5:
-                continue
-            d = side * sign  # direction the follower travels when commanded to this side
-            free = [g[4] for g in segs[-side]]
-            offset = float(np.median(free)) if free else 0.0
-            # Frames where an object holds the follower short of the command (calibration offset removed),
-            # whatever the command level: operators often grasp without squeezing the leader all the way.
-            held_obj: dict[int, list[tuple[int, int]]] = {}
-            for ep, a, s in eps:
-                blocked = d * (offset - (s[:, js] - a[:, ja])) >= cfg.grasp_object_min * s_rng
-                held_obj[ep] = [(b, e) for b, e in _runs(blocked) if e - b >= min_len]
+                        segs[p][side].append((ep, b, e, med_s, float(np.median(s[tail, js] - a[tail, ja])), b == 0))
 
-            # A hold that runs to the end of the episode on nothing is the gripper put back to rest when
-            # the task is over, not a grasp attempt, if the episode already held an object or already
-            # closed and reopened (a pick and release, even one too gentle to show as a held segment).
-            grasps = []
-            for g in segs[side]:
-                if g[5]:
+    # Which (gripper, side) combinations can hold grasps, and their calibration offset.
+    plans: dict[tuple[int, float], tuple[float, float]] = {}  # -> (direction, offset)
+    for p in range(len(pairs)):
+        m = moments[p]
+        if m.std_x() <= 1e-12 or m.std_y() <= 1e-12:
+            continue
+        sign = 1.0 if m.corr() >= 0 else -1.0
+        for side in (1.0, -1.0):
+            if sum(1 for g in segs[p][side] if not g[5]) < 5:
+                continue
+            free = [g[4] for g in segs[p][-side]]
+            plans[(p, side)] = (side * sign, float(np.median(free)) if free else 0.0)
+    if not plans:
+        return
+
+    # Pass 2: a hold that runs to the end of the episode on nothing is the gripper put back to rest
+    # when the task is over, not a grasp attempt, if the episode already held an object or already
+    # closed and reopened (a pick and release, even one too gentle to show as a held segment).
+    rest: set[tuple[int, float, int, int]] = set()  # (pair, side, episode, segment start) to ignore
+    ends_by_ep: dict[tuple[int, float], dict[int, list[tuple[int, int, int, float, float, bool]]]] = {}
+    for (p, side), _ in plans.items():
+        js = pairs[p][1]
+        by_ep: dict[int, list] = {}
+        for g in segs[p][side]:
+            if (
+                not g[5]
+                and g[2] == lengths[g[0]]
+                and abs(g[4] - plans[(p, side)][1]) < cfg.grasp_object_min * s_st.rng[js]
+            ):
+                by_ep.setdefault(g[0], []).append(g)
+        ends_by_ep[(p, side)] = by_ep
+    if any(ends_by_ep.values()):
+        wanted = {ep for by_ep in ends_by_ep.values() for ep in by_ep}
+        for pos in eps:
+            if ds.episodes[pos].index not in wanted:
+                continue
+            ep, a, s = load(pos)
+            for (p, side), (d, offset) in plans.items():
+                cands = ends_by_ep[(p, side)].get(ep)
+                if not cands:
                     continue
-                a = by_index[g[0]]
-                if g[2] == len(a) and abs(g[4] - offset) < cfg.grasp_object_min * s_rng:
-                    if any(e <= g[1] for _, e in held_obj[g[0]]) or _closed_and_reopened(
-                        a[: g[1], ja], a_lo, a_hi, side, cfg.grasp_object_min, min_len
+                ja, js = pairs[p]
+                # Frames where an object holds the follower short of the command (calibration offset
+                # removed), whatever the command level: operators often grasp without squeezing the
+                # leader all the way.
+                blocked = d * (offset - (s[:, js] - a[:, ja])) >= cfg.grasp_object_min * s_st.rng[js]
+                held_obj = [(b, e) for b, e in _runs(blocked) if e - b >= min_len]
+                for g in cands:
+                    if any(e <= g[1] for _, e in held_obj) or _closed_and_reopened(
+                        a[: g[1], ja], a_st.lo[ja], a_st.hi[ja], side, cfg.grasp_object_min, min_len
                     ):
-                        continue
-                grasps.append(g)
+                        rest.add((p, side, g[0], g[1]))
+
+    for p, (_, js) in enumerate(pairs):
+        s_rng = s_st.rng[js]
+        for side in (1.0, -1.0):
+            if (p, side) not in plans:
+                continue
+            d, offset = plans[(p, side)]
+            grasps = [g for g in segs[p][side] if not g[5] and (p, side, g[0], g[1]) not in rest]
             if len(grasps) < 5:
                 continue
             farthest = float(np.max([d * g[3] for g in grasps]))

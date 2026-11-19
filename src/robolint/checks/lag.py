@@ -19,6 +19,7 @@ import numpy as np
 
 from ..dataset import Dataset
 from ..findings import Finding, Severity
+from ..stream import Moments
 from . import Config
 from .signals import DimStats, _as2d, dataset_stats
 
@@ -246,7 +247,18 @@ class PositionJoints:
     state_dims: np.ndarray  # matching indices into the state vector
     names: list[str]
     rng: np.ndarray  # robust range of each action dim
-    episodes: list[tuple[int, np.ndarray, np.ndarray]]  # (episode, action, state) for usable episodes
+    positions: list[int]  # positions in ds.episodes of usable episodes
+    a_dim: int  # full action and state widths (to re-read episodes)
+    s_dim: int
+
+    def episodes(self, ds: Dataset) -> Iterator[tuple[int, np.ndarray, np.ndarray]]:
+        """(episode, action, state) of each usable episode, these joints only, read one at a time."""
+        for pos in self.positions:
+            ep = ds.episodes[pos]
+            a = _usable("action", self.a_dim, ep)
+            s = _usable("observation.state", self.s_dim, ep)
+            assert a is not None and s is not None
+            yield ep.index, a[:, self.action_dims], s[:, self.state_dims]
 
 
 def position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
@@ -272,8 +284,9 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
     ia = np.array([p[0] for p in pairs])
     i_s = np.array([p[1] for p in pairs])
 
-    episodes = []
-    for ep in ds.episodes:
+    positions = []
+    moments = Moments()  # correlation of each joint's command and measurement, over the whole dataset
+    for pos, ep in enumerate(ds.episodes):
         fi = ep.frames.get("frame_index")
         if fi is not None and len(np.unique(fi)) < len(fi):
             continue  # merged/duplicated frames: already an error, and the signals are interleaved
@@ -281,20 +294,13 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
         s = _usable("observation.state", len(s_st.rng), ep)
         if a is None or s is None or len(a) != len(s):
             continue
-        episodes.append((ep.index, a[:, ia], s[:, i_s]))
-    if not episodes:
+        positions.append(pos)
+        moments.add(a[:, ia], s[:, i_s])
+    if not positions:
         return None
 
-    a_all = np.concatenate([a for _, a, _ in episodes])
-    s_all = np.concatenate([s for _, _, s in episodes])
-    tracks = np.array(
-        [
-            np.std(a_all[:, j]) > 1e-12
-            and np.std(s_all[:, j]) > 1e-12
-            and np.corrcoef(a_all[:, j], s_all[:, j])[0, 1] >= cfg.lag_tracking_corr
-            for j in range(len(pairs))
-        ]
-    )
+    std_a, std_s, corr = moments.std_x(), moments.std_y(), moments.corr()
+    tracks = (std_a > 1e-12) & (std_s > 1e-12) & (np.nan_to_num(corr, nan=-1.0) >= cfg.lag_tracking_corr)
     if not tracks.any():
         return None
     return PositionJoints(
@@ -302,7 +308,9 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
         state_dims=i_s[tracks],
         names=[a_st.names[int(j)] for j in ia[tracks]],
         rng=a_st.rng[ia[tracks]],
-        episodes=[(ep, a[:, tracks], s[:, tracks]) for ep, a, s in episodes],
+        positions=positions,
+        a_dim=len(a_st.rng),
+        s_dim=len(s_st.rng),
     )
 
 
@@ -316,7 +324,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     width = max(1, int(round(cfg.lag_smooth_seconds * fps)))
     min_len = max(int(cfg.lag_min_seconds * fps), 4 * width, 12)
     curves: dict[int, LagCurve] = {}
-    for ep_idx, a, s in pj.episodes:
+    for ep_idx, a, s in pj.episodes(ds):
         if len(a) < min_len:
             continue
         # Static episodes (or ones where only noise moves) have nothing to line up.

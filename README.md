@@ -78,6 +78,9 @@ robolint check ./my_dataset --fail-under 85
 # Spot-check a huge dataset: downloads only the files for the first N episodes
 robolint check cadene/droid_1.0.1 --max-episodes 200
 
+# Cap the decoded data kept in memory (default 512 MB); bigger datasets are streamed from disk
+robolint check ./my_big_dataset --cache-mb 256
+
 # Audit many datasets at once
 robolint audit lerobot/pusht lerobot/svla_so101_pickplace --out audit/
 robolint audit --from-file datasets.txt --out audit/
@@ -95,6 +98,31 @@ for f in result.findings:
 ```
 
 Install options: `robolint` (local datasets), `robolint[hub]` (Hub downloads), `robolint[video]` (camera checks), `robolint[all]`.
+
+## Large datasets
+
+robolint does not load a dataset into memory. It reads each data file once to validate it and map
+its rows to episodes, then decodes columns on demand while the checks walk the episodes, keeping
+at most `--cache-mb` (default 512 MB) of decoded columns. Dataset-wide statistics (per-joint
+ranges and glitch thresholds) are exact: quantiles are found in two passes from a sample and the
+values near each answer, giving the same numbers as `numpy.quantile` without holding every value.
+Memory is bounded by the cache, one data file and one episode, not by the size of the dataset.
+
+Measured on synthetic 14-dimensional, 50 fps datasets (`benchmarks/scale.py`, one process per run):
+
+| Frames | Parquet on disk | Peak memory before | Peak memory after | Time before | Time after |
+|---|---|---|---|---|---|
+| 500,000 | 61 MB | 777 MB | 435 MB | 13 s | 13 s |
+| 2,000,000 | 240 MB | 2,160 MB | 567 MB | 58 s | 52 s |
+| 10,000,000 | 1,197 MB | 7,281 MB | 1,115 MB | 320 s | 328 s |
+| 10,000,000, `--cache-mb 128` | 1,197 MB | | 721 MB | | 416 s |
+
+Before, memory grew by about 0.7 KB per frame, so 20 million frames needed about 14 GB. After, it
+stops growing once the cache is full: the default 512 MB cache plus about 0.5 GB of working memory.
+A smaller cache trades memory for time spent re-reading columns.
+
+The findings and scores are identical before and after at every size, and on 69 synthetic
+datasets covering every fault robolint detects (`benchmarks/corpus.py`, `benchmarks/compare.py`).
 
 ## Exit codes
 

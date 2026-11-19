@@ -77,14 +77,11 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
         )
 
     # Global "index" column should be a contiguous range across the dataset
-    globals_ = [ep.frames["index"] for ep in ds.episodes if "index" in ep.frames]
-    if globals_ and all(np.all(np.isfinite(g)) for g in globals_):
-        g = np.sort(np.concatenate(globals_).astype(np.int64))
-        dupes = int(np.sum(np.diff(g) == 0))
-        if dupes:
-            yield Finding("GLOBAL_INDEX_DUPLICATES", E, f"{dupes} duplicate values in the global 'index' column")
-        elif len(g) and (g[-1] - g[0] + 1) != len(g):
-            yield Finding("GLOBAL_INDEX_GAPS", W, "global 'index' column is not contiguous")
+    dupes, n_idx, span = _global_index(ds)
+    if dupes:
+        yield Finding("GLOBAL_INDEX_DUPLICATES", E, f"{dupes} duplicate values in the global 'index' column")
+    elif n_idx and span != n_idx:
+        yield Finding("GLOBAL_INDEX_GAPS", W, "global 'index' column is not contiguous")
 
     # Declared features must exist in the data
     for key, spec in ds.features.items():
@@ -138,6 +135,40 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                 f"{len(vague)} task descriptions are too vague to condition a language policy",
                 details={"examples": vague[:5]},
             )
+
+
+BITMAP_MAX = 1 << 31  # largest index span counted with a bitmap (bytes); wider spans are sorted instead
+
+
+def _global_index(ds: Dataset) -> tuple[int, int, int]:
+    """(duplicate values, values, max - min + 1) of the global 'index' column, read episode by
+    episode. Duplicates are counted with a bitmap over the index span, so no sorted copy of the
+    column is needed. (0, 0, 0) when the column is absent or holds non-finite values."""
+    with_index = [ep for ep in ds.episodes if "index" in ep.frames]
+    if not with_index:
+        return 0, 0, 0
+    n, lo, hi = 0, None, None
+    for ep in with_index:
+        g = ep.frames["index"]
+        if not np.all(np.isfinite(g)):
+            return 0, 0, 0
+        if len(g):
+            g = g.astype(np.int64)
+            lo = int(g.min()) if lo is None else min(lo, int(g.min()))
+            hi = int(g.max()) if hi is None else max(hi, int(g.max()))
+        n += g.size
+    if lo is None or hi is None:
+        return 0, 0, 0
+    span = hi - lo + 1
+    if span <= BITMAP_MAX:
+        seen = np.zeros(span, dtype=bool)
+        for ep in with_index:
+            seen[ep.frames["index"].astype(np.int64).ravel() - lo] = True
+        distinct = int(np.count_nonzero(seen))
+    else:  # sparse, huge values: fall back to sorting
+        g = np.sort(np.concatenate([ep.frames["index"].astype(np.int64).ravel() for ep in with_index]))
+        distinct = int(np.count_nonzero(np.diff(g))) + 1
+    return n - distinct, n, span
 
 
 VAGUE_TASKS = {"task", "test", "demo", "default", "debug", "none", "null", "untitled", "do the task", "pick", "place"}

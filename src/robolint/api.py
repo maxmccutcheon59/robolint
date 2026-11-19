@@ -83,7 +83,10 @@ def lint(
     cache_dir: str | None = None,
     max_episodes: int | None = None,
     config: Config | None = None,
+    cache_mb: float | None = None,
 ) -> Result:
+    """Check a dataset. `cache_mb` caps the decoded frame data kept in memory (default 512 MB);
+    datasets larger than that are re-read from disk as checks need them."""
     t0 = time.perf_counter()
     cfg = config or Config()
     # Only a Hub download gets the relaxed symlink rule; a local folder keeps the strict one.
@@ -92,7 +95,7 @@ def lint(
         str(source), include_videos=videos, revision=revision, cache_dir=cache_dir, max_episodes=max_episodes
     )
     hub_blobs = hub_blob_dirs(root) if from_hub else None
-    ds = load_dataset(root, source=str(source), max_episodes=max_episodes, hub_blobs=hub_blobs)
+    ds = load_dataset(root, source=str(source), max_episodes=max_episodes, hub_blobs=hub_blobs, cache_mb=cache_mb)
     findings: list[Finding] = []
     for check in all_checks(include_video=videos):
         findings.extend(check(ds, cfg))
