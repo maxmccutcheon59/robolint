@@ -47,9 +47,9 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 | Area | Checks |
 |---|---|
 | **Timing** | dropped frames (timestamp gaps), timestamps going backwards, jitter, drift from declared fps, frame_index gaps and duplicates |
-| **Actions & state** | NaN/inf values, dead episodes (robot never moves), frozen state (follower disconnected), teleop glitches (action spikes), idle lead-in/tail padding, gripper never actuating, **failed grasps** (the gripper closes on nothing: a failed demo) and recovered re-grasps, joints pinned at limits |
+| **Actions & state** | NaN/inf values, dead episodes (robot never moves), frozen state (follower disconnected), teleop glitches (action spikes), idle lead-in/tail padding, gripper never actuating, **failed grasps** (the gripper closes on nothing: a failed demo) and recovered re-grasps, joints pinned at limits, **action-to-state lag** (the dataset's typical delay between command and measured state, and episodes whose delay is far off it) |
 | **Episodes** | false starts, truncated and runaway episodes, metadata/data length mismatches, near-duplicate episodes, missing or unknown tasks |
-| **Video** (`--videos`) | missing or unreadable files, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, fps and resolution mismatches |
+| **Video** (`--videos`) | missing or unreadable files, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, fps and resolution mismatches, **action/video sync** (each camera's typical delay behind the commanded motion, and episodes whose video is shifted in time against the actions) |
 | **Metadata** | declared vs actual episode/frame counts, missing features, shape mismatches, vague task descriptions that can't condition a VLA policy |
 
 

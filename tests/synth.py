@@ -12,6 +12,7 @@ import pyarrow.parquet as pq
 NAMES = ["shoulder_pan.pos", "shoulder_lift.pos", "elbow_flex.pos", "wrist_flex.pos", "wrist_roll.pos", "gripper.pos"]
 CAM = "observation.images.front"
 W, H = 64, 48
+SHIFT = 10
 
 
 def _trajectory(rng: np.random.Generator, n: int, fps: float, gripper: bool = True) -> np.ndarray:
@@ -32,13 +33,21 @@ def _trajectory(rng: np.random.Generator, n: int, fps: float, gripper: bool = Tr
     return a
 
 
+_YY, _XX = np.mgrid[0:H, 0:W].astype(np.float32)
+
+
 def _frame_for(action_row: np.ndarray) -> np.ndarray:
-    img = np.full((H, W, 3), 90, np.uint8)
-    x = int(np.clip((action_row[0] + 100) / 200, 0, 1) * (W - 20))
-    y = int(np.clip((action_row[1] + 100) / 200, 0, 1) * (H - 20))
-    img[y : y + 20, x : x + 20] = (230, 60, 40)
-    img[:, :4] = (20, 20, 20)
-    return img
+    """A camera view of the arm: two soft blobs whose sub-pixel positions follow the first four joints,
+    so the image changes smoothly and in proportion to how fast the arm moves."""
+    img = np.full((H, W), 90.0, np.float32)
+    for jx, jy, level in ((0, 1, 140.0), (2, 3, -60.0)):
+        x = 10 + np.clip((action_row[jx] + 100) / 200, 0, 1) * (W - 20)
+        y = 10 + np.clip((action_row[jy] + 100) / 200, 0, 1) * (H - 20)
+        img += level * np.exp(-((_XX - x) ** 2 + (_YY - y) ** 2) / (2 * 5.0**2))
+    img[:, :4] = 20
+    rgb = np.repeat(np.clip(img, 0, 255)[..., None], 3, axis=2).astype(np.uint8)
+    rgb[..., 1] = (rgb[..., 1] * 0.7).astype(np.uint8)
+    return rgb
 
 
 def _write_video(path: Path, frames: list[np.ndarray], fps: int) -> None:
@@ -70,6 +79,7 @@ def make_dataset(
     seed: int = 0,
     task: str = "Pick up the red cube and place it in the bin",
     grasp_object: bool = False,
+    dims: int = 6,
 ) -> Path:
     """grasp_object: the follower gripper stops on an object when it closes (as in real pick-and-place
     data) instead of following the command to fully closed."""
@@ -128,6 +138,8 @@ def make_dataset(
                 a[(t_ >= 0.35) & (t_ < 0.65), 5] = 34.0
             a[:, 5] += rng.normal(0, 0.05, n)
         s = np.vstack([a[:2], a[:-2]]) + rng.normal(0, 0.05, a.shape)
+        if "state_lag" in f:  # the state stream arrives 12 frames late (buffered/stalled recording)
+            s = np.vstack([np.repeat(a[:1], 12, axis=0), a[:-12]]) + rng.normal(0, 0.05, a.shape)
         if pick and "pick_place_missed" not in f:
             t_ = np.arange(n) / n
             on_object = (t_ >= 0.35) & (t_ < 0.67)
@@ -139,6 +151,8 @@ def make_dataset(
             s[blocked, 5] = np.minimum(s[blocked, 5], width + rng.normal(0, 0.05, int(blocked.sum())))
         if "hard_limit" in f or "rest_limit" in f or "one_arm_rest" in f:
             s[:, 1] = np.maximum(s[:, 1], -85.0)  # follower stops at its hard limit
+        if "state_unrelated" in f:  # the state measures something that does not follow the command
+            s = np.cumsum(rng.normal(0, 1.0, a.shape), axis=0)
         if "state_frozen" in f:
             s = np.tile(s[0], (n, 1))
         if "nan" in f:
@@ -158,8 +172,8 @@ def make_dataset(
         actions_by_ep[ep] = a
         eps_data.append(
             {
-                "action": a.astype(np.float32),
-                "observation.state": s.astype(np.float32),
+                "action": a[:, :dims].astype(np.float32),
+                "observation.state": s[:, :dims].astype(np.float32),
                 "timestamp": ts.astype(np.float32),
                 "frame_index": fi.astype(np.int64),
                 "episode_index": np.full(n, ep, np.int64),
@@ -182,8 +196,8 @@ def make_dataset(
         ep_meta.append(row)
 
     features = {
-        "action": {"dtype": "float32", "shape": [6], "names": NAMES},
-        "observation.state": {"dtype": "float32", "shape": [6], "names": NAMES},
+        "action": {"dtype": "float32", "shape": [dims], "names": NAMES[:dims]},
+        "observation.state": {"dtype": "float32", "shape": [dims], "names": NAMES[:dims]},
         "timestamp": {"dtype": "float32", "shape": [1], "names": None},
         "frame_index": {"dtype": "int64", "shape": [1], "names": None},
         "episode_index": {"dtype": "int64", "shape": [1], "names": None},
@@ -240,6 +254,8 @@ def make_dataset(
                 frames = [np.zeros((H, W, 3), np.uint8)] * len(a)
             elif "frozen_video" in f:
                 frames = [_frame_for(a[0])] * len(a)
+            elif "video_shift" in f:  # the camera shows each motion 10 frames after it was commanded
+                frames = [_frame_for(a[max(0, t - SHIFT)]) for t in range(len(a))]
             else:
                 frames = [_frame_for(row) for row in a]
             if "short_video" in f:

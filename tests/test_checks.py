@@ -44,6 +44,7 @@ def test_clean_dataset_has_no_problems(tmp_path, version):
         ("gripper_still", "GRIPPER_NEVER_ACTUATES", Severity.WARNING),
         ("length_meta", "EPISODE_LENGTH_MISMATCH", Severity.ERROR),
         ("bad_task", "TASK_INDEX_UNKNOWN", Severity.ERROR),
+        ("state_lag", "STATE_LAG_OUTLIER", Severity.WARNING),
     ],
 )
 def test_each_fault_is_detected_only_where_injected(tmp_path, version, fault, code, severity):
@@ -353,3 +354,141 @@ def test_bimanual_grippers_pair_by_name():
     a = st(["left_waist", "left_gripper", "right_waist", "right_gripper"])
     s = st(["right_gripper", "right_waist", "left_gripper", "left_waist"])
     assert _gripper_pairs(a, s) == [(1, 2), (3, 0)]
+
+
+# --- action-to-state lag and action/video sync ---------------------------------------------------
+
+LAG_CODES = {"STATE_LAG", "STATE_LAG_OUTLIER", "VIDEO_LAG", "VIDEO_ACTION_OFFSET"}
+
+
+def lag_findings(r):
+    return [f for f in r.findings if f.code in LAG_CODES]
+
+
+@pytest.mark.parametrize("version", ["v3.0", "v2.1"])
+def test_clean_data_reports_typical_lags_and_flags_nothing(tmp_path, version):
+    root = make_dataset(tmp_path / "ds", version=version, n_eps=10, length=150, videos=True)
+    r = lint(root, videos=True)
+    found = lag_findings(r)
+    assert not [f for f in found if f.severity >= Severity.WARNING], [f.message for f in found]
+    state = [f for f in found if f.code == "STATE_LAG"]
+    video = [f for f in found if f.code == "VIDEO_LAG"]
+    assert len(state) == 1 and state[0].episode is None and state[0].severity == Severity.INFO
+    assert state[0].details["typical_lag_frames"] == pytest.approx(2.0, abs=0.5)  # synth state trails by 2
+    assert len(video) == 1 and video[0].details["typical_lag_frames"] == pytest.approx(0.0, abs=1.0)
+    assert r.scores.dataset_score >= 99
+
+
+@pytest.mark.parametrize("version", ["v3.0", "v2.1"])
+def test_shifted_video_is_flagged_only_where_injected(tmp_path, version):
+    root = make_dataset(
+        tmp_path / "ds", version=version, n_eps=10, length=150, videos=True, faults={4: ["video_shift"]}
+    )
+    r = lint(root, videos=True)
+    hits = [f for f in r.findings if f.code == "VIDEO_ACTION_OFFSET"]
+    assert [f.episode for f in hits] == [4]
+    assert hits[0].severity == Severity.WARNING
+    assert hits[0].details["offset_frames"] == pytest.approx(10, abs=2)
+    assert not [f for f in r.findings if f.code == "STATE_LAG_OUTLIER"]  # the state stream is fine
+
+
+def test_lagged_state_is_not_blamed_on_the_video(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=10, length=150, videos=True, faults={4: ["state_lag"]})
+    r = lint(root, videos=True)
+    lag = [f for f in r.findings if f.code == "STATE_LAG_OUTLIER"]
+    assert [f.episode for f in lag] == [4]
+    assert lag[0].details["offset_frames"] == pytest.approx(10, abs=1)
+    assert not [f for f in r.findings if f.code == "VIDEO_ACTION_OFFSET"]
+
+
+def test_sync_check_needs_videos_and_degrades_without_them(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=10, length=150, videos=True, faults={4: ["video_shift"]})
+    r = lint(root)  # no --videos: the state lag still runs, the video sync does not
+    codes_found = {f.code for f in r.findings}
+    assert "STATE_LAG" in codes_found
+    assert not codes_found & {"VIDEO_LAG", "VIDEO_ACTION_OFFSET"}
+    # no camera declared at all
+    plain = make_dataset(tmp_path / "plain", n_eps=10, length=150)
+    assert not {f.code for f in lint(plain, videos=True).findings} & {"VIDEO_LAG", "VIDEO_ACTION_OFFSET"}
+
+
+def test_sync_check_without_pyav(tmp_path, monkeypatch):
+    import builtins
+
+    root = make_dataset(tmp_path / "ds", n_eps=10, length=150, videos=True, faults={4: ["video_shift"]})
+    real_import = builtins.__import__
+
+    def no_av(name, *args, **kwargs):
+        if name == "av" or name.startswith("av."):
+            raise ImportError("no PyAV")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", no_av)
+    r = lint(root, videos=True)
+    assert "VIDEO_SKIPPED" in {f.code for f in r.findings}
+    assert not {f.code for f in r.findings} & {"VIDEO_LAG", "VIDEO_ACTION_OFFSET"}
+
+
+def test_missing_video_files_do_not_flag_sync(tmp_path):
+    root = make_dataset(
+        tmp_path / "ds", version="v2.1", n_eps=10, length=150, videos=True, faults={3: ["missing_video"]}
+    )
+    r = lint(root, videos=True)
+    assert {f.episode for f in r.findings if f.code == "VIDEO_MISSING"} == {3}
+    assert not [f for f in r.findings if f.code == "VIDEO_ACTION_OFFSET"]
+
+
+def test_single_joint_dataset(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=10, length=150, dims=1, faults={4: ["state_lag"]})
+    r = lint(root)
+    assert [f.episode for f in r.findings if f.code == "STATE_LAG_OUTLIER"] == [4]
+    clean = make_dataset(tmp_path / "clean", n_eps=10, length=150, dims=1)
+    assert not [f for f in lint(clean).findings if f.code == "STATE_LAG_OUTLIER"]
+
+
+def test_static_episodes_are_not_judged(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=10, length=150, videos=True, faults={i: ["dead"] for i in (1, 3, 5, 7)})
+    r = lint(root, videos=True)
+    flagged = {f.episode for f in r.findings if f.code in {"STATE_LAG_OUTLIER", "VIDEO_ACTION_OFFSET"}}
+    assert not flagged
+    state = [f for f in r.findings if f.code == "STATE_LAG"]
+    assert state and state[0].details["episodes_estimated"] == 6  # the four dead episodes are skipped
+    # nothing moves anywhere: no estimate at all, rather than a guess
+    still = make_dataset(tmp_path / "still", n_eps=10, length=150, faults={i: ["dead"] for i in range(10)})
+    assert not lag_findings(lint(still))
+
+
+def test_too_few_episodes_gives_no_lag_verdict(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=4, length=150, faults={2: ["state_lag"]})
+    assert not lag_findings(lint(root))
+
+
+def test_state_that_does_not_follow_the_command_is_not_judged(tmp_path):
+    # e.g. delta or velocity actions: they say nothing about where the arm is, so neither the state
+    # lag nor the video sync is estimated (the sync would be matching the wrong signal).
+    root = make_dataset(
+        tmp_path / "ds", n_eps=10, length=150, videos=True, faults={i: ["state_unrelated"] for i in range(10)}
+    )
+    assert not lag_findings(lint(root, videos=True))
+
+
+def test_repeating_motion_one_cycle_over_is_not_an_outlier():
+    import numpy as np
+
+    from robolint.checks.lag import LagCurve, judge
+
+    lags = np.arange(-30, 31)
+
+    def bump(center, height):
+        return height * np.exp(-((lags - center) ** 2) / 20.0)
+
+    # Every episode lines up at 0; a rhythmic one also lines up almost as well 20 frames later.
+    curves = {i: LagCurve(bump(0, 0.9) + 0.01 * i, 30) for i in range(8)}
+    curves[8] = LagCurve(np.maximum(bump(0, 0.9), bump(20, 0.95)), 30)
+    kw = dict(min_corr=0.5, flag_corr=0.7, min_episodes=5, tol_seconds=0.15, tol_frames=3, mad_factor=5, margin=0.1)
+    summary = judge(curves, 30.0, **kw)
+    assert summary is not None and summary.typical == pytest.approx(0, abs=0.5)
+    assert summary.outliers == []
+    # ... but an episode that only lines up 20 frames later is.
+    curves[8] = LagCurve(bump(20, 0.95), 30)
+    assert [o.episode for o in judge(curves, 30.0, **kw).outliers] == [8]

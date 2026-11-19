@@ -56,6 +56,15 @@ def outlier_residual(a: np.ndarray) -> np.ndarray:
 
 
 def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
+    """Per-dimension statistics of `key` across the dataset (computed once per dataset and config)."""
+    cache = ds.__dict__.setdefault("_dim_stats_cache", {})
+    ck = (key, cfg.spike_quantile)
+    if ck not in cache:
+        cache[ck] = _dataset_stats(ds, key, cfg)
+    return cache[ck]
+
+
+def _dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
     arrays = [_as2d(ep.frames[key]) for ep in ds.episodes if key in ep.frames and ep.length]
     if not arrays:
         return None

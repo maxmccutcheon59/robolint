@@ -1,4 +1,5 @@
-"""Camera stream checks: missing files, length mismatches, black/blown-out/frozen feeds."""
+"""Camera stream checks: missing files, length mismatches, black/blown-out/frozen feeds, and
+whether each camera's motion lines up in time with the commanded motion."""
 
 from __future__ import annotations
 
@@ -12,6 +13,8 @@ import numpy as np
 from ..dataset import Dataset, Episode, VideoRef
 from ..findings import Finding, Severity
 from . import Config
+from .lag import LagCurve, PositionJoints, fit_curve, judge, position_joints, smooth
+from .signals import _as2d
 
 E, W, I = Severity.ERROR, Severity.WARNING, Severity.INFO
 
@@ -29,6 +32,10 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
         return
 
     motion: dict[str, list[tuple[int, float]]] = {}  # camera -> [(episode, max frame-to-frame change)]
+    # Only position commands describe where the arm is, so only they predict what a camera sees.
+    joints = position_joints(ds, cfg)
+    sync: dict[str, dict[int, LagCurve]] = {}  # camera -> episode -> how well video lines up per shift
+    no_sync: set[str] = set()  # cameras whose frame rate differs from the dataset's
     # Keep only a few containers open at once: v2.x has one file per episode and camera, so a
     # dataset can reference thousands of files (and run out of file descriptors). v3.x shares
     # files between consecutive episodes, which a small LRU cache still reuses.
@@ -52,10 +59,21 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                 if ref.path not in checked_files:  # stream properties of every file, reported once per issue
                     checked_files.add(ref.path)
                     for f in _stream_props(ds, ref.key, container, fps):
+                        if f.code == "VIDEO_FPS_MISMATCH":
+                            no_sync.add(ref.key)
                         if (f.code, ref.key) not in stream_findings:
                             stream_findings.add((f.code, ref.key))
                             yield f
-                yield from _episode_video(ep, ref, container, fps, moving, cfg, motion)
+                found = list(_episode_video(ep, ref, container, fps, moving, cfg, motion))
+                yield from found
+                # A broken feed (black, blank, wrong length, unreadable) has no motion to line up.
+                if joints is not None and ref.key not in no_sync and not any(f.severity >= W for f in found):
+                    try:
+                        curve = _sync_curve(ep, ref, container, fps, joints, cfg)
+                    except Exception:  # noqa: BLE001 - a decode problem here is not a sync finding
+                        curve = None
+                    if curve is not None:
+                        sync.setdefault(ref.key, {})[ep.index] = curve
     finally:
         cache.close()
 
@@ -74,6 +92,8 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                     ep_idx,
                     {"key": key, "change": round(m, 2), "typical": round(typical, 2)},
                 )
+
+    yield from _sync_findings(sync, fps, cfg)
 
 
 MAX_OPEN_VIDEOS = 8
@@ -244,3 +264,115 @@ def _episode_video(
         # compare each sample to the first: robust to codec flicker between neighbours
         change = max(float(np.mean(np.abs(f - frames[0]))) for f in frames[1:])
         motion.setdefault(ref.key, []).append((ep.index, change))
+
+
+def _sync_curve(
+    ep: Episode, ref: VideoRef, container, fps: float, joints: PositionJoints, cfg: Config
+) -> LagCurve | None:
+    """How well this camera's image change is explained by the commanded joint speeds, for each
+    shift of the video against the actions. None when there is too little motion to go on."""
+    a = ep.frames.get("action")
+    fi = ep.frames.get("frame_index")
+    if a is None or (fi is not None and len(np.unique(fi)) < len(fi)):
+        return None
+    a = _as2d(a).astype(np.float64)
+    if a.shape[1] <= int(joints.action_dims.max()) or not np.all(np.isfinite(a)):
+        return None
+    n = min(len(a), int(cfg.sync_max_seconds * fps))
+    width = max(1, int(round(cfg.sync_smooth_seconds * fps)))
+    max_lag = max(3, int(round(cfg.sync_max_lag_seconds * fps)))
+    if n < max(int(cfg.lag_min_seconds * fps), 3 * max_lag, 4 * width):
+        return None
+    a = a[:n, joints.action_dims] / joints.rng
+    travel = a.max(axis=0) - a.min(axis=0)
+    if not np.any(travel >= cfg.lag_min_travel):
+        return None  # the robot barely moves: nothing to line up
+    frames = _decode_range(container, ref.from_ts, n, fps)
+    if frames is None:
+        return None
+    video = smooth(np.array([np.mean(np.abs(frames[i] - frames[i - 1])) for i in range(1, n)]), width)
+    speeds = smooth(np.abs(np.diff(a[:, travel >= cfg.lag_min_travel], axis=0)), width)
+    if np.std(video) < 1e-3:
+        return None  # a still image (or one that only flickers): nothing to line up
+    return fit_curve(speeds, video, max_lag)
+
+
+def _decode_range(container, start: float, n: int, fps: float) -> list[np.ndarray] | None:
+    """Every frame of the n-frame span starting at `start` seconds, small and grey, or None if any
+    frame of it is missing (a gap would fake a jump in motion)."""
+    stream = container.streams.video[0]
+    tb = stream.time_base
+    if tb is None:
+        return None
+    container.seek(int(start / tb), stream=stream, backward=True, any_frame=False)
+    out: list[np.ndarray | None] = [None] * n
+    for frame in container.decode(stream):
+        if frame.pts is None:
+            continue
+        i = int(round((float(frame.pts * tb) - start) * fps))
+        if i < 0:
+            continue
+        if i >= n:
+            break
+        out[i] = frame.reformat(width=32, height=24, format="gray").to_ndarray().astype(np.float32)
+    if any(f is None for f in out):
+        return None
+    return out  # type: ignore[return-value]
+
+
+def _sync_findings(sync: dict[str, dict[int, LagCurve]], fps: float, cfg: Config) -> Iterator[Finding]:
+    """Judge each episode's camera delay against that camera's typical delay across the dataset."""
+    for key, curves in sync.items():
+        summary = judge(
+            curves,
+            fps,
+            min_corr=cfg.sync_min_corr,
+            flag_corr=cfg.sync_flag_corr,
+            min_episodes=cfg.lag_min_episodes,
+            tol_seconds=cfg.sync_tol_seconds,
+            tol_frames=cfg.sync_tol_frames,
+            mad_factor=cfg.sync_mad_factor,
+            margin=cfg.sync_margin,
+        )
+        if summary is None:
+            continue
+        typical = summary.typical
+        ms = typical / fps * 1000
+        if abs(typical) < 0.5:
+            when = "in the same frame as it is commanded"
+        else:
+            when = (
+                f"{abs(typical):.1f} frames ({abs(ms):.0f} ms) {'after' if typical > 0 else 'before'} it is commanded"
+            )
+        yield Finding(
+            "VIDEO_LAG",
+            I,
+            f"camera '{key}' typically shows motion {when}, estimated over {summary.episodes} episodes",
+            None,
+            {
+                "key": key,
+                "typical_lag_frames": round(typical, 2),
+                "typical_lag_ms": round(ms, 1),
+                "spread_frames": round(summary.spread, 2),
+                "episodes_estimated": summary.episodes,
+            },
+        )
+        for o in summary.outliers:
+            lag = o.estimate.lag
+            off = lag - typical
+            yield Finding(
+                "VIDEO_ACTION_OFFSET",
+                W,
+                f"camera '{key}' shows motion {abs(off):.1f} frames ({abs(off) / fps * 1000:.0f} ms) "
+                f"{'later' if off > 0 else 'earlier'} than in the rest of the dataset (delay {lag:.1f} vs "
+                f"typical {typical:.1f} frames): video and actions may be out of sync",
+                o.episode,
+                {
+                    "key": key,
+                    "lag_frames": round(lag, 2),
+                    "typical_frames": round(typical, 2),
+                    "offset_frames": round(off, 2),
+                    "confidence": round(o.estimate.peak, 3),
+                    "fit_gain": round(o.margin, 3),
+                },
+            )
