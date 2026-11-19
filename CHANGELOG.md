@@ -28,6 +28,6 @@ broken dataset as clean.
 ### Changed
 - Vector columns load as float32 instead of float64, which uses less memory. Scores on the
   published audit datasets are unchanged.
-- README and AUDIT.md now describe the score as a heuristic (100 minus penalties per issue)
-  rather than "the share of your data you can train on". AUDIT.md notes that video streams were
+- README, AUDIT.md and docs/hf-article.md now describe the score as a heuristic (100 minus penalties per issue)
+  rather than "the share of your data you can train on". The audit write-ups note that video streams were
   not checked in the audit.
