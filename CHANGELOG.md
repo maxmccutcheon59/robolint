@@ -15,7 +15,37 @@
 - `Episode.frames` is now a read-only mapping whose arrays are decoded on first use. Code that
   modified those arrays in place must copy them first.
 
+- **Video: frozen-feed check no longer flags cameras that cannot see the motion.** Before,
+  `VIDEO_FROZEN` fired whenever any action moved and the image did not, so a wrist camera on a
+  resting arm was flagged while the other arm worked. It now uses the per-camera fit described
+  under `VIDEO_FREEZE` and stays quiet when only joints that camera does not see moved. It falls
+  back to the old behaviour when no fit is possible.
+- **Video: stream properties are summarized over every file.** `VIDEO_FPS_MISMATCH` and
+  `VIDEO_SHAPE_MISMATCH` now say how many of the camera's files are affected ("(3 of 50 files)"),
+  and are reported at the end of the video checks. When no shape is declared, files whose
+  resolution differs from the rest are reported. A file's frame rate is measured from the spacing
+  of its frame timestamps, so dropped frames no longer make a camera look slow. Only episodes in
+  files at the wrong rate are left out of the sync check, not the whole camera.
+- **Video: a file with no video stream** is reported as `VIDEO_UNREADABLE` instead of crashing
+  the run.
+
 ### Added
+- **`VIDEO_DROPPED_FRAMES` (error), `VIDEO_DUPLICATE_FRAMES` and `VIDEO_TIMESTAMPS_UNORDERED`
+  (warnings), with `--videos`.** Every packet timestamp of every video file is read without
+  decoding. A gap of more than 1.5 frame periods inside an episode's segment counts as missing
+  frames: loaders that fetch frames by timestamp fail or return the wrong frame there. Gaps at
+  episode boundaries are left to `VIDEO_LENGTH_MISMATCH`.
+- **`VIDEO_FREEZE` (warning), with `--videos`.** About four frames per second are decoded (only
+  key frames when there is one at least every quarter second, as in LeRobot's encoding). For each
+  camera, image change between samples is fitted to the measured movement of each joint with
+  non-negative weights, and the flicker of a still scene is measured. A stretch of at least 1 s is
+  flagged when the image changes less than that flicker (or, for a camera whose still scenes can
+  be perfectly static, when the joints it sees move clearly through most of the stretch), and the
+  camera is live elsewhere in the episode. Cameras whose change is poorly explained by the motion
+  (R² < 0.3), and datasets with no joints whose state follows the command, are skipped. New config
+  fields: `freeze_sample_hz`, `freeze_min_seconds`, `freeze_min_r2`, `freeze_min_episodes`.
+- `benchmarks/video.py`: a synthetic bimanual recording with two cameras, sensor noise, pauses and
+  three injected cases, timed before and after a change.
 - `--cache-mb` (CLI) and `cache_mb=` (`lint()`, `load_dataset()`): memory budget for decoded frames.
 - `benchmarks/`: `scale.py` (peak memory and time at any size, optionally against an older
   checkout and with a given `--cache-mb`), `corpus.py` (synthetic datasets covering every fault) and `compare.py` (diff two

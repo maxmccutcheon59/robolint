@@ -49,7 +49,7 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 | **Timing** | dropped frames (timestamp gaps), timestamps going backwards, jitter, drift from declared fps, frame_index gaps and duplicates |
 | **Actions & state** | NaN/inf values, dead episodes (robot never moves), frozen state (follower disconnected), teleop glitches (action spikes), idle lead-in/tail padding, gripper never actuating, **failed grasps** (the gripper closes on nothing: a failed demo) and recovered re-grasps, joints pinned at limits, **action-to-state lag** (the dataset's typical delay between command and measured state, and episodes whose delay is far off it) |
 | **Episodes** | false starts, truncated and runaway episodes, metadata/data length mismatches, near-duplicate episodes, missing or unknown tasks |
-| **Video** (`--videos`) | missing or unreadable files, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, fps and resolution mismatches, **action/video sync** (each camera's typical delay behind the commanded motion, and episodes whose video is shifted in time against the actions) |
+| **Video** (`--videos`) | missing or unreadable files, **frames missing mid-episode** (gaps in the frame timestamps of every file, read without decoding), duplicate or out-of-order frame timestamps, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, **frozen stretches mid-episode** (the image stops changing for a second or more while the joints that camera sees keep moving), fps and resolution mismatches in every file, **action/video sync** (each camera's typical delay behind the commanded motion, and episodes whose video is shifted in time against the actions) |
 | **Metadata** | declared vs actual episode/frame counts, missing features, shape mismatches, vague task descriptions that can't condition a VLA policy |
 
 
@@ -98,6 +98,33 @@ for f in result.findings:
 ```
 
 Install options: `robolint` (local datasets), `robolint[hub]` (Hub downloads), `robolint[video]` (camera checks), `robolint[all]`.
+
+## How the video checks work
+
+Frame timestamps come from the container's packets, which are read without decoding, so every
+frame of every file is checked. A gap of more than 1.5 frame periods inside an episode is
+reported as missing frames. That is an error, because loaders that fetch frames by timestamp
+(LeRobot does) fail or return the wrong frame there. Each file's frame rate is measured from the
+regular spacing of its timestamps, so lost frames don't make a camera look slow.
+
+Images are decoded sparingly. To find frozen stretches, about four frames per second are decoded:
+only key frames when the encoding has them that often (LeRobot encodes every second frame as one),
+otherwise the episode is decoded in full and sampled. For each camera, robolint fits how much the
+image changes for a given movement of each joint, with non-negative weights, so joints that
+camera does not see (the other arm of a bimanual robot, say) get no weight. It also measures how
+much the image flickers when nothing moves. A stretch is flagged when, for at least a second, the
+image changes less than that flicker while the joints the camera sees keep moving, and the same
+camera is live elsewhere in the episode. The same fit stops the whole-episode frozen check from
+flagging a camera when only joints it cannot see moved. When a camera's image change isn't
+explained well by joint movement, or the dataset has no joints whose state follows the command,
+frozen stretches are not looked for.
+
+On a synthetic 24-episode bimanual recording with two cameras (AV1, sensor noise, pauses, one arm
+often resting; `benchmarks/video.py`), `--videos` takes 11.8 s, against 10.9 s before this change. It finds
+exactly the two injected faults and nothing else. Before, it missed both faults and wrongly
+flagged 6 episodes as frozen. The same holds with a rendered (noise-free) image, sparse key frames
+(H.264, every 2 s) and coarse encoding, except that the frozen stretch, which falls at the end of a
+motion, is only caught when the camera has sensor noise.
 
 ## Large datasets
 

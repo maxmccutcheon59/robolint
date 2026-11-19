@@ -125,6 +125,24 @@ def _nonneg_fit(X: np.ndarray, y: np.ndarray) -> np.ndarray:
     return np.full(len(y), y.mean())
 
 
+def nonneg_coef(X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Weights of a least-squares prediction of y from the columns of X plus a constant (last entry),
+    every column's weight kept at or above zero, as in _nonneg_fit."""
+    keep = np.ones(X.shape[1], bool)
+    coef_full = np.zeros(X.shape[1] + 1)
+    while keep.any():
+        A = np.column_stack([X[:, keep], np.ones(len(X))])
+        coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+        if np.all(coef[:-1] >= 0):
+            coef_full[np.flatnonzero(keep)] = coef[:-1]
+            coef_full[-1] = coef[-1]
+            return coef_full
+        idx = np.flatnonzero(keep)
+        keep[idx[int(np.argmin(coef[:-1]))]] = False
+    coef_full[-1] = float(np.mean(y)) if len(y) else 0.0
+    return coef_full
+
+
 def fit_curve(X: np.ndarray, y: np.ndarray, max_lag: int) -> LagCurve | None:
     """How well the columns of X (e.g. per-joint speeds) explain y (e.g. image change) for every shift
     of y, as the square root of the fit's R^2. Positive shifts mean y[t + lag] follows X[t]."""
