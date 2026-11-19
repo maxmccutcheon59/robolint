@@ -1,0 +1,530 @@
+[
+  {
+    "mix": "heavy",
+    "data_seed": 0,
+    "scores": {
+      "raw": [
+        0.6666666666666666,
+        0.67,
+        0.58
+      ],
+      "robolint-err": [
+        0.84,
+        0.6566666666666666,
+        0.77
+      ],
+      "robolint-all": [
+        0.77,
+        0.7233333333333334,
+        0.7166666666666667
+      ],
+      "oracle": [
+        0.77,
+        0.7233333333333334,
+        0.7166666666666667
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 128,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "state_frozen": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "spikes": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "idle": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "failed": {
+        "episodes": 20,
+        "flagged_error": 20,
+        "flagged_any": 20
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 160,
+      "robolint-all": 128,
+      "oracle": 128
+    },
+    "robolint_score": 77.6,
+    "robolint_grade": "C"
+  },
+  {
+    "mix": "heavy",
+    "data_seed": 1,
+    "scores": {
+      "raw": [
+        0.6366666666666667,
+        0.5166666666666667,
+        0.56
+      ],
+      "robolint-err": [
+        0.7033333333333334,
+        0.7066666666666667,
+        0.76
+      ],
+      "robolint-all": [
+        0.6466666666666666,
+        0.6433333333333333,
+        0.6666666666666666
+      ],
+      "oracle": [
+        0.6466666666666666,
+        0.6433333333333333,
+        0.6666666666666666
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 128,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "state_frozen": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "spikes": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "idle": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "failed": {
+        "episodes": 20,
+        "flagged_error": 20,
+        "flagged_any": 20
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 160,
+      "robolint-all": 128,
+      "oracle": 128
+    },
+    "robolint_score": 77.6,
+    "robolint_grade": "C"
+  },
+  {
+    "mix": "heavy",
+    "data_seed": 2,
+    "scores": {
+      "raw": [
+        0.7333333333333333,
+        0.6533333333333333,
+        0.6866666666666666
+      ],
+      "robolint-err": [
+        0.6866666666666666,
+        0.7333333333333333,
+        0.7033333333333334
+      ],
+      "robolint-all": [
+        0.64,
+        0.7366666666666667,
+        0.6533333333333333
+      ],
+      "oracle": [
+        0.64,
+        0.7366666666666667,
+        0.6533333333333333
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 128,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "state_frozen": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "spikes": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "idle": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "failed": {
+        "episodes": 20,
+        "flagged_error": 20,
+        "flagged_any": 20
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 160,
+      "robolint-all": 128,
+      "oracle": 128
+    },
+    "robolint_score": 77.6,
+    "robolint_grade": "C"
+  },
+  {
+    "mix": "heavy",
+    "data_seed": 3,
+    "scores": {
+      "raw": [
+        0.56,
+        0.63,
+        0.7
+      ],
+      "robolint-err": [
+        0.7533333333333333,
+        0.8733333333333333,
+        0.6866666666666666
+      ],
+      "robolint-all": [
+        0.7566666666666667,
+        0.7266666666666667,
+        0.7566666666666667
+      ],
+      "oracle": [
+        0.7566666666666667,
+        0.7266666666666667,
+        0.7566666666666667
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 128,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "state_frozen": {
+        "episodes": 10,
+        "flagged_error": 10,
+        "flagged_any": 10
+      },
+      "spikes": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "idle": {
+        "episodes": 16,
+        "flagged_error": 0,
+        "flagged_any": 16
+      },
+      "failed": {
+        "episodes": 20,
+        "flagged_error": 20,
+        "flagged_any": 20
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 160,
+      "robolint-all": 128,
+      "oracle": 128
+    },
+    "robolint_score": 77.6,
+    "robolint_grade": "C"
+  },
+  {
+    "mix": "light",
+    "data_seed": 0,
+    "scores": {
+      "raw": [
+        0.7833333333333333,
+        0.7933333333333333,
+        0.8066666666666666
+      ],
+      "robolint-err": [
+        0.8233333333333334,
+        0.8666666666666667,
+        0.81
+      ],
+      "robolint-all": [
+        0.85,
+        0.8233333333333334,
+        0.83
+      ],
+      "oracle": [
+        0.85,
+        0.8233333333333334,
+        0.83
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 174,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "state_frozen": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "spikes": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "idle": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "failed": {
+        "episodes": 6,
+        "flagged_error": 6,
+        "flagged_any": 6
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 186,
+      "robolint-all": 174,
+      "oracle": 174
+    },
+    "robolint_score": 92.1,
+    "robolint_grade": "A"
+  },
+  {
+    "mix": "light",
+    "data_seed": 1,
+    "scores": {
+      "raw": [
+        0.7866666666666666,
+        0.8,
+        0.8233333333333334
+      ],
+      "robolint-err": [
+        0.7566666666666667,
+        0.8966666666666666,
+        0.7733333333333333
+      ],
+      "robolint-all": [
+        0.8266666666666667,
+        0.83,
+        0.8533333333333334
+      ],
+      "oracle": [
+        0.8266666666666667,
+        0.83,
+        0.8533333333333334
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 174,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "state_frozen": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "spikes": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "idle": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "failed": {
+        "episodes": 6,
+        "flagged_error": 6,
+        "flagged_any": 6
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 186,
+      "robolint-all": 174,
+      "oracle": 174
+    },
+    "robolint_score": 92.1,
+    "robolint_grade": "A"
+  },
+  {
+    "mix": "light",
+    "data_seed": 2,
+    "scores": {
+      "raw": [
+        0.79,
+        0.75,
+        0.75
+      ],
+      "robolint-err": [
+        0.8033333333333333,
+        0.82,
+        0.79
+      ],
+      "robolint-all": [
+        0.8566666666666667,
+        0.79,
+        0.81
+      ],
+      "oracle": [
+        0.8566666666666667,
+        0.79,
+        0.81
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 174,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "state_frozen": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "spikes": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "idle": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "failed": {
+        "episodes": 6,
+        "flagged_error": 6,
+        "flagged_any": 6
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 186,
+      "robolint-all": 174,
+      "oracle": 174
+    },
+    "robolint_score": 92.1,
+    "robolint_grade": "A"
+  },
+  {
+    "mix": "light",
+    "data_seed": 3,
+    "scores": {
+      "raw": [
+        0.8166666666666667,
+        0.8666666666666667,
+        0.8233333333333334
+      ],
+      "robolint-err": [
+        0.88,
+        0.8033333333333333,
+        0.8633333333333333
+      ],
+      "robolint-all": [
+        0.82,
+        0.7766666666666666,
+        0.7733333333333333
+      ],
+      "oracle": [
+        0.82,
+        0.7766666666666666,
+        0.7733333333333333
+      ]
+    },
+    "detection": {
+      "clean": {
+        "episodes": 174,
+        "flagged_error": 0,
+        "flagged_any": 0
+      },
+      "dead": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "state_frozen": {
+        "episodes": 4,
+        "flagged_error": 4,
+        "flagged_any": 4
+      },
+      "spikes": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "idle": {
+        "episodes": 6,
+        "flagged_error": 0,
+        "flagged_any": 6
+      },
+      "failed": {
+        "episodes": 6,
+        "flagged_error": 6,
+        "flagged_any": 6
+      }
+    },
+    "kept": {
+      "raw": 200,
+      "robolint-err": 186,
+      "robolint-all": 174,
+      "oracle": 174
+    },
+    "robolint_score": 92.1,
+    "robolint_grade": "A"
+  }
+]

@@ -69,7 +69,10 @@ def make_dataset(
     videos: bool = False,
     seed: int = 0,
     task: str = "Pick up the red cube and place it in the bin",
+    grasp_object: bool = False,
 ) -> Path:
+    """grasp_object: the follower gripper stops on an object when it closes (as in real pick-and-place
+    data) instead of following the command to fully closed."""
     faults = faults or {}
     dataset_faults = dataset_faults or []
     rng = np.random.default_rng(seed)
@@ -112,7 +115,15 @@ def make_dataset(
             a[n // 2, 5] = -a[n // 2 - 1, 5]  # a one-frame toggle
         if "hard_limit" in f:  # operator keeps pushing past the joint's reach, mid-task
             a[n // 2 :, 1] = -95.0 + 5.0 * np.sin(np.arange(n - n // 2) / 5.0)
+        if "regrasp" in f:  # first close misses, the operator reopens and grasps again
+            t_ = np.arange(n)
+            a[:, 5] = np.where(((t_ >= 0.25 * n) & (t_ < 0.4 * n)) | (t_ >= 0.6 * n), 45.0, 5.0)
+            a[:, 5] += rng.normal(0, 0.05, n)
         s = np.vstack([a[:2], a[:-2]]) + rng.normal(0, 0.05, a.shape)
+        if grasp_object and "missed_grasp" not in f:
+            blocked = np.arange(n) >= (0.6 * n if "regrasp" in f else 0)
+            width = 37.0 if "small_object" in f else 30.0  # a smaller object lets the gripper close further
+            s[blocked, 5] = np.minimum(s[blocked, 5], width + rng.normal(0, 0.05, int(blocked.sum())))
         if "hard_limit" in f or "rest_limit" in f or "one_arm_rest" in f:
             s[:, 1] = np.maximum(s[:, 1], -85.0)  # follower stops at its hard limit
         if "state_frozen" in f:
