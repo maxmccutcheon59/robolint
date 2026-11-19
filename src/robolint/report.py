@@ -64,6 +64,17 @@ HELP: dict[str, str] = {
     "METADATA_INCOMPLETE": "Episode metadata files are missing.",
     "OLD_FORMAT": "Dataset predates LeRobot v2.",
     "PARTIAL_CHECK": "Quick mode: only part of the dataset was checked.",
+    "DATA_COLUMN_INVALID": "Rows with null values, a different vector width, or a non-numeric type. They were treated as missing; repair or drop them.",
+    "DATA_FILE_SKIPPED": "A data file (or some of its rows) could not be checked. The score covers only the rest of the dataset.",
+    "LOADER_WARNING": "The loader had to skip or ignore part of the data.",
+    "TIMING_UNVERIFIED": "This format has no per-frame timestamps, so dropped frames and jitter cannot be checked.",
+    "JOINT_LIMIT_VIOLATION": "Values leave the joint limits set in your robot config: unreachable commands or a calibration/units problem.",
+    "VELOCITY_LIMIT_EXCEEDED": "A joint moves faster than the limit in your robot config: a glitch, or a limit set too low.",
+    "FPS_UNEXPECTED": "The dataset's fps differs from the rate this robot records at.",
+    "REQUIRED_FEATURE_MISSING": "A feature your robot config requires is missing.",
+    "ROBOT_TYPE_MISMATCH": "The dataset declares a different robot than the config is for.",
+    "CONFIG_UNKNOWN_FEATURE": "The config sets limits for a feature the dataset does not have.",
+    "CONFIG_UNKNOWN_DIMENSION": "The config sets limits for a dimension name the dataset does not declare.",
     "VIDEO_SKIPPED": "Video checks need PyAV installed.",
 }
 

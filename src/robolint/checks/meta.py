@@ -15,11 +15,24 @@ E, W, I = Severity.ERROR, Severity.WARNING, Severity.INFO
 
 def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     info = ds.info
+    lerobot = ds.format == "lerobot"
     for msg in ds.load_warnings:
-        yield Finding("METADATA_INCOMPLETE", W, msg)
+        yield Finding("METADATA_INCOMPLETE" if lerobot else "LOADER_WARNING", W, msg)
+
+    # Data the loader could not use. Each one means checks ran on less than the whole dataset,
+    # so it is an error rather than something to skip quietly.
+    seen: dict[str, int] = {}
+    for code, msg, details in ds.load_errors:
+        seen[code] = seen.get(code, 0) + 1
+        if seen[code] <= 20:
+            yield Finding(code, E, msg, details=details)
+    for code, n in seen.items():
+        if n > 20:
+            yield Finding(code, E, f"... and {n - 20} more {code} problems", details={"total": n})
 
     if ds.fps is None:
-        yield Finding("FPS_MISSING", E, "meta/info.json has no valid fps; timing cannot be verified")
+        where = "meta/info.json has no valid fps" if lerobot else "the file does not record a control rate (pass --fps)"
+        yield Finding("FPS_MISSING", E, f"{where}; timing cannot be verified")
 
     major = ds.major_version
     if major and major < 2:
@@ -65,7 +78,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
 
     # Global "index" column should be a contiguous range across the dataset
     globals_ = [ep.frames["index"] for ep in ds.episodes if "index" in ep.frames]
-    if globals_:
+    if globals_ and all(np.all(np.isfinite(g)) for g in globals_):
         g = np.sort(np.concatenate(globals_).astype(np.int64))
         dupes = int(np.sum(np.diff(g) == 0))
         if dupes:
@@ -83,7 +96,14 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     if "action" not in ds.data_columns:
         yield Finding("NO_ACTIONS", E, "dataset has no 'action' column; it cannot be used for policy training")
     if "timestamp" not in ds.data_columns:
-        yield Finding("NO_TIMESTAMPS", E, "dataset has no 'timestamp' column")
+        if lerobot:
+            yield Finding("NO_TIMESTAMPS", E, "dataset has no 'timestamp' column")
+        else:
+            yield Finding(
+                "TIMING_UNVERIFIED",
+                I,
+                f"{ds.format} files carry no per-frame timestamps, so dropped frames and jitter cannot be checked",
+            )
 
     # Declared shapes should match
     for key in ("action", "observation.state"):
@@ -102,7 +122,8 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
 
     # Tasks
     if not ds.tasks:
-        yield Finding("TASKS_MISSING", W, "no task descriptions found (meta/tasks.parquet or tasks.jsonl)")
+        if lerobot:
+            yield Finding("TASKS_MISSING", W, "no task descriptions found (meta/tasks.parquet or tasks.jsonl)")
     else:
         empty = [i for i, t in ds.tasks.items() if not t.strip()]
         if empty:
