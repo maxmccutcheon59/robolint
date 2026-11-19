@@ -18,7 +18,8 @@ GOAL_R = 0.15
 HORIZON = 150  # evaluation step limit (15 s)
 
 ACTION_NAMES = ["vel_x", "vel_y", "gripper"]
-STATE_NAMES = ["x", "y", "object_x", "object_y", "goal_x", "goal_y", "gripper_closed"]
+STATE_NAMES = ["x", "y", "object_x", "object_y", "goal_x", "goal_y", "gripper"]
+OBJECT_WIDTH = 0.6  # where the follower gripper stops when it closes on the object (1.0 = fully closed)
 
 
 class VecEnv:
@@ -37,7 +38,8 @@ class VecEnv:
             k = int(close.sum())
             self.o[close] = rng.uniform(-0.9, 0.9, (k, 2))
             self.g[close] = rng.uniform(-0.9, 0.9, (k, 2))
-        self.grip = np.zeros(n)
+        self.grip = np.zeros(n)  # follower gripper position: 0 open, 1 fully closed
+        self.cmd = np.zeros(n, bool)
         self.held = np.zeros(n, bool)
         self.done = np.zeros(n, bool)
 
@@ -50,11 +52,14 @@ class VecEnv:
         v = np.clip(a[:, :2], -VMAX, VMAX)
         self.p[live] = np.clip(self.p[live] + v[live] * DT, -1.2, 1.2)
         cmd = a[:, 2] > 0.5
-        closing = cmd & (self.grip < 0.5)
+        closing = cmd & ~self.cmd
         near = np.linalg.norm(self.p - self.o, axis=1) < GRASP_R
         self.held |= live & closing & near
         self.held &= cmd  # opening drops the object
-        self.grip[live] = cmd[live].astype(float)
+        self.cmd = cmd
+        # the follower moves toward the command; an object in the gripper stops it partway
+        target = np.where(cmd, np.where(self.held, OBJECT_WIDTH, 1.0), 0.0)
+        self.grip[live] += np.clip(target - self.grip, -0.5, 0.5)[live]
         self.o[self.held] = self.p[self.held]
         released_at_goal = live & ~self.held & ~cmd & (np.linalg.norm(self.o - self.g, axis=1) < GOAL_R)
         self.done |= released_at_goal

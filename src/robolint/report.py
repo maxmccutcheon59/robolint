@@ -62,6 +62,8 @@ HELP: dict[str, str] = {
     "NO_TIMESTAMPS": "No timestamp column: timing cannot be verified.",
     "FPS_MISSING": "No valid fps in info.json.",
     "METADATA_INCOMPLETE": "Episode metadata files are missing.",
+    "FAILED_GRASP": "The gripper's last grasp closed all the way on nothing, while other episodes stop on an object: a failed demo. Drop it; it teaches the policy to grasp air.",
+    "REGRASP": "A grasp missed and the operator retried successfully. Keep it if you want recovery behavior; drop it if not.",
     "OLD_FORMAT": "Dataset predates LeRobot v2.",
     "PARTIAL_CHECK": "Quick mode: only part of the dataset was checked.",
     "DATA_COLUMN_INVALID": "Rows with null values, a different vector width, or a non-numeric type. They were treated as missing; repair or drop them.",

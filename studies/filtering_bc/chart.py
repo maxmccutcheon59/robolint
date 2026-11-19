@@ -18,7 +18,7 @@ CONDS = [
     ("raw", "Raw data", "#2a78d6"),
     ("robolint-err", "robolint: drop errors", "#eb6834"),
     ("robolint-all", "robolint: drop errors + warnings", "#1baf7a"),
-    ("oracle", "Clean, successful demos only (ceiling)", "#eda100"),
+    ("oracle", "Only clean, successful demos", "#eda100"),
 ]
 MIXES = [("light", "Light faults\n(13% of episodes)"), ("heavy", "Heavy faults\n(36% of episodes)")]
 SURFACE, INK, MUTED = "#fcfcfb", "#0b0b0b", "#52514e"

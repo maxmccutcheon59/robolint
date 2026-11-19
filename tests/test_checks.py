@@ -286,3 +286,26 @@ def test_joint_resting_on_stop_while_others_work_is_calibration_info(tmp_path):
     assert not [f for f in r.findings if f.code == "JOINT_AT_LIMIT"]
     hits = [f for f in r.findings if f.code == "CALIBRATION_OFFSET"]
     assert {f.episode for f in hits} == {3} and all(f.severity == Severity.INFO for f in hits)
+
+
+def test_failed_grasp_is_an_error_and_regrasp_is_info(tmp_path):
+    root = make_dataset(tmp_path / "ds", n_eps=12, grasp_object=True, faults={4: ["missed_grasp"], 8: ["regrasp"]})
+    r = lint(root)
+    failed = [f for f in r.findings if f.code == "FAILED_GRASP"]
+    regrasp = [f for f in r.findings if f.code == "REGRASP"]
+    assert {f.episode for f in failed} == {4} and failed[0].severity == Severity.ERROR
+    assert {f.episode for f in regrasp} == {8} and regrasp[0].severity == Severity.INFO
+
+
+@pytest.mark.parametrize("grasp_object", [False, True])
+def test_no_failed_grasps_when_every_grasp_is_alike(tmp_path, grasp_object):
+    # Either every grasp holds an object, or the gripper always closes freely (e.g. a pushing task):
+    # neither should produce grasp findings.
+    r = lint(make_dataset(tmp_path / "ds", n_eps=12, grasp_object=grasp_object))
+    assert not {"FAILED_GRASP", "REGRASP"} & {f.code for f in r.findings}
+
+
+def test_smaller_objects_are_not_mistaken_for_missed_grasps(tmp_path):
+    small = {i: ["small_object"] for i in (1, 5, 9)}
+    r = lint(make_dataset(tmp_path / "ds", n_eps=12, grasp_object=True, faults={**small, 6: ["missed_grasp"]}))
+    assert {f.episode for f in r.findings if f.code == "FAILED_GRASP"} == {6}
