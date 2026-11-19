@@ -6,7 +6,7 @@
 **Quality checks for robot learning datasets.** Point it at any [LeRobot](https://github.com/huggingface/lerobot) dataset, local or on the Hugging Face Hub, and find out which episodes will quietly hurt your policy before you spend GPU hours training on them.
 
 ```bash
-pip install "robolint[all] @ git+https://github.com/maxmccutcheon59/robolint.git"
+pip install "robolint[all]"
 robolint check lerobot/svla_so101_pickplace --videos --html report.html
 ```
 
