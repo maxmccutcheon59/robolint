@@ -101,6 +101,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     stats = {k: dataset_stats(ds, k, cfg) for k in KEYS}
     fps = ds.fps or 30.0
     a_st, s_st = stats["action"], stats["observation.state"]
+    grasp_eps: list[tuple[int, np.ndarray, np.ndarray]] = []  # healthy episodes for the grasp check
 
     for ep in ds.episodes:
         if ep.length < 2:
@@ -159,18 +160,20 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                         "actions change but the measured state never does: the follower robot was likely disconnected or not recording",
                         ep.index,
                     )
-                elif (
-                    not state_frozen
-                    and not corrupt
-                    and a_st is not None
-                    and clean.get("action")
-                    and a_st.names == s_st.names
-                ):
+                elif not state_frozen and not corrupt and a_st is not None and clean.get("action"):
                     a = _as2d(ep.frames["action"]).astype(np.float64)
-                    lead, tail = idle_bounds(a, a_st, cfg)
-                    # Resting on a hard stop before/after a take is normal; judge only the active part.
-                    if lead < len(a) - tail:
-                        yield from _limits(ep.index, s[lead : len(a) - tail], a[lead : len(a) - tail], s_st, fps, cfg)
+                    if not action_dead and a.shape[1] == len(a_st.rng):
+                        grasp_eps.append((ep.index, a, s))
+                    if a_st.names == s_st.names:
+                        lead, tail = idle_bounds(a, a_st, cfg)
+                        # Resting on a hard stop before/after a take is normal; judge only the active part.
+                        if lead < len(a) - tail:
+                            yield from _limits(
+                                ep.index, s[lead : len(a) - tail], a[lead : len(a) - tail], s_st, fps, cfg
+                            )
+
+    if a_st is not None and s_st is not None:
+        yield from _grasps(grasp_eps, a_st, s_st, fps, cfg)
 
 
 def _gripper(ep: int, ep_rng: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
@@ -276,3 +279,131 @@ def _limits(ep: int, s: np.ndarray, a: np.ndarray, st: DimStats, fps: float, cfg
             ep,
             {"joints": offset},
         )
+
+
+def _gripper_pairs(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
+    """(action dim, state dim) for each gripper, matched in order (one pair per arm)."""
+    ia = [i for i, n in enumerate(a_st.names) if "gripper" in n.lower()]
+    i_s = [i for i, n in enumerate(s_st.names) if "gripper" in n.lower()]
+    if len(ia) != len(i_s):
+        return []
+    a_names, s_names = [a_st.names[i] for i in ia], [s_st.names[i] for i in i_s]
+    if sorted(a_names) == sorted(s_names):  # same names on both sides: pair by name, not by position
+        return [(ja, s_st.names.index(a_st.names[ja])) for ja in ia]
+    return list(zip(ia, i_s, strict=True))
+
+
+def _closed_and_reopened(cmd: np.ndarray, lo: float, hi: float, side: float, depth: float, min_len: int) -> bool:
+    """True if the command moved toward `side` by at least `depth` of its range, stayed there for
+    `min_len` frames, and moved back again (a close-and-release cycle, however gentle)."""
+    if len(cmd) < min_len:
+        return False
+    q = (cmd - lo) / (hi - lo)
+    q = q if side > 0 else 1.0 - q
+    bump = np.minimum(q - np.minimum.accumulate(q), q - np.minimum.accumulate(q[::-1])[::-1])
+    return any(e - b >= min_len for b, e in _runs(bump >= depth))
+
+
+def _grasps(
+    eps: list[tuple[int, np.ndarray, np.ndarray]], a_st: DimStats, s_st: DimStats, fps: float, cfg: Config
+) -> Iterator[Finding]:
+    """Grasps that closed on nothing.
+
+    When a gripper closes on an object, the object blocks it and the follower stops partway.
+    When it closes on air, it travels to its fully closed position. For each side the gripper
+    is commanded to and held at, collect where the follower settles in every episode: if it
+    usually stops short of the farthest settling point (the dataset holds objects), a settle
+    at that farthest point is a grasp on nothing. An episode whose last grasp missed is very
+    likely a failed demonstration; one that missed and then grasped is a recovery.
+    """
+    pairs = _gripper_pairs(a_st, s_st)
+    if not pairs or len(eps) < 5:
+        return
+    min_len = max(3, int(cfg.grasp_hold_seconds * fps))
+    for ja, js in pairs:
+        a_lo, a_hi, s_rng = a_st.lo[ja], a_st.hi[ja], s_st.rng[js]
+        if a_hi - a_lo <= 1e-9 or s_rng <= 1e-9:
+            continue
+        # does the follower's reading rise or fall when the command rises?
+        a_all = np.concatenate([a[:, ja] for _, a, _ in eps])
+        s_all = np.concatenate([s[:, js] for _, _, s in eps])
+        if np.std(a_all) <= 1e-12 or np.std(s_all) <= 1e-12:
+            continue
+        sign = 1.0 if np.corrcoef(a_all, s_all)[0, 1] >= 0 else -1.0
+        # Held segments per side: (episode, start, end, settle position, follower minus command, lead?).
+        # "lead" = held from the first frame: the rest pose before the gripper has moved, never a grasp.
+        segs: dict[float, list[tuple[int, int, int, float, float, bool]]] = {1.0: [], -1.0: []}
+        for ep, a, s in eps:
+            c = (a[:, ja] - a_lo) / (a_hi - a_lo)
+            for side, held in ((1.0, c > 0.8), (-1.0, c < 0.2)):
+                for b, e in _runs(held):
+                    if e - b >= min_len:
+                        tail = slice(b + (e - b) // 2, e)
+                        med_s = float(np.median(s[tail, js]))
+                        segs[side].append((ep, b, e, med_s, float(np.median(s[tail, js] - a[tail, ja])), b == 0))
+        by_index = {ep: a for ep, a, _ in eps}
+        for side in (1.0, -1.0):
+            if sum(1 for g in segs[side] if not g[5]) < 5:
+                continue
+            d = side * sign  # direction the follower travels when commanded to this side
+            free = [g[4] for g in segs[-side]]
+            offset = float(np.median(free)) if free else 0.0
+            # Frames where an object holds the follower short of the command (calibration offset removed),
+            # whatever the command level: operators often grasp without squeezing the leader all the way.
+            held_obj: dict[int, list[tuple[int, int]]] = {}
+            for ep, a, s in eps:
+                blocked = d * (offset - (s[:, js] - a[:, ja])) >= cfg.grasp_object_min * s_rng
+                held_obj[ep] = [(b, e) for b, e in _runs(blocked) if e - b >= min_len]
+
+            # A hold that runs to the end of the episode on nothing is the gripper put back to rest when
+            # the task is over, not a grasp attempt, if the episode already held an object or already
+            # closed and reopened (a pick and release, even one too gentle to show as a held segment).
+            grasps = []
+            for g in segs[side]:
+                if g[5]:
+                    continue
+                a = by_index[g[0]]
+                if g[2] == len(a) and abs(g[4] - offset) < cfg.grasp_object_min * s_rng:
+                    if any(e <= g[1] for _, e in held_obj[g[0]]) or _closed_and_reopened(
+                        a[: g[1], ja], a_lo, a_hi, side, cfg.grasp_object_min, min_len
+                    ):
+                        continue
+                grasps.append(g)
+            if len(grasps) < 5:
+                continue
+            farthest = float(np.max([d * g[3] for g in grasps]))
+            shortfall = (farthest - d * np.array([g[3] for g in grasps])) / s_rng
+            if np.median(shortfall) < cfg.grasp_object_min:
+                continue  # this side is free motion (opening, or closing on nothing by design)
+            # A gripper closing on nothing reaches the operator's command, offset only by the
+            # leader/follower calibration seen when it moves freely to the other side; an object
+            # holds it short of the command. This also keeps a smaller object from being taken for air.
+            if np.median([abs(g[4] - offset) for g in grasps]) / s_rng < cfg.grasp_object_min:
+                # Settle points vary but the follower follows the command: the operator just opens (or
+                # closes) by different amounts, and nothing is held. Not a grasping side.
+                continue
+            by_ep: dict[int, list[bool]] = {}
+            for g, short in zip(grasps, shortfall, strict=True):
+                by_ep.setdefault(g[0], []).append(
+                    bool(short < cfg.grasp_air_tol and abs(g[4] - offset) < cfg.grasp_air_tol * s_rng)
+                )
+            name = s_st.names[js]
+            for ep, missed in sorted(by_ep.items()):
+                if missed[-1]:
+                    yield Finding(
+                        "FAILED_GRASP",
+                        E,
+                        f"'{name}' closed fully on nothing in the last grasp, where other episodes stop on an "
+                        "object: likely a failed demonstration",
+                        ep,
+                        {"gripper": name, "missed_grasps": sum(missed), "grasps": len(missed)},
+                    )
+                elif any(missed):
+                    yield Finding(
+                        "REGRASP",
+                        I,
+                        f"'{name}' missed {sum(missed)} grasp(s) before picking the object up: a recovery, "
+                        "useful data if the retry is intended",
+                        ep,
+                        {"gripper": name, "missed_grasps": sum(missed), "grasps": len(missed)},
+                    )

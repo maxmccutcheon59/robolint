@@ -25,6 +25,9 @@ class Config:
     idle_warn: float = 0.30  # idle lead-in + tail above this fraction of the episode
     idle_info: float = 0.15
     limit_seconds: float = 2.0  # pinned at a joint's extreme for this long
+    grasp_hold_seconds: float = 0.3  # gripper command held this long counts as a grasp attempt
+    grasp_object_min: float = 0.15  # typical grasp stops this far short of fully closed (fraction of range)
+    grasp_air_tol: float = 0.05  # within this of fully closed = closed on nothing
     # Episodes
     min_seconds: float = 1.0
     short_ratio: float = 0.25  # shorter than this fraction of the median length
