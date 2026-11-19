@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -52,7 +53,9 @@ class Dataset:
     data_columns: set[str]
     source: str = ""
     load_warnings: list[str] = field(default_factory=list)
+    load_errors: list[tuple[str, str, dict]] = field(default_factory=list)  # (code, message, details)
     partial: bool = False  # only the first N episodes were loaded (quick mode)
+    format: str = "lerobot"  # "lerobot", "hdf5-robomimic", or "hdf5-aloha"
 
     @property
     def version(self) -> str:
@@ -205,70 +208,265 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def _inside(root: Path, p: Path) -> bool:
+def _within(parent: str, child: str) -> bool:
+    """True if absolute path `child` equals or sits below absolute path `parent` (no I/O)."""
     try:
-        return p.resolve().is_relative_to(root.resolve())
-    except (OSError, RuntimeError):
+        return os.path.commonpath([parent, child]) == parent
+    except ValueError:  # different drives on Windows, or mixed abs/rel
         return False
 
 
-def _column_to_numpy(col: pa.ChunkedArray) -> np.ndarray | None:
-    """Numeric scalar -> (n,), numeric list -> (n, d). Anything else -> None."""
+_MAX_LINK_HOPS = 8
+
+
+def hub_blob_dirs(snapshot: Path) -> tuple[Path, ...] | None:
+    """Blob folders a Hugging Face cache snapshot may legitimately link into.
+
+    huggingface_hub downloads to <cache>/datasets--<org>--<name>/snapshots/<rev>/... and
+    stores each file as a relative symlink into that repo's blobs/ folder. Newer releases
+    (2.x) add a second hop from the repo's blobs/ into a cache-wide <cache>/blobs/ folder.
+    Returns None when `snapshot` does not have that layout.
+    """
+    real = Path(os.path.realpath(snapshot))
+    repo_dir = real.parent.parent
+    if real.parent.name != "snapshots" or not repo_dir.name.startswith("datasets--"):
+        return None
+    dirs = tuple(Path(os.path.realpath(d)) for d in (repo_dir / "blobs", repo_dir.parent / "blobs") if d.is_dir())
+    return dirs or None
+
+
+def _inside(root: Path, p: Path, hub_blobs: tuple[Path, ...] | None = None) -> bool:
+    """Path-safety check for files the dataset metadata points us at.
+
+    Always: the path, taken literally, must stay under root (no "..", no absolute paths
+    smuggled in through metadata templates).
+
+    Local datasets: the fully resolved file must be under the resolved root, so symlinks
+    that leave the dataset folder are refused.
+
+    Hub downloads (hub_blobs given): additionally accept the Hub cache's own symlinks, but
+    only if every hop of the link chain lands inside one of the cache's blob folders, the
+    chain is short, the folders between root and the file are real (not links out), and
+    the final target is a regular file. A link to /etc/passwd, out of the cache, or a chain
+    that detours outside the blob folders is refused.
+    """
+    try:
+        root_abs = os.path.abspath(root)
+        p_abs = os.path.abspath(p)
+        if not _within(root_abs, p_abs):
+            return False
+        root_real = os.path.realpath(root)
+        real = os.path.realpath(p)
+        if _within(root_real, real):
+            return True
+        if not hub_blobs:
+            return False
+        allowed = [os.path.realpath(b) for b in hub_blobs]
+        # Directories inside the snapshot must not themselves be links out of it.
+        if not _within(root_real, os.path.realpath(os.path.dirname(p_abs))):
+            return False
+        cur = p_abs
+        for hop in range(_MAX_LINK_HOPS + 1):
+            if not os.path.islink(cur):
+                break
+            if hop == _MAX_LINK_HOPS:
+                return False  # chain too long
+            target = os.readlink(cur)
+            if os.path.isabs(target):
+                return False  # Hub cache links are always relative
+            cur = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(cur)), target))
+            if not any(_within(b, cur) for b in allowed):
+                return False  # this hop leaves the cache's blob folders
+        return cur == real and any(_within(b, real) for b in allowed) and os.path.isfile(real)
+    except (OSError, RuntimeError, ValueError):
+        return False
+
+
+def _column_to_numpy(col: pa.ChunkedArray) -> tuple[np.ndarray | None, str | None]:
+    """Numeric scalar -> (n,), numeric list -> (n, d).
+
+    Returns (array, problem). Null entries and list rows whose width differs from the most common
+    width become NaN rows (so per-episode checks flag them) and are described in `problem`.
+    Non-numeric columns return (None, None); they are not data robolint checks.
+    """
     arr = col.combine_chunks() if isinstance(col, pa.ChunkedArray) else col
     t = arr.type
+    n = len(arr)
     if pa.types.is_integer(t) or pa.types.is_floating(t) or pa.types.is_boolean(t):
+        nulls = arr.null_count
+        if nulls:
+            out = pc.cast(arr, pa.float64()).to_numpy(zero_copy_only=False)  # nulls -> NaN
+            return out, f"{nulls} null values"
         out = arr.to_numpy(zero_copy_only=False)
-        return out.astype(np.float64) if out.dtype == bool else out
+        return (out.astype(np.float32) if out.dtype == bool else out), None
     if pa.types.is_list(t) or pa.types.is_large_list(t) or pa.types.is_fixed_size_list(t):
         vt = t.value_type
         if not (pa.types.is_integer(vt) or pa.types.is_floating(vt)):
-            return None
-        n = len(arr)
+            return None, None
         if n == 0:
-            return np.zeros((0, 0))
-        if arr.null_count:
-            return None
+            return np.zeros((0, 0), np.float32), None
         lengths = pc.list_value_length(arr).to_numpy(zero_copy_only=False)
-        if len(np.unique(lengths)) != 1:
-            return None
-        d = int(lengths[0])
-        flat = pc.list_flatten(arr).to_numpy(zero_copy_only=False).astype(np.float64)
-        return flat.reshape(n, d)
-    return None
+        valid = ~np.asarray(arr.is_null().to_numpy(zero_copy_only=False), dtype=bool)
+        if not valid.any():
+            return np.full((n, 0), np.nan, np.float32), f"all {n} rows are null"
+        lens_valid = lengths[valid].astype(np.int64)
+        widths, counts = np.unique(lens_valid, return_counts=True)
+        d = int(widths[np.argmax(counts)])
+        good = valid & (np.nan_to_num(lengths, nan=-1).astype(np.int64) == d)
+        problems = []
+        if (~valid).any():
+            problems.append(f"{int((~valid).sum())} null rows")
+        odd = valid & ~good
+        if odd.any():
+            others = sorted({int(x) for x in lens_valid if x != d})
+            problems.append(f"{int(odd.sum())} rows with width {others} instead of {d}")
+        if not problems:
+            flat = pc.list_flatten(arr).to_numpy(zero_copy_only=False).astype(np.float32, copy=False)
+            return flat.reshape(n, d), None
+        out = np.full((n, d), np.nan, np.float32)
+        if good.any():
+            sub = arr.filter(pa.array(good))
+            out[good] = pc.list_flatten(sub).to_numpy(zero_copy_only=False).astype(np.float32).reshape(-1, d)
+        # Inner nulls inside otherwise valid rows already arrive as NaN through list_flatten -> float.
+        return out, "; ".join(problems)
+    return None, None
 
 
-def _load_frames(root: Path, max_episodes: int | None = None) -> tuple[dict[str, np.ndarray], set[str]]:
+BOOKKEEPING = ("episode_index", "frame_index", "index", "timestamp", "task_index")
+CORE = ("action", "observation.state", "episode_index", "frame_index", "timestamp")
+
+
+def _merge(
+    pieces: list[tuple[str, int, dict[str, np.ndarray]]], errors: list[tuple[str, str, dict]]
+) -> dict[str, np.ndarray]:
+    """Concatenate per-file columns; a column missing or of the wrong width in a file becomes NaN rows."""
+    names: list[str] = []
+    for _, _, cols in pieces:
+        for k in cols:
+            if k not in names:
+                names.append(k)
+    out: dict[str, np.ndarray] = {}
+    for name in names:
+        widths: dict[int, int] = {}
+        for _, n, cols in pieces:
+            a = cols.get(name)
+            if a is not None:
+                w = 0 if a.ndim == 1 else a.shape[1]
+                widths[w] = widths.get(w, 0) + n
+        w = max(widths, key=lambda k: widths[k])
+        blocks = []
+        for rel, n, cols in pieces:
+            a = cols.get(name)
+            aw = None if a is None else (0 if a.ndim == 1 else a.shape[1])
+            if aw == w:
+                blocks.append(a)
+                continue
+            if a is None:
+                why = "is missing"
+            else:
+                why = f"has width {aw} instead of {w}"
+            errors.append(
+                (
+                    "DATA_COLUMN_INVALID",
+                    f"column '{name}' {why} in {rel}; its {n} rows were treated as missing",
+                    {"column": name, "file": rel, "rows": n},
+                )
+            )
+            blocks.append(np.full((n,) if w == 0 else (n, w), np.nan, np.float32))
+        if any(b.dtype.kind == "f" for b in blocks) and any(b.dtype.kind != "f" for b in blocks):
+            blocks = [b.astype(np.float64) for b in blocks]
+        out[name] = np.concatenate(blocks) if blocks else np.zeros(0)
+    return out
+
+
+def _load_frames(
+    root: Path,
+    max_episodes: int | None = None,
+    hub_blobs: tuple[Path, ...] | None = None,
+    errors: list[tuple[str, str, dict]] | None = None,
+) -> tuple[dict[str, np.ndarray], set[str]]:
+    """Read every numeric column of every data file.
+
+    Problems that would otherwise drop data silently (files outside the dataset, unreadable
+    columns, null rows, mixed list widths, rows without an episode) are appended to `errors` as
+    (code, message, details); the meta check reports them as errors that cost score.
+    """
+    errors = errors if errors is not None else []
     files = sorted((root / "data").rglob("*.parquet"))
     if not files:
         raise DatasetError(f"no parquet files under {root / 'data'}")
-    tables = []
+    pieces: list[tuple[str, int, dict[str, np.ndarray]]] = []
     all_names: set[str] = set()
     seen_eps: set[int] = set()
     for f in files:
-        if not _inside(root, f):
+        rel = str(f.relative_to(root)) if _within(str(root), str(f)) else f.name
+        if not _inside(root, f, hub_blobs):
+            errors.append(
+                (
+                    "DATA_FILE_SKIPPED",
+                    f"{rel} resolves outside the dataset folder (symlink) and was not read",
+                    {"file": rel},
+                )
+            )
             continue
         try:
             schema = pq.read_schema(f)
             all_names.update(schema.names)
             # Only numeric columns: skips embedded images, which can be gigabytes.
             wanted = [fld.name for fld in schema if _is_numeric(fld.type)]
+            for fld in schema:
+                if fld.name in CORE and fld.name not in wanted:
+                    errors.append(
+                        (
+                            "DATA_COLUMN_INVALID",
+                            f"column '{fld.name}' in {rel} has non-numeric type {fld.type}",
+                            {"column": fld.name, "file": rel, "type": str(fld.type)},
+                        )
+                    )
             t = pq.read_table(f, columns=wanted)
         except Exception as e:
-            raise DatasetError(f"unreadable parquet file {f.relative_to(root)}: {e}") from e
-        tables.append(t)
-        if max_episodes is not None and "episode_index" in t.column_names:
-            seen_eps.update(pc.unique(t.column("episode_index")).to_pylist())
+            raise DatasetError(f"unreadable parquet file {rel}: {e}") from e
+        cols: dict[str, np.ndarray] = {}
+        for name in t.column_names:
+            arr, problem = _column_to_numpy(t.column(name))
+            if arr is None:
+                continue
+            if problem:
+                errors.append(
+                    ("DATA_COLUMN_INVALID", f"column '{name}' in {rel}: {problem}", {"column": name, "file": rel})
+                )
+            cols[name] = arr
+        n = t.num_rows
+        ep = cols.get("episode_index")
+        if ep is None:
+            errors.append(
+                (
+                    "DATA_FILE_SKIPPED",
+                    f"{rel} has no episode_index column; its {n} rows were not checked",
+                    {"file": rel, "rows": n},
+                )
+            )
+            continue
+        if ep.dtype.kind == "f" and not np.all(np.isfinite(ep)):
+            keep = np.isfinite(ep)
+            errors.append(
+                (
+                    "DATA_FILE_SKIPPED",
+                    f"{rel}: {int((~keep).sum())} rows have no episode_index and were not checked",
+                    {"file": rel, "rows": int((~keep).sum())},
+                )
+            )
+            cols = {k: v[keep] for k, v in cols.items()}
+            n = int(keep.sum())
+        cols["episode_index"] = cols["episode_index"].astype(np.int64)
+        pieces.append((rel, n, cols))
+        if max_episodes is not None:
+            seen_eps.update(np.unique(cols["episode_index"]).tolist())
             if len(seen_eps) > max_episodes:
                 break  # quick mode: enough files read
-    if not tables:
+    if not pieces:
         raise DatasetError("no readable parquet files")
-    table = pa.concat_tables(tables, promote_options="default")
-    columns: dict[str, np.ndarray] = {}
-    for name in table.column_names:
-        arr = _column_to_numpy(table.column(name))
-        if arr is not None:
-            columns[name] = arr
-    return columns, all_names
+    return _merge(pieces, errors), all_names
 
 
 def _is_numeric(t: pa.DataType) -> bool:
@@ -324,7 +522,13 @@ def _load_episode_meta(root: Path) -> dict[int, dict[str, Any]]:
 
 
 def _video_refs(
-    root: Path, info: dict[str, Any], ep: int, row: dict[str, Any], video_keys: list[str], major: int
+    root: Path,
+    info: dict[str, Any],
+    ep: int,
+    row: dict[str, Any],
+    video_keys: list[str],
+    major: int,
+    hub_blobs: tuple[Path, ...] | None = None,
 ) -> list[VideoRef]:
     template = info.get("video_path")
     if not isinstance(template, str):
@@ -354,12 +558,23 @@ def _video_refs(
                 ref = VideoRef(key=key, path=root / rel)
         except (KeyError, IndexError, ValueError):
             continue
-        if _inside(root, ref.path):
+        if _inside(root, ref.path, hub_blobs):
             refs.append(ref)
     return refs
 
 
-def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = None) -> Dataset:
+def load_dataset(
+    root: Path,
+    *,
+    source: str = "",
+    max_episodes: int | None = None,
+    hub_blobs: tuple[Path, ...] | None = None,
+) -> Dataset:
+    """Load a dataset from a local folder.
+
+    Pass hub_blobs (from hub_blob_dirs) only for folders that resolve_source downloaded from
+    the Hub; it lets the Hub cache's symlinks into its blob store through the path check.
+    """
     root = Path(root)
     info_path = root / "meta" / "info.json"
     if not info_path.exists():
@@ -368,7 +583,8 @@ def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = Non
     if not isinstance(info, dict):
         raise DatasetError("meta/info.json is not a JSON object")
 
-    columns, all_columns = _load_frames(root, max_episodes)
+    load_errors: list[tuple[str, str, dict]] = []
+    columns, all_columns = _load_frames(root, max_episodes, hub_blobs, load_errors)
     if "episode_index" not in columns:
         raise DatasetError("data has no episode_index column")
 
@@ -407,7 +623,7 @@ def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = Non
                 frames={k: v[s:e] for k, v in sorted_cols.items()},
                 length_meta=int(length_meta) if isinstance(length_meta, (int, float)) else None,
                 tasks=[str(t) for t in ep_tasks],
-                videos=_video_refs(root, info, int(ep), row, video_keys, major),
+                videos=_video_refs(root, info, int(ep), row, video_keys, major, hub_blobs),
             )
         )
     if not meta:
@@ -425,5 +641,6 @@ def load_dataset(root: Path, *, source: str = "", max_episodes: int | None = Non
         data_columns=all_columns,
         source=source or str(root),
         load_warnings=warnings,
+        load_errors=load_errors,
         partial=partial,
     )

@@ -10,7 +10,7 @@ from typing import Any
 
 from . import __version__
 from .checks import Config, all_checks
-from .dataset import Dataset, load_dataset, resolve_source
+from .dataset import Dataset, hub_blob_dirs, load_dataset, resolve_source
 from .findings import Finding, Scores, Severity, score
 
 
@@ -86,10 +86,13 @@ def lint(
 ) -> Result:
     t0 = time.perf_counter()
     cfg = config or Config()
+    # Only a Hub download gets the relaxed symlink rule; a local folder keeps the strict one.
+    from_hub = not Path(str(source)).expanduser().exists()
     root = resolve_source(
         str(source), include_videos=videos, revision=revision, cache_dir=cache_dir, max_episodes=max_episodes
     )
-    ds = load_dataset(root, source=str(source), max_episodes=max_episodes)
+    hub_blobs = hub_blob_dirs(root) if from_hub else None
+    ds = load_dataset(root, source=str(source), max_episodes=max_episodes, hub_blobs=hub_blobs)
     findings: list[Finding] = []
     for check in all_checks(include_video=videos):
         findings.extend(check(ds, cfg))

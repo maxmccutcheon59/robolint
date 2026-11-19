@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from collections.abc import Iterator
-from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 
@@ -29,9 +29,13 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
         return
 
     motion: dict[str, list[tuple[int, float]]] = {}  # camera -> [(episode, max frame-to-frame change)]
-    with ExitStack() as stack:
-        opened: dict[Path, Any] = {}
-        reported_stream: set[str] = set()
+    # Keep only a few containers open at once: v2.x has one file per episode and camera, so a
+    # dataset can reference thousands of files (and run out of file descriptors). v3.x shares
+    # files between consecutive episodes, which a small LRU cache still reuses.
+    cache = _ContainerCache(MAX_OPEN_VIDEOS)
+    checked_files: set[Path] = set()
+    stream_findings: set[tuple[str, str]] = set()
+    try:
         for ep in ds.episodes:
             moving = _actions_move(ep)
             for ref in ep.videos:
@@ -40,20 +44,20 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                         "VIDEO_MISSING", E, f"camera '{ref.key}' video file is missing", ep.index, {"key": ref.key}
                     )
                     continue
-                container = opened.get(ref.path)
-                if container is None:
-                    try:
-                        container = stack.enter_context(_open(ref.path))
-                    except Exception as e:  # noqa: BLE001 - any decode/open failure is a finding
-                        yield Finding(
-                            "VIDEO_UNREADABLE", E, f"camera '{ref.key}' video cannot be opened: {e}", ep.index
-                        )
-                        continue
-                    opened[ref.path] = container
-                if ref.key not in reported_stream:
-                    reported_stream.add(ref.key)
-                    yield from _stream_props(ds, ref.key, container, fps)
+                try:
+                    container = cache.get(ref.path)
+                except Exception as e:  # noqa: BLE001 - any decode/open failure is a finding
+                    yield Finding("VIDEO_UNREADABLE", E, f"camera '{ref.key}' video cannot be opened: {e}", ep.index)
+                    continue
+                if ref.path not in checked_files:  # stream properties of every file, reported once per issue
+                    checked_files.add(ref.path)
+                    for f in _stream_props(ds, ref.key, container, fps):
+                        if (f.code, ref.key) not in stream_findings:
+                            stream_findings.add((f.code, ref.key))
+                            yield f
                 yield from _episode_video(ep, ref, container, fps, moving, cfg, motion)
+    finally:
+        cache.close()
 
     # A frozen feed still flickers a little from compression, so judge each episode
     # against how much this camera normally changes across the dataset.
@@ -70,6 +74,37 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
                     ep_idx,
                     {"key": key, "change": round(m, 2), "typical": round(typical, 2)},
                 )
+
+
+MAX_OPEN_VIDEOS = 8
+
+
+class _ContainerCache:
+    """Small LRU of open PyAV containers; evicted containers are closed immediately."""
+
+    def __init__(self, size: int) -> None:
+        self.size = max(1, size)
+        self._open: OrderedDict[Path, Any] = OrderedDict()
+
+    def get(self, path: Path):
+        c = self._open.get(path)
+        if c is not None:
+            self._open.move_to_end(path)
+            return c
+        c = _open(path)
+        self._open[path] = c
+        while len(self._open) > self.size:
+            _, old = self._open.popitem(last=False)
+            old.close()
+        return c
+
+    def close(self) -> None:
+        while self._open:
+            _, c = self._open.popitem(last=False)
+            try:
+                c.close()
+            except Exception:  # noqa: BLE001 - closing must never mask a result
+                pass
 
 
 def _open(path: Path):
