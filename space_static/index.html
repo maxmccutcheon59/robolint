@@ -35,8 +35,9 @@ code{background:var(--code);border-radius:4px;padding:1px 5px;font-size:13px}
 <body>
 <main>
   <h1>robolint</h1>
-  <p class="muted">Quality checks for robot learning datasets in <a href="https://github.com/huggingface/lerobot">LeRobot</a> format: dropped frames, dead episodes, teleop glitches, merged recordings, broken metadata.
+  <p class="muted">Quality checks for robot learning datasets in <a href="https://github.com/huggingface/lerobot">LeRobot</a> format: dropped frames, dead episodes, teleop glitches, failed grasps, merged recordings, broken metadata.
   <a href="https://github.com/maxmccutcheon59/robolint">GitHub</a> · <a href="https://github.com/maxmccutcheon59/robolint/blob/main/AUDIT.md">Audit write-up</a></p>
+  <p class="muted">About the failed-grasp checks (<code>FAILED_GRASP</code>, <code>REGRASP</code>): we haven't yet measured how many real failed demonstrations they miss, and they only check grippers named "gripper" (a dimension whose name contains "gripper" in both <code>action</code> and <code>observation.state</code>).</p>
 
   <div class="card" style="margin-top:18px">
     <strong>Training on your own robot data?</strong>
