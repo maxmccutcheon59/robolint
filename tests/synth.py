@@ -119,8 +119,21 @@ def make_dataset(
             t_ = np.arange(n)
             a[:, 5] = np.where(((t_ >= 0.25 * n) & (t_ < 0.4 * n)) | (t_ >= 0.6 * n), 45.0, 5.0)
             a[:, 5] += rng.normal(0, 0.05, n)
+        pick = "pick_place" in f or "pick_place_missed" in f
+        if pick:  # real teleop shape: rest closed, open, close on the object, release, back to rest closed
+            t_ = np.arange(n) / n
+            wide = 4.0 if ep % 3 == 0 else 11.0  # operators open by different amounts from take to take
+            a[:, 5] = np.select([t_ < 0.15, t_ < 0.35, t_ < 0.65, t_ < 0.85], [45.0, wide, 45.0, wide], 45.0)
+            if "soft_grasp" in f or "gentle_grasp" in f:  # the operator does not squeeze the leader all the way
+                a[(t_ >= 0.35) & (t_ < 0.65), 5] = 34.0
+            a[:, 5] += rng.normal(0, 0.05, n)
         s = np.vstack([a[:2], a[:-2]]) + rng.normal(0, 0.05, a.shape)
-        if grasp_object and "missed_grasp" not in f:
+        if pick and "pick_place_missed" not in f:
+            t_ = np.arange(n) / n
+            on_object = (t_ >= 0.35) & (t_ < 0.67)
+            width = 26.0 if "soft_grasp" in f else 32.0 if "gentle_grasp" in f else 30.0  # gentle: barely any contact
+            s[on_object, 5] = np.minimum(s[on_object, 5], width + rng.normal(0, 0.05, int(on_object.sum())))
+        if grasp_object and not pick and "missed_grasp" not in f:
             blocked = np.arange(n) >= (0.6 * n if "regrasp" in f else 0)
             width = 37.0 if "small_object" in f else 30.0  # a smaller object lets the gripper close further
             s[blocked, 5] = np.minimum(s[blocked, 5], width + rng.normal(0, 0.05, int(blocked.sum())))

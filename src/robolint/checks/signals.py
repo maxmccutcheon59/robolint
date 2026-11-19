@@ -285,7 +285,23 @@ def _gripper_pairs(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
     """(action dim, state dim) for each gripper, matched in order (one pair per arm)."""
     ia = [i for i, n in enumerate(a_st.names) if "gripper" in n.lower()]
     i_s = [i for i, n in enumerate(s_st.names) if "gripper" in n.lower()]
-    return list(zip(ia, i_s, strict=False)) if len(ia) == len(i_s) else []
+    if len(ia) != len(i_s):
+        return []
+    a_names, s_names = [a_st.names[i] for i in ia], [s_st.names[i] for i in i_s]
+    if sorted(a_names) == sorted(s_names):  # same names on both sides: pair by name, not by position
+        return [(ja, s_st.names.index(a_st.names[ja])) for ja in ia]
+    return list(zip(ia, i_s, strict=True))
+
+
+def _closed_and_reopened(cmd: np.ndarray, lo: float, hi: float, side: float, depth: float, min_len: int) -> bool:
+    """True if the command moved toward `side` by at least `depth` of its range, stayed there for
+    `min_len` frames, and moved back again (a close-and-release cycle, however gentle)."""
+    if len(cmd) < min_len:
+        return False
+    q = (cmd - lo) / (hi - lo)
+    q = q if side > 0 else 1.0 - q
+    bump = np.minimum(q - np.minimum.accumulate(q), q - np.minimum.accumulate(q[::-1])[::-1])
+    return any(e - b >= min_len for b, e in _runs(bump >= depth))
 
 
 def _grasps(
@@ -314,35 +330,63 @@ def _grasps(
         if np.std(a_all) <= 1e-12 or np.std(s_all) <= 1e-12:
             continue
         sign = 1.0 if np.corrcoef(a_all, s_all)[0, 1] >= 0 else -1.0
-        # (episode, settle position, follower minus command) for each held segment, per side
-        segs: dict[float, list[tuple[int, float, float]]] = {1.0: [], -1.0: []}
+        # Held segments per side: (episode, start, end, settle position, follower minus command, lead?).
+        # "lead" = held from the first frame: the rest pose before the gripper has moved, never a grasp.
+        segs: dict[float, list[tuple[int, int, int, float, float, bool]]] = {1.0: [], -1.0: []}
         for ep, a, s in eps:
             c = (a[:, ja] - a_lo) / (a_hi - a_lo)
             for side, held in ((1.0, c > 0.8), (-1.0, c < 0.2)):
                 for b, e in _runs(held):
                     if e - b >= min_len:
                         tail = slice(b + (e - b) // 2, e)
-                        segs[side].append(
-                            (ep, float(np.median(s[tail, js])), float(np.median(s[tail, js] - a[tail, ja])))
-                        )
+                        med_s = float(np.median(s[tail, js]))
+                        segs[side].append((ep, b, e, med_s, float(np.median(s[tail, js] - a[tail, ja])), b == 0))
+        by_index = {ep: a for ep, a, _ in eps}
         for side in (1.0, -1.0):
-            if len(segs[side]) < 5:
+            if sum(1 for g in segs[side] if not g[5]) < 5:
                 continue
             d = side * sign  # direction the follower travels when commanded to this side
-            settle = np.array([v for _, v, _ in segs[side]])
-            farthest = float(np.max(d * settle))
-            shortfall = (farthest - d * settle) / s_rng
+            free = [g[4] for g in segs[-side]]
+            offset = float(np.median(free)) if free else 0.0
+            # Frames where an object holds the follower short of the command (calibration offset removed),
+            # whatever the command level: operators often grasp without squeezing the leader all the way.
+            held_obj: dict[int, list[tuple[int, int]]] = {}
+            for ep, a, s in eps:
+                blocked = d * (offset - (s[:, js] - a[:, ja])) >= cfg.grasp_object_min * s_rng
+                held_obj[ep] = [(b, e) for b, e in _runs(blocked) if e - b >= min_len]
+
+            # A hold that runs to the end of the episode on nothing is the gripper put back to rest when
+            # the task is over, not a grasp attempt, if the episode already held an object or already
+            # closed and reopened (a pick and release, even one too gentle to show as a held segment).
+            grasps = []
+            for g in segs[side]:
+                if g[5]:
+                    continue
+                a = by_index[g[0]]
+                if g[2] == len(a) and abs(g[4] - offset) < cfg.grasp_object_min * s_rng:
+                    if any(e <= g[1] for _, e in held_obj[g[0]]) or _closed_and_reopened(
+                        a[: g[1], ja], a_lo, a_hi, side, cfg.grasp_object_min, min_len
+                    ):
+                        continue
+                grasps.append(g)
+            if len(grasps) < 5:
+                continue
+            farthest = float(np.max([d * g[3] for g in grasps]))
+            shortfall = (farthest - d * np.array([g[3] for g in grasps])) / s_rng
             if np.median(shortfall) < cfg.grasp_object_min:
                 continue  # this side is free motion (opening, or closing on nothing by design)
-            # Second test, so a smaller object is not mistaken for air: a gripper closing on nothing
-            # reaches the operator's command, offset only by the leader/follower calibration seen
-            # when the gripper moves freely to the other side.
-            free = [g for _, _, g in segs[-side]]
-            offset = float(np.median(free)) if free else 0.0
+            # A gripper closing on nothing reaches the operator's command, offset only by the
+            # leader/follower calibration seen when it moves freely to the other side; an object
+            # holds it short of the command. This also keeps a smaller object from being taken for air.
+            if np.median([abs(g[4] - offset) for g in grasps]) / s_rng < cfg.grasp_object_min:
+                # Settle points vary but the follower follows the command: the operator just opens (or
+                # closes) by different amounts, and nothing is held. Not a grasping side.
+                continue
             by_ep: dict[int, list[bool]] = {}
-            for (ep, _, gap), short in zip(segs[side], shortfall, strict=True):
-                reached = abs(gap - offset) < cfg.grasp_air_tol * s_rng
-                by_ep.setdefault(ep, []).append(bool(short < cfg.grasp_air_tol and reached))
+            for g, short in zip(grasps, shortfall, strict=True):
+                by_ep.setdefault(g[0], []).append(
+                    bool(short < cfg.grasp_air_tol and abs(g[4] - offset) < cfg.grasp_air_tol * s_rng)
+                )
             name = s_st.names[js]
             for ep, missed in sorted(by_ep.items()):
                 if missed[-1]:
