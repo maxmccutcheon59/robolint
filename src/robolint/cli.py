@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .api import lint
+from .checks import Config
 from .dataset import DatasetError
 from .findings import Severity
 from .report import audit_markdown, write_exclude, write_html, write_json, write_text
@@ -23,6 +24,41 @@ def _common(p: argparse.ArgumentParser) -> None:
         "--cache-mb",
         type=float,
         help="decoded frame data kept in memory, in MB (default 512); larger datasets are streamed from disk",
+    )
+    k = p.add_argument_group("columns (found automatically unless given)")
+    k.add_argument(
+        "--action-key",
+        action="append",
+        metavar="COLUMN",
+        help="data column that makes up the action; repeat to join several side by side, in order "
+        "(e.g. --action-key action.left --action-key action.right)",
+    )
+    k.add_argument("--state-key", action="append", metavar="COLUMN", help="the same for observation.state")
+    k.add_argument(
+        "--gripper",
+        action="append",
+        metavar="DIM",
+        help="action dimension that is a gripper, by name or 0-based index; repeat for each gripper",
+    )
+    k.add_argument(
+        "--state-gripper",
+        action="append",
+        metavar="DIM",
+        help="state dimension that is a gripper (default: the same name, or the same index if action "
+        "and state have the same width)",
+    )
+
+
+def _dim(v: str) -> str | int:
+    return int(v) if v.lstrip("-").isdigit() else v
+
+
+def _config(args: argparse.Namespace) -> Config:
+    return Config(
+        action_keys=tuple(args.action_key or ()),
+        state_keys=tuple(args.state_key or ()),
+        gripper_dims=tuple(_dim(v) for v in args.gripper or ()),
+        state_gripper_dims=tuple(_dim(v) for v in args.state_gripper or ()),
     )
 
 
@@ -66,6 +102,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
             cache_dir=args.cache_dir,
             max_episodes=args.max_episodes,
             cache_mb=args.cache_mb,
+            config=_config(args),
         )
     except DatasetError as e:
         print(f"robolint: {e}", file=sys.stderr)
@@ -110,6 +147,7 @@ def _cmd_audit(args: argparse.Namespace) -> int:
                 cache_dir=args.cache_dir,
                 max_episodes=args.max_episodes,
                 cache_mb=args.cache_mb,
+                config=_config(args),
             )
         except Exception as e:  # noqa: BLE001 - keep going across many datasets
             msg = str(e).replace("|", "/").replace("\n", " ")[:200]

@@ -91,6 +91,7 @@ class FrameStore:
         self.names = names
         self.segments = segments
         self.cache = cache
+        self.aliases: dict[str, list[str]] = {}  # column assembled from other columns, side by side
         self._episodes: OrderedDict[int, tuple[np.ndarray | None, dict[str, np.ndarray]]] = OrderedDict()
 
     # -- file columns -------------------------------------------------------------------------
@@ -115,8 +116,22 @@ class FrameStore:
 
     # -- episodes -----------------------------------------------------------------------------
 
+    def add_alias(self, name: str, parts: list[str]) -> None:
+        """Make `name` read as the columns `parts` placed side by side (e.g. one action vector from
+        separate left- and right-arm columns)."""
+        width = sum(max(1, self.spec[p].width) for p in parts)
+        self.spec[name] = ColumnSpec(width=width, dtype=np.dtype(np.float32))  # as vector columns load
+        self.aliases[name] = list(parts)
+        if name not in self.names:
+            self.names.append(name)
+        self._episodes.clear()
+
     def _raw(self, ep: int, name: str) -> np.ndarray:
         spec = self.spec[name]
+        if name in self.aliases:
+            cols = [self._raw(ep, p) for p in self.aliases[name]]
+            cols = [c.reshape(len(c), -1) for c in cols]
+            return np.concatenate(cols, axis=1).astype(spec.dtype)
         parts = []
         for fid, rows in self.segments[ep]:
             a = self.file_column(fid, name)

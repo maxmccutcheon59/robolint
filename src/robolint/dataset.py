@@ -63,6 +63,9 @@ class Dataset:
     partial: bool = False  # only the first N episodes were loaded (quick mode)
     format: str = "lerobot"  # "lerobot", "hdf5-robomimic", or "hdf5-aloha"
     store: FrameStore | None = field(default=None, repr=False)  # where lazily loaded frames come from
+    # Columns read as "action" / "observation.state" when they are not single columns of those names
+    key_sources: dict[str, list[str]] = field(default_factory=dict)
+    virtual_features: dict[str, Any] = field(default_factory=dict)
 
     @property
     def version(self) -> str:
@@ -81,7 +84,8 @@ class Dataset:
     @property
     def features(self) -> dict[str, Any]:
         f = self.info.get("features")
-        return f if isinstance(f, dict) else {}
+        f = f if isinstance(f, dict) else {}
+        return {**f, **self.virtual_features} if self.virtual_features else f
 
     @property
     def video_keys(self) -> list[str]:
@@ -632,6 +636,74 @@ def _video_refs(
     return refs
 
 
+ACTION, STATE = "action", "observation.state"
+
+
+def _feature_names(features: dict[str, Any], key: str) -> list[str]:
+    names = features.get(key, {}).get("names") if isinstance(features.get(key), dict) else None
+    if isinstance(names, dict):
+        names = next((v for v in names.values() if isinstance(v, list)), None)
+    return [str(x) for x in names] if isinstance(names, list) else []
+
+
+def _part_order(key: str) -> tuple[int, str]:
+    """Left before right, then by name, so action and state parts line up the same way."""
+    k = key.lower()
+    side = 0 if re.search(r"(^|[._])(left|l)([._]|$)", k) else 1 if re.search(r"(^|[._])(right|r)([._]|$)", k) else 2
+    return side, k
+
+
+def resolve_keys(
+    features: dict[str, Any], columns: dict[str, int], action_keys=(), state_keys=()
+) -> tuple[dict[str, list[str]], list[str]]:
+    """Which data columns make up the action and the state.
+
+    Explicit keys are used as given, in that order. Otherwise a column named exactly 'action'
+    ('actions' also works) or 'observation.state' is used; failing that, all numeric columns
+    under 'action.' or 'observation.state.' (for example 'action.left_arm' and 'action.right_arm'
+    in a bimanual recording) are placed side by side, left before right. `columns` maps each
+    numeric data column to its width. Returns {canonical key: source columns} for the keys that are
+    not a single column of the canonical name, and problems with explicit keys.
+    """
+    out: dict[str, list[str]] = {}
+    problems: list[str] = []
+    for canon, given, fallbacks in ((ACTION, action_keys, ("actions",)), (STATE, state_keys, ())):
+        if given:
+            missing = [k for k in given if k not in columns]
+            if missing:
+                problems.append(
+                    f"{canon} key{'s' if len(missing) > 1 else ''} {', '.join(repr(k) for k in missing)} "
+                    "not found among the numeric data columns"
+                )
+            parts = [k for k in given if k in columns]
+        elif canon in columns:
+            continue
+        elif any(f in columns for f in fallbacks):
+            parts = [next(f for f in fallbacks if f in columns)]
+        else:
+            parts = sorted((k for k in columns if k.startswith(canon + ".")), key=_part_order)
+            if canon == ACTION:  # 'action.*' never includes the state, but guard against odd names
+                parts = [k for k in parts if not k.startswith(STATE)]
+        if parts and parts != [canon]:
+            out[canon] = parts
+    return out, problems
+
+
+def _virtual_feature(features: dict[str, Any], canon: str, parts: list[str], widths: dict[str, int]) -> dict:
+    names: list[str] = []
+    for p in parts:
+        w = max(1, widths[p])
+        label = p[len(canon) + 1 :] if p.startswith(canon + ".") else p
+        own = _feature_names(features, p)
+        if widths[p] == 0:
+            names.append(label)
+        elif len(own) == w:
+            names.extend(f"{label}.{n}" if len(parts) > 1 else n for n in own)
+        else:
+            names.extend(f"{label}[{i}]" for i in range(w))
+    return {"dtype": "float32", "shape": [len(names)], "names": names, "assembled_from": parts}
+
+
 def load_dataset(
     root: Path,
     *,
@@ -639,8 +711,15 @@ def load_dataset(
     max_episodes: int | None = None,
     hub_blobs: tuple[Path, ...] | None = None,
     cache_mb: float | None = None,
+    action_keys: tuple[str, ...] | list[str] = (),
+    state_keys: tuple[str, ...] | list[str] = (),
 ) -> Dataset:
     """Load a dataset from a local folder.
+
+    `action_keys` / `state_keys` name the data columns that make up the action and the state when
+    they are not single columns called 'action' and 'observation.state'; by default split columns
+    such as 'action.left_arm' and 'action.right_arm' are found and placed side by side (see
+    resolve_keys).
 
     Frames are not held in memory: each episode's columns are decoded from the parquet files when a
     check first reads them, with at most `cache_mb` megabytes (default 512) of decoded columns kept.
@@ -661,6 +740,17 @@ def load_dataset(
     store, all_columns, n_found = _scan(root, max_episodes, hub_blobs, load_errors, cache)
     if "episode_index" not in store.spec:
         raise DatasetError("data has no episode_index column")
+
+    features = info.get("features") if isinstance(info.get("features"), dict) else {}
+    widths = {k: v.width for k, v in store.spec.items()}
+    key_sources, problems = resolve_keys(features, widths, tuple(action_keys), tuple(state_keys))
+    if problems:
+        raise DatasetError("; ".join(problems) + f" (numeric columns: {', '.join(sorted(widths))})")
+    virtual: dict[str, Any] = {}
+    for canon, parts in key_sources.items():
+        store.add_alias(canon, parts)
+        all_columns = all_columns | {canon}
+        virtual[canon] = _virtual_feature(features, canon, parts, widths)
 
     warnings: list[str] = []
     tasks = _load_tasks(root)
@@ -709,4 +799,6 @@ def load_dataset(
         load_errors=load_errors,
         partial=partial,
         store=store,
+        key_sources=key_sources,
+        virtual_features=virtual,
     )

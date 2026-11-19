@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
-from ..dataset import Dataset
+from ..dataset import Dataset, DatasetError
 from ..findings import Finding, Severity
 from ..stream import Moments, QuantileStream
 from . import Config
@@ -24,17 +24,96 @@ class DimStats:
     step_scale: np.ndarray  # high quantile of |value - rolling median| per dimension
     names: list[str]
     discrete: np.ndarray  # dims that only take a handful of values (e.g. a binary gripper command)
+    grippers: np.ndarray | None = None  # gripper dims named in the config; None: found by name
 
     @property
     def active(self) -> np.ndarray:
         return self.rng > 1e-9
 
     def gripper_mask(self) -> np.ndarray:
+        if self.grippers is not None:
+            return self.grippers
         return (
             np.array(["gripper" in n.lower() for n in self.names], dtype=bool)
             if self.names
             else np.zeros(len(self.rng), bool)
         )
+
+
+def gripper_spec(cfg: Config, key: str, a_names: list[str], a_width: int, s_names: list[str], s_width: int):
+    """The configured gripper dims of `key` ("action" or "observation.state"), as given or, for
+    the state when only action grippers are given, carried over: the same name if the state has
+    it, otherwise the same position when action and state have the same width."""
+
+    def norm(spec, names):  # "5" means index 5 unless a dimension is called "5"
+        return tuple(int(g) if isinstance(g, str) and g.isdigit() and g not in names else g for g in spec)
+
+    if key == "action" or cfg.state_gripper_dims:
+        return norm(cfg.gripper_dims, a_names) if key == "action" else norm(cfg.state_gripper_dims, s_names)
+    out: list[str | int] = []
+    for g in norm(cfg.gripper_dims, a_names):
+        j = a_names.index(g) if isinstance(g, str) and g in a_names else g if isinstance(g, int) else None
+        if isinstance(g, str) and g in s_names:
+            out.append(g)
+        elif j is not None and a_width == s_width:
+            out.append(int(j))
+        else:
+            raise DatasetError(
+                f"gripper {g!r} has no matching state dimension; name it with state_gripper_dims (--state-gripper)"
+            )
+    return tuple(out)
+
+
+def gripper_mask_for(spec, names: list[str], width: int, key: str) -> np.ndarray:
+    """Mask of the dims in `spec` (names or indices). Raises DatasetError for an unknown one."""
+    mask = np.zeros(width, bool)
+    for g in spec:
+        if isinstance(g, bool) or not isinstance(g, (int, str)):
+            raise DatasetError(f"gripper dims must be names or indices, got {g!r}")
+        if isinstance(g, int):
+            if not 0 <= g < width:
+                raise DatasetError(f"gripper index {g} is outside '{key}', which has {width} dimensions")
+            mask[g] = True
+        elif g in names:
+            mask[names.index(g)] = True
+        else:
+            known = ", ".join(names) if names else "none declared; use an index"
+            raise DatasetError(f"gripper {g!r} is not a dimension of '{key}' (names: {known})")
+    return mask
+
+
+def configured_grippers(ds: Dataset, cfg: Config) -> dict[str, np.ndarray]:
+    """Gripper masks named in the config, for the keys the dataset has. Raises DatasetError if a
+    configured dim does not exist."""
+    if not cfg.gripper_dims and not cfg.state_gripper_dims:
+        return {}
+    info = {k: (_names(ds, k), _width(ds, k)) for k in KEYS}
+    (an, aw), (sn, sw) = info["action"], info["observation.state"]
+    out = {}
+    for key in KEYS:
+        names, width = info[key]
+        if width is None:
+            continue
+        spec = gripper_spec(cfg, key, an, aw or 0, sn, sw or 0)
+        if spec:
+            out[key] = gripper_mask_for(spec, names, width, key)
+    return out
+
+
+def _width(ds: Dataset, key: str) -> int | None:
+    if ds.store is not None:
+        sp = ds.store.spec.get(key)
+        return None if sp is None else max(1, sp.width)
+    for ep in ds.episodes:
+        if key in ep.frames:
+            return _as2d(ep.frames[key]).shape[1]
+    return None
+
+
+def _names(ds: Dataset, key: str) -> list[str]:
+    names = ds.feature_names(key)
+    w = _width(ds, key)
+    return names if w is not None and len(names) == w else []
 
 
 def _as2d(a: np.ndarray) -> np.ndarray:
@@ -67,7 +146,14 @@ def dataset_stats(ds: Dataset, key: str, cfg: Config) -> DimStats | None:
         keys = [key] + [k for k in KEYS if k != key and (k, cfg.spike_quantile) not in cache]
         for k, st in _dataset_stats(ds, keys, cfg).items():
             cache[(k, cfg.spike_quantile)] = st
-    return cache[ck]
+    st = cache[ck]
+    if st is None or not (cfg.gripper_dims or cfg.state_gripper_dims):
+        return st
+    gk = (key, cfg.spike_quantile, cfg.gripper_dims, cfg.state_gripper_dims)
+    if gk not in cache:
+        mask = configured_grippers(ds, cfg).get(key)
+        cache[gk] = st if mask is None or len(mask) != len(st.rng) else replace(st, grippers=mask)
+    return cache[gk]
 
 
 DISCRETE_SAMPLE = 200_000  # rows looked at to decide whether a dimension only takes a handful of values
@@ -383,10 +469,12 @@ def _limits(ep: int, s: np.ndarray, a: np.ndarray, st: DimStats, fps: float, cfg
 
 def _gripper_pairs(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
     """(action dim, state dim) for each gripper, matched in order (one pair per arm)."""
-    ia = [i for i, n in enumerate(a_st.names) if "gripper" in n.lower()]
-    i_s = [i for i, n in enumerate(s_st.names) if "gripper" in n.lower()]
+    ia = np.flatnonzero(a_st.gripper_mask()).tolist()
+    i_s = np.flatnonzero(s_st.gripper_mask()).tolist()
     if len(ia) != len(i_s):
         return []
+    if not a_st.names or not s_st.names:
+        return list(zip(ia, i_s, strict=True))
     a_names, s_names = [a_st.names[i] for i in ia], [s_st.names[i] for i in i_s]
     if sorted(a_names) == sorted(s_names):  # same names on both sides: pair by name, not by position
         return [(ja, s_st.names.index(a_st.names[ja])) for ja in ia]

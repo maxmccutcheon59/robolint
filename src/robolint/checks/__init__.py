@@ -11,6 +11,11 @@ from ..findings import Finding
 
 @dataclass
 class Config:
+    # Which columns and dimensions to read (empty: found automatically; see README "Choosing columns")
+    action_keys: tuple[str, ...] = ()  # data columns that make up the action, placed side by side
+    state_keys: tuple[str, ...] = ()  # data columns that make up the measured state
+    gripper_dims: tuple[str | int, ...] = ()  # action dims that are grippers, by name or index
+    state_gripper_dims: tuple[str | int, ...] = ()  # state dims that are grippers (default: as above)
     # Timing
     gap_factor: float = 1.5  # dt above this many frame periods counts as dropped frames
     jitter_ratio: float = 0.10  # std(dt) / period above this is jittery

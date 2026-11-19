@@ -60,7 +60,7 @@ HELP: dict[str, str] = {
     "TIMESTAMP_NONFINITE": "Timestamps contain NaN or infinite values.",
     "EMPTY_EPISODE": "Episode contains no frames.",
     "NO_EPISODES": "Dataset contains no episodes.",
-    "NO_ACTIONS": "No action column: the dataset cannot train a policy.",
+    "NO_ACTIONS": "No action column: the dataset cannot train a policy. If it is named differently, pass --action-key.",
     "NO_TIMESTAMPS": "No timestamp column: timing cannot be verified.",
     "FPS_MISSING": "No valid fps in info.json.",
     "METADATA_INCOMPLETE": "Episode metadata files are missing.",
@@ -120,6 +120,8 @@ def write_text(
         f"with warnings {sc.episodes_with_warnings} ({_pct(sc.episodes_with_warnings, n_eps)}) · "
         f"with errors {sc.episodes_with_errors} ({_pct(sc.episodes_with_errors, n_eps)})\n"
     )
+    for key, parts in ds.key_sources.items():
+        w(c(f"  {key} read from {' + '.join(parts)}\n", _DIM))
     if not r.videos_checked and ds.video_keys:
         w(c("  video not checked (add --videos to check camera streams)\n", _DIM))
 
@@ -194,6 +196,7 @@ def write_html(r: Result, path: Path) -> None:
         f"<div class='muted'>LeRobot {e(ds.version)} · robot {e(str(ds.info.get('robot_type') or 'unknown'))} · "
         f"{ds.fps or '?'} fps · cameras: {e(', '.join(ds.video_keys) or 'none')}"
         f"{'' if r.videos_checked or not ds.video_keys else ' · video not checked'}</div>",
+        *(f"<div class='muted'>{e(k)} read from {e(' + '.join(v))}</div>" for k, v in ds.key_sources.items()),
         "<div class='cards'>",
         f"<div class='card'><div class='muted'>Score</div><div class='big {grade_cls}'>{sc.dataset_score:.1f}</div><div>grade {e(sc.grade)}</div></div>",
         f"<div class='card'><div class='muted'>Episodes</div><div class='big'>{n_eps:,}</div><div>{ds.total_frames:,} frames</div></div>",

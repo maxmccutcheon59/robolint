@@ -50,6 +50,7 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 | **Actions & state** | NaN/inf values, dead episodes (robot never moves), frozen state (follower disconnected), teleop glitches (action spikes), idle lead-in/tail padding, gripper never actuating, **failed grasps** (the gripper closes on nothing: a failed demo) and recovered re-grasps, joints pinned at limits, **action-to-state lag** (the dataset's typical delay between command and measured state, and episodes whose delay is far off it) |
 | **Episodes** | false starts, truncated and runaway episodes, metadata/data length mismatches, near-duplicate episodes, missing or unknown tasks |
 | **Video** (`--videos`) | missing or unreadable files, **frames missing mid-episode** (gaps in the frame timestamps of every file, read without decoding), duplicate or out-of-order frame timestamps, video/action length mismatches, black, blown-out, blank, and frozen camera feeds, **frozen stretches mid-episode** (the image stops changing for a second or more while the joints that camera sees keep moving), fps and resolution mismatches in every file, **action/video sync** (each camera's typical delay behind the commanded motion, and episodes whose video is shifted in time against the actions) |
+| **Columns** | split action and state columns (`action.left_arm` + `action.right_arm`) are found and joined; grippers can be named when the dimension names don't say "gripper" (see [Choosing columns](#choosing-columns)) |
 | **Metadata** | declared vs actual episode/frame counts, missing features, shape mismatches, vague task descriptions that can't condition a VLA policy |
 
 
@@ -81,6 +82,11 @@ robolint check cadene/droid_1.0.1 --max-episodes 200
 # Cap the decoded data kept in memory (default 512 MB); bigger datasets are streamed from disk
 robolint check ./my_big_dataset --cache-mb 256
 
+# Columns with other names: join split arms, name a gripper the dimension names don't reveal
+robolint check ./my_dataset --action-key action.left_arm --action-key action.right_arm \
+    --state-key observation.state.left_arm --state-key observation.state.right_arm
+robolint check ./libero_style_dataset --gripper 6
+
 # Audit many datasets at once
 robolint audit lerobot/pusht lerobot/svla_so101_pickplace --out audit/
 robolint audit --from-file datasets.txt --out audit/
@@ -98,6 +104,26 @@ for f in result.findings:
 ```
 
 Install options: `robolint` (local datasets), `robolint[hub]` (Hub downloads), `robolint[video]` (camera checks), `robolint[all]`.
+
+## Choosing columns
+
+robolint reads the action from a column called `action` and the measured state from
+`observation.state`. When a dataset has no such column, it looks for split columns instead: every
+numeric column under `action.` (for example `action.left_arm` and `action.right_arm` in a bimanual
+recording) is joined side by side into one action, and the same for `observation.state.`. Parts
+are ordered left before right, then by name, so action and state line up the same way. Each
+joined dimension is named after its part, such as `left_arm.gripper.pos`, so grippers are paired
+by name. The report says which columns were joined. A column called `actions` is also read as the
+action. To choose the columns yourself, pass `--action-key` and `--state-key` once per column, in
+the order to join them (`Config(action_keys=..., state_keys=...)` from Python).
+
+The grasp, gripper and joint-limit checks find grippers by name: any dimension whose name contains
+"gripper". When a gripper is called something else, or the dataset declares no dimension names at
+all, name it with `--gripper`, by name or by 0-based index, once per gripper. The state's gripper
+is taken to be the dimension with the same name, or at the same index when action and state have
+the same width; `--state-gripper` names it otherwise. A gripper named this way is also left out of
+the lag and video checks, which treat the other dimensions as joints. An unknown name or an index
+out of range stops the run with an error (exit code 2).
 
 ## How the video checks work
 

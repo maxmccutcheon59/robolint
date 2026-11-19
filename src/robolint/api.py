@@ -58,6 +58,7 @@ class Result:
                 "frames": ds.total_frames,
                 "cameras": ds.video_keys,
                 "tasks": len(ds.tasks),
+                "columns": columns_used(ds),
             },
             "score": self.scores.dataset_score,
             "grade": self.scores.grade,
@@ -73,6 +74,12 @@ class Result:
             "findings": [f.to_dict() for f in self.findings],
             "seconds": round(self.seconds, 2),
         }
+
+
+def columns_used(ds: Dataset) -> dict[str, list[str]]:
+    """The data columns read as the action and the state, when they are not single columns of
+    those names."""
+    return {k: list(v) for k, v in ds.key_sources.items()}
 
 
 def lint(
@@ -95,7 +102,18 @@ def lint(
         str(source), include_videos=videos, revision=revision, cache_dir=cache_dir, max_episodes=max_episodes
     )
     hub_blobs = hub_blob_dirs(root) if from_hub else None
-    ds = load_dataset(root, source=str(source), max_episodes=max_episodes, hub_blobs=hub_blobs, cache_mb=cache_mb)
+    ds = load_dataset(
+        root,
+        source=str(source),
+        max_episodes=max_episodes,
+        hub_blobs=hub_blobs,
+        cache_mb=cache_mb,
+        action_keys=cfg.action_keys,
+        state_keys=cfg.state_keys,
+    )
+    from .checks.signals import configured_grippers
+
+    configured_grippers(ds, cfg)  # an unknown gripper name or index stops here, before any check
     findings: list[Finding] = []
     for check in all_checks(include_video=videos):
         findings.extend(check(ds, cfg))

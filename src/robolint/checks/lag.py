@@ -228,10 +228,11 @@ def matched_dims(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
     grippers (an object stops them short of the command) and on/off channels."""
     a_names = a_st.names
     s_index = {n: i for i, n in enumerate(s_st.names)}
+    a_grip, s_grip = a_st.gripper_mask(), s_st.gripper_mask()
     pairs = []
     for ja, name in enumerate(a_names):
         js = s_index.get(name)
-        if js is None or "gripper" in name.lower():
+        if js is None or "gripper" in name.lower() or a_grip[ja] or s_grip[js]:
             continue
         if not (a_st.active[ja] and s_st.active[js]) or a_st.discrete[ja] or s_st.discrete[js]:
             continue
@@ -244,6 +245,8 @@ def matched_dims(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
             for j in range(len(a_names))
             if a_st.active[j] and s_st.active[j] and not a_st.discrete[j] and not s_st.discrete[j]
         ]
+    if a_st.grippers is not None or s_st.grippers is not None:  # grippers named in the config
+        pairs = [(ja, js) for ja, js in pairs if not a_grip[ja] and not s_grip[js]]
     return pairs
 
 
@@ -285,7 +288,7 @@ def position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
     something else have no lag to estimate, and their actions do not describe visible motion as
     positions. None if there are none."""
     cache = ds.__dict__.setdefault("_position_joints_cache", {})
-    key = (cfg.lag_tracking_corr, cfg.spike_quantile)
+    key = (cfg.lag_tracking_corr, cfg.spike_quantile, cfg.gripper_dims, cfg.state_gripper_dims)
     if key not in cache:
         cache[key] = _position_joints(ds, cfg)
     return cache[key]

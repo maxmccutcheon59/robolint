@@ -30,6 +30,21 @@
   the run.
 
 ### Added
+- **Split action and state columns.** When a dataset has no `action` or `observation.state` column,
+  every numeric column under `action.` or `observation.state.` (for example `action.left_arm` and
+  `action.right_arm`) is joined side by side, left before right, then by name; joined dimensions
+  are named after their part (`left_arm.gripper.pos`). Before, such datasets got `NO_ACTIONS` and
+  no other action or state check ran. A column called `actions` is read as the action. The report
+  and the JSON (`dataset.columns`) say which columns were joined. Datasets with an `action` column
+  are read exactly as before: 69/69 synthetic datasets give identical findings.
+- **`--action-key`, `--state-key` (CLI) and `Config.action_keys`, `Config.state_keys`:** choose the
+  columns, in the order to join them. An unknown column stops the run with an error.
+- **`--gripper`, `--state-gripper` (CLI) and `Config.gripper_dims`, `Config.state_gripper_dims`:**
+  name grippers whose dimension names don't contain "gripper", by name or index (for example
+  LIBERO-style data with no names). The grasp, gripper and joint-limit checks then run on them, and
+  the lag and video checks leave them out of the joints they use. The state gripper defaults to the
+  same name, or the same index when action and state have the same width. An unknown name or
+  index stops the run with an error.
 - **`VIDEO_DROPPED_FRAMES` (error), `VIDEO_DUPLICATE_FRAMES` and `VIDEO_TIMESTAMPS_UNORDERED`
   (warnings), with `--videos`.** Every packet timestamp of every video file is read without
   decoding. A gap of more than 1.5 frame periods inside an episode's segment counts as missing
