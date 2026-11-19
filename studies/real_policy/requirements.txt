@@ -1,0 +1,2 @@
+lerobot[aloha,training]==0.7.0
+matplotlib>=3.8
