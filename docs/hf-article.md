@@ -39,7 +39,7 @@ robolint audit --from-file datasets.txt --out audit
 | lerobot/libero | 1,693 | 100 (A) | 0 | 2 minor glitches |
 | recast-robotics/rollout_dagger_r1_s2_b0_20260915_121327 | 10 | 100 (A) | 0 | none |
 
-An **error** means the episode is unusable for training as published. The score is roughly the share of the data you can train on (see [scoring](https://github.com/maxmccutcheon59/robolint#what-it-checks)).
+An **error** means the episode is unusable for training as published. The score is a heuristic summary: 100 minus penalties per issue, not a measure of usable data (see [scoring](https://github.com/maxmccutcheon59/robolint#what-it-checks)). Video streams were not checked in this audit.
 
 ## Findings
 

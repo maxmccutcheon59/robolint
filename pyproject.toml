@@ -51,7 +51,7 @@ packages = ["src/robolint"]
 
 # Keep the sdist to the package, tests, and docs it needs (no Space app or audit lists).
 [tool.hatch.build.targets.sdist]
-include = ["/src/robolint", "/tests", "/README.md", "/LICENSE", "/pyproject.toml"]
+include = ["/src/robolint", "/tests", "/README.md", "/CHANGELOG.md", "/LICENSE", "/pyproject.toml"]
 
 [tool.ruff]
 line-length = 120

@@ -22,7 +22,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
             continue
 
         fi = ep.frames.get("frame_index")
-        if fi is not None:
+        if fi is not None and np.all(np.isfinite(fi)):  # non-finite rows are reported by the loader
             fi = fi.astype(np.int64)
             if fi[0] != 0:
                 yield Finding("FRAME_INDEX_OFFSET", W, f"frame_index starts at {fi[0]}, not 0", ep.index)
