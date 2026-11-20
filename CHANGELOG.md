@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **`STATE_LAG_OUTLIER` (warning) and `STATE_LAG` (info).** For joints whose measured position
+  follows the command, robolint cross-correlates smoothed action and state velocities to estimate
+  how many frames the state trails the action in each episode. `STATE_LAG` reports the dataset's
+  typical lag. An episode is flagged only when its lag is far from the typical one (at least
+  0.15 s, 3 frames and 5 robust standard deviations), the match at its own lag is strong, and that
+  lag fits clearly better than the typical one. Grippers, on/off channels, static and short
+  episodes, and datasets with fewer than 5 estimable episodes are skipped.
+- **`VIDEO_ACTION_OFFSET` (warning) and `VIDEO_LAG` (info), with `--videos`.** robolint decodes up
+  to 30 s of each camera per episode and finds the shift at which frame-to-frame image change is
+  best explained by the commanded joint speeds (a non-negative fit, so more motion can only mean
+  more image change). `VIDEO_LAG` reports each camera's typical delay; episodes whose shift is far
+  from it, by the same rules as above (0.25 s tolerance), are flagged. Feeds that are already black,
+  blank, frozen, the wrong length or at the wrong frame rate are skipped, and the check is skipped
+  without PyAV.
+
 ## 0.1.2 (2026-11-19)
 
 ### Added
