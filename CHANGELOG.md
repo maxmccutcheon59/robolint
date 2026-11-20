@@ -2,7 +2,82 @@
 
 ## Unreleased
 
+### Changed
+- **Scoring is consistent and its weights can be changed.** Each finding now keeps (1 − weight) of
+  the score instead of subtracting fixed points. Episode findings: error 1.0, warning 0.15, info
+  0.02, so one warning still gives 85, but warnings stack toward 0 without reaching it (before, 7
+  warnings scored 0, the same as an error). Dataset-level findings now scale the dataset score:
+  error 0.15, warning 0.05. Before, a dataset-level error cost a flat 10 points, less than a
+  single warning costs its episode. `NO_ACTIONS` and `NO_EPISODES` score the dataset 0. Weights
+  are set with `--weight KEY=W` (CLI) or `Config.score_weights` (`ScoreWeights`), and the JSON
+  report lists them under `score_weights`. On the 18-dataset audit no grade changes; recomputed
+  from the published findings (`benchmarks/audit_scores.py`): EPITECH-LILLE/eval_training 36.6 to
+  40.9 (F), kmg0620/so101_bomb_pick_place_v1 55.3 to 52.4 (F), jchandru08/so100_press_red_button
+  55.5 to 54.9 (F), SO-101-robot-learning/so101_pick_place 78.5 to 71.1 (C),
+  imstevenpmwork/omx_sentry_1 82.0 to 80.8 (B). The other 13 are unchanged. Episode scores can now
+  have decimals (72.25).
+- **Large datasets no longer need to fit in memory.** The loader reads each data file once, one
+  column at a time, to validate it and record which rows belong to which episode; episode columns
+  are then decoded when a check first reads them, with at most `--cache-mb` (default 512 MB) of
+  decoded data kept. Dataset-wide statistics, the grasp and lag checks, and the global index check
+  were rewritten to stream over episodes. Quantiles stay exact (two passes: a sample locates a
+  narrow band around each answer, then only the values in the band are kept), and correlations
+  are merged chunk by chunk. On a 10M-frame, 14-dimensional dataset peak memory drops from
+  7.3 GB to 1.1 GB (0.72 GB with `--cache-mb 128`) with identical findings; see the README's
+  "Large datasets" section.
+- `Episode.frames` is now a read-only mapping whose arrays are decoded on first use. Code that
+  modified those arrays in place must copy them first.
+
+- **Video: frozen-feed check no longer flags cameras that cannot see the motion.** Before,
+  `VIDEO_FROZEN` fired whenever any action moved and the image did not, so a wrist camera on a
+  resting arm was flagged while the other arm worked. It now uses the per-camera fit described
+  under `VIDEO_FREEZE` and stays quiet when only joints that camera does not see moved. It falls
+  back to the old behaviour when no fit is possible.
+- **Video: stream properties are summarized over every file.** `VIDEO_FPS_MISMATCH` and
+  `VIDEO_SHAPE_MISMATCH` now say how many of the camera's files are affected ("(3 of 50 files)"),
+  and are reported at the end of the video checks. When no shape is declared, files whose
+  resolution differs from the rest are reported. A file's frame rate is measured from the spacing
+  of its frame timestamps, so dropped frames no longer make a camera look slow. Only episodes in
+  files at the wrong rate are left out of the sync check, not the whole camera.
+- **Video: a file with no video stream** is reported as `VIDEO_UNREADABLE` instead of crashing
+  the run.
+
 ### Added
+- **Split action and state columns.** When a dataset has no `action` or `observation.state` column,
+  every numeric column under `action.` or `observation.state.` (for example `action.left_arm` and
+  `action.right_arm`) is joined side by side, left before right, then by name; joined dimensions
+  are named after their part (`left_arm.gripper.pos`). Before, such datasets got `NO_ACTIONS` and
+  no other action or state check ran. A column called `actions` is read as the action. The report
+  and the JSON (`dataset.columns`) say which columns were joined. Datasets with an `action` column
+  are read exactly as before: 69/69 synthetic datasets give identical findings.
+- **`--action-key`, `--state-key` (CLI) and `Config.action_keys`, `Config.state_keys`:** choose the
+  columns, in the order to join them. An unknown column stops the run with an error.
+- **`--gripper`, `--state-gripper` (CLI) and `Config.gripper_dims`, `Config.state_gripper_dims`:**
+  name grippers whose dimension names don't contain "gripper", by name or index (for example
+  LIBERO-style data with no names). The grasp, gripper and joint-limit checks then run on them, and
+  the lag and video checks leave them out of the joints they use. The state gripper defaults to the
+  same name, or the same index when action and state have the same width. An unknown name or
+  index stops the run with an error.
+- **`VIDEO_DROPPED_FRAMES` (error), `VIDEO_DUPLICATE_FRAMES` and `VIDEO_TIMESTAMPS_UNORDERED`
+  (warnings), with `--videos`.** Every packet timestamp of every video file is read without
+  decoding. A gap of more than 1.5 frame periods inside an episode's segment counts as missing
+  frames: loaders that fetch frames by timestamp fail or return the wrong frame there. Gaps at
+  episode boundaries are left to `VIDEO_LENGTH_MISMATCH`.
+- **`VIDEO_FREEZE` (warning), with `--videos`.** About four frames per second are decoded (only
+  key frames when there is one at least every quarter second, as in LeRobot's encoding). For each
+  camera, image change between samples is fitted to the measured movement of each joint with
+  non-negative weights, and the flicker of a still scene is measured. A stretch of at least 1 s is
+  flagged when the image changes less than that flicker (or, for a camera whose still scenes can
+  be perfectly static, when the joints it sees move clearly through most of the stretch), and the
+  camera is live elsewhere in the episode. Cameras whose change is poorly explained by the motion
+  (R² < 0.3), and datasets with no joints whose state follows the command, are skipped. New config
+  fields: `freeze_sample_hz`, `freeze_min_seconds`, `freeze_min_r2`, `freeze_min_episodes`.
+- `benchmarks/video.py`: a synthetic bimanual recording with two cameras, sensor noise, pauses and
+  three injected cases, timed before and after a change.
+- `--cache-mb` (CLI) and `cache_mb=` (`lint()`, `load_dataset()`): memory budget for decoded frames.
+- `benchmarks/`: `scale.py` (peak memory and time at any size, optionally against an older
+  checkout and with a given `--cache-mb`), `corpus.py` (synthetic datasets covering every fault) and `compare.py` (diff two
+  source trees' findings and scores on those datasets).
 - **`STATE_LAG_OUTLIER` (warning) and `STATE_LAG` (info).** For joints whose measured position
   follows the command, robolint cross-correlates smoothed action and state velocities to estimate
   how many frames the state trails the action in each episode. `STATE_LAG` reports the dataset's

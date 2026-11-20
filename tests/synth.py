@@ -50,17 +50,22 @@ def _frame_for(action_row: np.ndarray) -> np.ndarray:
     return rgb
 
 
-def _write_video(path: Path, frames: list[np.ndarray], fps: int) -> None:
+def _write_video(path: Path, frames: list[np.ndarray], fps: int, pts: list[int] | None = None, gop: int = 2) -> None:
+    """pts: frame numbers to stamp the frames with (default 0, 1, 2, ...); skipping numbers leaves
+    gaps in the timeline, as when frames are dropped while recording."""
     import av
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with av.open(str(path), "w") as out:
         st = out.add_stream("mpeg4", rate=fps)
         st.width, st.height, st.pix_fmt = W, H, "yuv420p"
-        st.codec_context.gop_size = 2
+        st.codec_context.gop_size = gop
         st.bit_rate = 4_000_000  # near-lossless, like a real recording at sane settings
-        for f in frames:
-            for pkt in st.encode(av.VideoFrame.from_ndarray(f, format="rgb24")):
+        for i, f in enumerate(frames):
+            vf = av.VideoFrame.from_ndarray(f, format="rgb24")
+            if pts is not None:
+                vf.pts = pts[i]
+            for pkt in st.encode(vf):
                 out.mux(pkt)
         for pkt in st.encode():
             out.mux(pkt)
@@ -80,6 +85,7 @@ def make_dataset(
     task: str = "Pick up the red cube and place it in the bin",
     grasp_object: bool = False,
     dims: int = 6,
+    video_gop: int = 2,
 ) -> Path:
     """grasp_object: the follower gripper stops on an object when it closes (as in real pick-and-place
     data) instead of following the command to fully closed."""
@@ -114,6 +120,12 @@ def make_dataset(
             a = a[(np.arange(n) // 4) * 4]
         if "spike" in f:
             a[n // 2, 1] += 150.0
+        if "unseen_motion" in f:  # for a while only the wrist roll moves, which the camera does not show
+            k0, k1 = int(0.3 * n), int(0.7 * n)
+            a[k1:, :4] -= a[k1, :4] - a[k0, :4]
+            a[k0:k1, :4] = a[k0, :4]
+        if "unseen_all" in f:  # only joints the camera does not show move, all episode
+            a[:, :4] = a[0, :4]
         if "rest_limit" in f:  # arm rests on its hard stop before the take; leader reads slightly past it
             k = int(n * 0.3)
             a[:k] = a[k]
@@ -246,6 +258,7 @@ def make_dataset(
 
     if videos:
         all_frames: list[np.ndarray] = []
+        all_pts: list[int] = []
         t0 = 0.0
         for ep in range(len(eps_data)):
             f = faults.get(ep, [])
@@ -258,20 +271,32 @@ def make_dataset(
                 frames = [_frame_for(a[max(0, t - SHIFT)]) for t in range(len(a))]
             else:
                 frames = [_frame_for(row) for row in a]
+            if "freeze_stretch" in f:  # the camera repeats one image for 1.5 s mid-episode
+                k = int(0.4 * len(frames))
+                frames[k : k + int(1.5 * fps)] = [frames[k]] * int(1.5 * fps)
             if "short_video" in f:
                 frames = frames[: len(frames) // 2]
             n_written = len(frames)
+            pts = list(range(n_written))
+            if "drop_frames" in f:  # five frames lost mid-episode; the rest keep their timestamps
+                k = n_written // 2
+                del frames[k : k + 5]
+                del pts[k : k + 5]
             if v3:
                 all_frames.extend(frames)
+                all_pts.extend(int(round(t0 * fps)) + p for p in pts)
                 ep_meta[ep][f"videos/{CAM}/chunk_index"] = 0
                 ep_meta[ep][f"videos/{CAM}/file_index"] = 0
                 ep_meta[ep][f"videos/{CAM}/from_timestamp"] = t0
                 ep_meta[ep][f"videos/{CAM}/to_timestamp"] = t0 + n_written / fps
                 t0 += n_written / fps
             elif "missing_video" not in f:
-                _write_video(root / "videos" / "chunk-000" / CAM / f"episode_{ep:06d}.mp4", frames, fps)
+                path = root / "videos" / "chunk-000" / CAM / f"episode_{ep:06d}.mp4"
+                _write_video(path, frames, fps, pts if "drop_frames" in f else None, video_gop)
         if v3:
-            _write_video(root / "videos" / CAM / "chunk-000" / "file-000.mp4", all_frames, fps)
+            dropped = any("drop_frames" in faults.get(ep, []) for ep in range(len(eps_data)))
+            path = root / "videos" / CAM / "chunk-000" / "file-000.mp4"
+            _write_video(path, all_frames, fps, all_pts if dropped else None, video_gop)
 
     (root / "meta" / "info.json").write_text(json.dumps(info, indent=2))
     if v3:

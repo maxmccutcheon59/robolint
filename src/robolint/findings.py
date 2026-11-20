@@ -31,11 +31,70 @@ class Finding:
         return d
 
 
-# Points removed from an episode's score, counted once per distinct code.
-# An error makes an episode unusable for training, so it zeroes the episode.
-EPISODE_PENALTY = {Severity.ERROR: 100, Severity.WARNING: 15, Severity.INFO: 2}
-# Points removed from the dataset score for dataset-level findings.
-DATASET_PENALTY = {Severity.ERROR: 10, Severity.WARNING: 3, Severity.INFO: 0}
+@dataclass(frozen=True)
+class ScoreWeights:
+    """How much of a score each finding takes away: a weight w keeps (1 - w) of it.
+
+    `episode` applies to findings about one episode, `dataset` to findings about the whole
+    dataset, and `codes` overrides either for particular finding codes. Each code counts once per
+    episode (or once for the dataset), at its worst severity.
+    """
+
+    # An error makes an episode unusable for training, so it zeroes the episode.
+    episode: dict[Severity, float] = field(
+        default_factory=lambda: {Severity.ERROR: 1.0, Severity.WARNING: 0.15, Severity.INFO: 0.02}
+    )
+    # A dataset-level error (mostly metadata that no longer matches the data) costs as much as a
+    # warning on every episode; a dataset-level warning a third of that.
+    dataset: dict[Severity, float] = field(
+        default_factory=lambda: {Severity.ERROR: 0.15, Severity.WARNING: 0.05, Severity.INFO: 0.0}
+    )
+    # Problems that leave nothing to train on zero the whole dataset.
+    codes: dict[str, float] = field(default_factory=lambda: {"NO_ACTIONS": 1.0, "NO_EPISODES": 1.0})
+
+    def __post_init__(self) -> None:
+        for table in (self.episode, self.dataset, self.codes):
+            for k, w in table.items():
+                if not (isinstance(w, (int, float)) and 0.0 <= w <= 1.0):
+                    raise ValueError(f"score weight for {getattr(k, 'label', k)} must be between 0 and 1, got {w!r}")
+        for table in (self.episode, self.dataset):
+            missing = [s.label for s in Severity if s not in table]
+            if missing:
+                raise ValueError(f"score weights are missing for: {', '.join(missing)}")
+
+    def weight(self, code: str, severity: Severity, dataset_level: bool) -> float:
+        if code in self.codes:
+            return float(self.codes[code])
+        return float((self.dataset if dataset_level else self.episode)[severity])
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "episode": {s.label: self.episode[s] for s in Severity},
+            "dataset": {s.label: self.dataset[s] for s in Severity},
+            "codes": dict(sorted(self.codes.items())),
+        }
+
+    def with_overrides(self, overrides: dict[str, float]) -> ScoreWeights:
+        """A copy with weights changed by key: 'error', 'warning' or 'info' (episode findings),
+        'dataset-error', 'dataset-warning' or 'dataset-info', or a finding code."""
+        episode, dataset, codes = dict(self.episode), dict(self.dataset), dict(self.codes)
+        for key, w in overrides.items():
+            k = key.strip().lower()
+            if k.startswith("dataset-") and k[8:] in SEVERITY_BY_LABEL:
+                dataset[SEVERITY_BY_LABEL[k[8:]]] = w
+            elif k in SEVERITY_BY_LABEL:
+                episode[SEVERITY_BY_LABEL[k]] = w
+            elif key.strip().isupper() or "_" in key:
+                codes[key.strip().upper()] = w
+            else:
+                raise ValueError(
+                    f"unknown score weight {key!r}: use error, warning, info, dataset-error, dataset-warning, "
+                    "dataset-info or a finding code such as IDLE_PADDING"
+                )
+        return ScoreWeights(episode=episode, dataset=dataset, codes=codes)
+
+
+SEVERITY_BY_LABEL = {s.label: s for s in Severity}
 
 
 def grade(score: float) -> str:
@@ -55,7 +114,15 @@ class Scores:
     episodes_with_warnings: int
 
 
-def score(findings: list[Finding], episode_indices: list[int]) -> Scores:
+def score(findings: list[Finding], episode_indices: list[int], weights: ScoreWeights | None = None) -> Scores:
+    """Score each episode and the dataset (see ScoreWeights and the README's "Scoring" section).
+
+    An episode starts at 100 and each distinct finding code keeps (1 - weight) of it, so warnings
+    stack toward zero but only an error reaches it. The dataset score is the average episode
+    score, scaled the same way by each dataset-level finding. The score summarizes how many and
+    how serious the issues are; it is not a measured prediction of training results.
+    """
+    weights = weights or ScoreWeights()
     per_ep: dict[int, dict[str, Severity]] = {i: {} for i in episode_indices}
     dataset_level: dict[str, Severity] = {}
     for f in findings:
@@ -67,8 +134,10 @@ def score(findings: list[Finding], episode_indices: list[int]) -> Scores:
     ep_scores: dict[int, float] = {}
     clean = with_err = with_warn = 0
     for ep, codes in per_ep.items():
-        penalty = sum(EPISODE_PENALTY[s] for s in codes.values())
-        ep_scores[ep] = float(max(0, 100 - penalty))
+        kept = 1.0
+        for code, sev in codes.items():
+            kept *= 1.0 - weights.weight(code, sev, dataset_level=False)
+        ep_scores[ep] = round(100.0 * kept, 2)
         sevs = set(codes.values())
         if Severity.ERROR in sevs:
             with_err += 1
@@ -78,8 +147,10 @@ def score(findings: list[Finding], episode_indices: list[int]) -> Scores:
             clean += 1
 
     base = sum(ep_scores.values()) / len(ep_scores) if ep_scores else 0.0
-    ds_penalty = sum(DATASET_PENALTY[s] for s in dataset_level.values())
-    final = round(max(0.0, min(100.0, base - ds_penalty)), 1)
+    kept = 1.0
+    for code, sev in dataset_level.items():
+        kept *= 1.0 - weights.weight(code, sev, dataset_level=True)
+    final = round(max(0.0, min(100.0, base * kept)), 1)
     return Scores(
         dataset_score=final,
         grade=grade(final),

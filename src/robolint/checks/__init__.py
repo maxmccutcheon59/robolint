@@ -3,14 +3,19 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ..dataset import Dataset
-from ..findings import Finding
+from ..findings import Finding, ScoreWeights
 
 
 @dataclass
 class Config:
+    # Which columns and dimensions to read (empty: found automatically; see README "Choosing columns")
+    action_keys: tuple[str, ...] = ()  # data columns that make up the action, placed side by side
+    state_keys: tuple[str, ...] = ()  # data columns that make up the measured state
+    gripper_dims: tuple[str | int, ...] = ()  # action dims that are grippers, by name or index
+    state_gripper_dims: tuple[str | int, ...] = ()  # state dims that are grippers (default: as above)
     # Timing
     gap_factor: float = 1.5  # dt above this many frame periods counts as dropped frames
     jitter_ratio: float = 0.10  # std(dt) / period above this is jittery
@@ -40,6 +45,10 @@ class Config:
     blank_std: float = 2.0
     frozen_diff: float = 1.0  # minimum mean pixel change (0-255) before a feed counts as live
     frozen_min_seconds: float = 2.0  # shorter episodes are too brief to judge
+    freeze_sample_hz: float = 4.0  # images sampled per second when looking for frozen stretches
+    freeze_min_seconds: float = 1.0  # a frozen stretch must last this long to be reported
+    freeze_min_r2: float = 0.3  # a camera's image change must be this well explained by the robot's motion
+    freeze_min_episodes: int = 3  # sampled episodes needed per camera before stretches are judged
     # Action-to-state lag
     lag_tracking_corr: float = 0.8  # a joint's state must follow its command this closely to be used
     lag_max_seconds: float = 1.0  # lags searched in each direction
@@ -63,6 +72,8 @@ class Config:
     sync_tol_frames: float = 3.0
     sync_mad_factor: float = 5.0
     sync_margin: float = 0.1
+    # Scoring (see ScoreWeights and the README's "Scoring" section)
+    score_weights: ScoreWeights = field(default_factory=ScoreWeights)
 
 
 CheckFn = Callable[[Dataset, Config], Iterable[Finding]]

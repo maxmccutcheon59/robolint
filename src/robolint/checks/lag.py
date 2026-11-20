@@ -19,6 +19,7 @@ import numpy as np
 
 from ..dataset import Dataset
 from ..findings import Finding, Severity
+from ..stream import Moments
 from . import Config
 from .signals import DimStats, _as2d, dataset_stats
 
@@ -124,6 +125,24 @@ def _nonneg_fit(X: np.ndarray, y: np.ndarray) -> np.ndarray:
     return np.full(len(y), y.mean())
 
 
+def nonneg_coef(X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Weights of a least-squares prediction of y from the columns of X plus a constant (last entry),
+    every column's weight kept at or above zero, as in _nonneg_fit."""
+    keep = np.ones(X.shape[1], bool)
+    coef_full = np.zeros(X.shape[1] + 1)
+    while keep.any():
+        A = np.column_stack([X[:, keep], np.ones(len(X))])
+        coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+        if np.all(coef[:-1] >= 0):
+            coef_full[np.flatnonzero(keep)] = coef[:-1]
+            coef_full[-1] = coef[-1]
+            return coef_full
+        idx = np.flatnonzero(keep)
+        keep[idx[int(np.argmin(coef[:-1]))]] = False
+    coef_full[-1] = float(np.mean(y)) if len(y) else 0.0
+    return coef_full
+
+
 def fit_curve(X: np.ndarray, y: np.ndarray, max_lag: int) -> LagCurve | None:
     """How well the columns of X (e.g. per-joint speeds) explain y (e.g. image change) for every shift
     of y, as the square root of the fit's R^2. Positive shifts mean y[t + lag] follows X[t]."""
@@ -209,10 +228,11 @@ def matched_dims(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
     grippers (an object stops them short of the command) and on/off channels."""
     a_names = a_st.names
     s_index = {n: i for i, n in enumerate(s_st.names)}
+    a_grip, s_grip = a_st.gripper_mask(), s_st.gripper_mask()
     pairs = []
     for ja, name in enumerate(a_names):
         js = s_index.get(name)
-        if js is None or "gripper" in name.lower():
+        if js is None or "gripper" in name.lower() or a_grip[ja] or s_grip[js]:
             continue
         if not (a_st.active[ja] and s_st.active[js]) or a_st.discrete[ja] or s_st.discrete[js]:
             continue
@@ -225,6 +245,8 @@ def matched_dims(a_st: DimStats, s_st: DimStats) -> list[tuple[int, int]]:
             for j in range(len(a_names))
             if a_st.active[j] and s_st.active[j] and not a_st.discrete[j] and not s_st.discrete[j]
         ]
+    if a_st.grippers is not None or s_st.grippers is not None:  # grippers named in the config
+        pairs = [(ja, js) for ja, js in pairs if not a_grip[ja] and not s_grip[js]]
     return pairs
 
 
@@ -246,7 +268,18 @@ class PositionJoints:
     state_dims: np.ndarray  # matching indices into the state vector
     names: list[str]
     rng: np.ndarray  # robust range of each action dim
-    episodes: list[tuple[int, np.ndarray, np.ndarray]]  # (episode, action, state) for usable episodes
+    positions: list[int]  # positions in ds.episodes of usable episodes
+    a_dim: int  # full action and state widths (to re-read episodes)
+    s_dim: int
+
+    def episodes(self, ds: Dataset) -> Iterator[tuple[int, np.ndarray, np.ndarray]]:
+        """(episode, action, state) of each usable episode, these joints only, read one at a time."""
+        for pos in self.positions:
+            ep = ds.episodes[pos]
+            a = _usable("action", self.a_dim, ep)
+            s = _usable("observation.state", self.s_dim, ep)
+            assert a is not None and s is not None
+            yield ep.index, a[:, self.action_dims], s[:, self.state_dims]
 
 
 def position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
@@ -255,7 +288,7 @@ def position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
     something else have no lag to estimate, and their actions do not describe visible motion as
     positions. None if there are none."""
     cache = ds.__dict__.setdefault("_position_joints_cache", {})
-    key = (cfg.lag_tracking_corr, cfg.spike_quantile)
+    key = (cfg.lag_tracking_corr, cfg.spike_quantile, cfg.gripper_dims, cfg.state_gripper_dims)
     if key not in cache:
         cache[key] = _position_joints(ds, cfg)
     return cache[key]
@@ -272,8 +305,9 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
     ia = np.array([p[0] for p in pairs])
     i_s = np.array([p[1] for p in pairs])
 
-    episodes = []
-    for ep in ds.episodes:
+    positions = []
+    moments = Moments()  # correlation of each joint's command and measurement, over the whole dataset
+    for pos, ep in enumerate(ds.episodes):
         fi = ep.frames.get("frame_index")
         if fi is not None and len(np.unique(fi)) < len(fi):
             continue  # merged/duplicated frames: already an error, and the signals are interleaved
@@ -281,20 +315,13 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
         s = _usable("observation.state", len(s_st.rng), ep)
         if a is None or s is None or len(a) != len(s):
             continue
-        episodes.append((ep.index, a[:, ia], s[:, i_s]))
-    if not episodes:
+        positions.append(pos)
+        moments.add(a[:, ia], s[:, i_s])
+    if not positions:
         return None
 
-    a_all = np.concatenate([a for _, a, _ in episodes])
-    s_all = np.concatenate([s for _, _, s in episodes])
-    tracks = np.array(
-        [
-            np.std(a_all[:, j]) > 1e-12
-            and np.std(s_all[:, j]) > 1e-12
-            and np.corrcoef(a_all[:, j], s_all[:, j])[0, 1] >= cfg.lag_tracking_corr
-            for j in range(len(pairs))
-        ]
-    )
+    std_a, std_s, corr = moments.std_x(), moments.std_y(), moments.corr()
+    tracks = (std_a > 1e-12) & (std_s > 1e-12) & (np.nan_to_num(corr, nan=-1.0) >= cfg.lag_tracking_corr)
     if not tracks.any():
         return None
     return PositionJoints(
@@ -302,7 +329,9 @@ def _position_joints(ds: Dataset, cfg: Config) -> PositionJoints | None:
         state_dims=i_s[tracks],
         names=[a_st.names[int(j)] for j in ia[tracks]],
         rng=a_st.rng[ia[tracks]],
-        episodes=[(ep, a[:, tracks], s[:, tracks]) for ep, a, s in episodes],
+        positions=positions,
+        a_dim=len(a_st.rng),
+        s_dim=len(s_st.rng),
     )
 
 
@@ -316,7 +345,7 @@ def check(ds: Dataset, cfg: Config) -> Iterator[Finding]:
     width = max(1, int(round(cfg.lag_smooth_seconds * fps)))
     min_len = max(int(cfg.lag_min_seconds * fps), 4 * width, 12)
     curves: dict[int, LagCurve] = {}
-    for ep_idx, a, s in pj.episodes:
+    for ep_idx, a, s in pj.episodes(ds):
         if len(a) < min_len:
             continue
         # Static episodes (or ones where only noise moves) have nothing to line up.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,8 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
+
+from .frames import DEFAULT_CACHE_MB, ColumnCache, ColumnSpec, DataFile, FrameStore, LazyFrames, Rows, Segment, rows_len
 
 REPO_ID_RE = re.compile(r"^[A-Za-z0-9][\w.-]*/[\w.-]+$")
 
@@ -32,13 +35,16 @@ class VideoRef:
 @dataclass
 class Episode:
     index: int
-    frames: dict[str, np.ndarray]
+    frames: Mapping[str, np.ndarray]  # column -> per-frame values (decoded on first use when loaded from disk)
     length_meta: int | None = None
     tasks: list[str] = field(default_factory=list)
     videos: list[VideoRef] = field(default_factory=list)
+    n_rows: int | None = None  # frame count, known without decoding any column
 
     @property
     def length(self) -> int:
+        if self.n_rows is not None:
+            return self.n_rows
         for arr in self.frames.values():
             return len(arr)
         return 0
@@ -56,6 +62,10 @@ class Dataset:
     load_errors: list[tuple[str, str, dict]] = field(default_factory=list)  # (code, message, details)
     partial: bool = False  # only the first N episodes were loaded (quick mode)
     format: str = "lerobot"  # "lerobot", "hdf5-robomimic", or "hdf5-aloha"
+    store: FrameStore | None = field(default=None, repr=False)  # where lazily loaded frames come from
+    # Columns read as "action" / "observation.state" when they are not single columns of those names
+    key_sources: dict[str, list[str]] = field(default_factory=dict)
+    virtual_features: dict[str, Any] = field(default_factory=dict)
 
     @property
     def version(self) -> str:
@@ -74,7 +84,8 @@ class Dataset:
     @property
     def features(self) -> dict[str, Any]:
         f = self.info.get("features")
-        return f if isinstance(f, dict) else {}
+        f = f if isinstance(f, dict) else {}
+        return {**f, **self.virtual_features} if self.virtual_features else f
 
     @property
     def video_keys(self) -> list[str]:
@@ -334,71 +345,112 @@ def _column_to_numpy(col: pa.ChunkedArray) -> tuple[np.ndarray | None, str | Non
 
 BOOKKEEPING = ("episode_index", "frame_index", "index", "timestamp", "task_index")
 CORE = ("action", "observation.state", "episode_index", "frame_index", "timestamp")
+# Columns the checks read; the scan keeps these decoded (cache budget permitting) instead of reading them twice.
+HOT = (*BOOKKEEPING, "action", "observation.state")
 
 
-def _merge(
-    pieces: list[tuple[str, int, dict[str, np.ndarray]]], errors: list[tuple[str, str, dict]]
-) -> dict[str, np.ndarray]:
-    """Concatenate per-file columns; a column missing or of the wrong width in a file becomes NaN rows."""
+@dataclass
+class _Piece:
+    fid: int
+    rows: int  # rows that belong to an episode
+    widths: dict[str, int]
+    dtypes: dict[str, np.dtype]
+
+
+def _plan(
+    pieces: list[_Piece], files: list[DataFile], errors: list[tuple[str, str, dict]]
+) -> tuple[list[str], dict[str, ColumnSpec]]:
+    """Dataset-wide width and dtype of every column. A column that is missing, or has another width,
+    in a file is read as NaN rows for that file's episodes, and reported."""
     names: list[str] = []
-    for _, _, cols in pieces:
-        for k in cols:
+    for p in pieces:
+        for k in p.widths:
             if k not in names:
                 names.append(k)
-    out: dict[str, np.ndarray] = {}
+    spec: dict[str, ColumnSpec] = {}
     for name in names:
         widths: dict[int, int] = {}
-        for _, n, cols in pieces:
-            a = cols.get(name)
-            if a is not None:
-                w = 0 if a.ndim == 1 else a.shape[1]
-                widths[w] = widths.get(w, 0) + n
+        for p in pieces:
+            if name in p.widths:
+                w = p.widths[name]
+                widths[w] = widths.get(w, 0) + p.rows
         w = max(widths, key=lambda k: widths[k])
-        blocks = []
-        for rel, n, cols in pieces:
-            a = cols.get(name)
-            aw = None if a is None else (0 if a.ndim == 1 else a.shape[1])
+        dtypes = []
+        for p in pieces:
+            aw = p.widths.get(name)
             if aw == w:
-                blocks.append(a)
+                dtypes.append(p.dtypes[name])
                 continue
-            if a is None:
-                why = "is missing"
-            else:
-                why = f"has width {aw} instead of {w}"
+            why = "is missing" if aw is None else f"has width {aw} instead of {w}"
+            rel = files[p.fid].rel
             errors.append(
                 (
                     "DATA_COLUMN_INVALID",
-                    f"column '{name}' {why} in {rel}; its {n} rows were treated as missing",
-                    {"column": name, "file": rel, "rows": n},
+                    f"column '{name}' {why} in {rel}; its {p.rows} rows were treated as missing",
+                    {"column": name, "file": rel, "rows": p.rows},
                 )
             )
-            blocks.append(np.full((n,) if w == 0 else (n, w), np.nan, np.float32))
-        if any(b.dtype.kind == "f" for b in blocks) and any(b.dtype.kind != "f" for b in blocks):
-            blocks = [b.astype(np.float64) for b in blocks]
-        out[name] = np.concatenate(blocks) if blocks else np.zeros(0)
-    return out
+            dtypes.append(np.dtype(np.float32))
+        if any(d.kind == "f" for d in dtypes) and any(d.kind != "f" for d in dtypes):
+            dt = np.dtype(np.float64)
+        else:
+            dt = np.result_type(*dtypes) if dtypes else np.dtype(np.float64)
+        spec[name] = ColumnSpec(width=w, dtype=np.dtype(dt))
+    if "episode_index" in spec:
+        spec["episode_index"].dtype = np.dtype(np.int64)
+    return names, spec
 
 
-def _load_frames(
+def _episode_runs(ep: np.ndarray, pos: np.ndarray | None) -> list[tuple[int, Rows]]:
+    """(episode, rows) for each run of one episode's rows in a file, in file order. `pos` maps the
+    kept rows back to file rows (None when every row was kept)."""
+    n = len(ep)
+    if n == 0:
+        return []
+    cuts = np.flatnonzero(ep[1:] != ep[:-1]) + 1
+    if len(cuts) > 2 * len(np.unique(ep)) + 16:
+        # Rows of different episodes are interleaved: group each episode's rows (kept in file order).
+        order = np.argsort(ep, kind="stable")
+        e_sorted = ep[order]
+        bounds = np.flatnonzero(e_sorted[1:] != e_sorted[:-1]) + 1
+        out = []
+        for s, e in zip(np.r_[0, bounds].tolist(), np.r_[bounds, n].tolist(), strict=True):
+            idx = order[s:e]
+            out.append((int(e_sorted[s]), idx if pos is None else pos[idx]))
+        return out
+    starts = np.r_[0, cuts].tolist()
+    ends = np.r_[cuts, n].tolist()
+    if pos is None:
+        return [(int(ep[s]), slice(s, e)) for s, e in zip(starts, ends, strict=True)]
+    return [(int(ep[s]), pos[s:e]) for s, e in zip(starts, ends, strict=True)]
+
+
+def _scan(
     root: Path,
-    max_episodes: int | None = None,
-    hub_blobs: tuple[Path, ...] | None = None,
-    errors: list[tuple[str, str, dict]] | None = None,
-) -> tuple[dict[str, np.ndarray], set[str]]:
-    """Read every numeric column of every data file.
+    max_episodes: int | None,
+    hub_blobs: tuple[Path, ...] | None,
+    errors: list[tuple[str, str, dict]],
+    cache: ColumnCache,
+    hot: tuple[str, ...] = HOT,
+) -> tuple[FrameStore, set[str], int]:
+    """Read every data file once: validate it, and record which of its rows belong to which episode.
 
     Problems that would otherwise drop data silently (files outside the dataset, unreadable
     columns, null rows, mixed list widths, rows without an episode) are appended to `errors` as
     (code, message, details); the meta check reports them as errors that cost score.
+
+    Returns the frame store, every column name seen, and how many distinct episodes the scanned
+    files hold.
     """
-    errors = errors if errors is not None else []
-    files = sorted((root / "data").rglob("*.parquet"))
-    if not files:
+    paths = sorted((root / "data").rglob("*.parquet"))
+    if not paths:
         raise DatasetError(f"no parquet files under {root / 'data'}")
-    pieces: list[tuple[str, int, dict[str, np.ndarray]]] = []
+    files: list[DataFile] = []
+    pieces: list[_Piece] = []
     all_names: set[str] = set()
     seen_eps: set[int] = set()
-    for f in files:
+    segments: dict[int, list[Segment]] = {}
+    for f in paths:
         rel = str(f.relative_to(root)) if _within(str(root), str(f)) else f.name
         if not _inside(root, f, hub_blobs):
             errors.append(
@@ -410,7 +462,8 @@ def _load_frames(
             )
             continue
         try:
-            schema = pq.read_schema(f)
+            pf = pq.ParquetFile(f)
+            schema = pf.schema_arrow
             all_names.update(schema.names)
             # Only numeric columns: skips embedded images, which can be gigabytes.
             wanted = [fld.name for fld in schema if _is_numeric(fld.type)]
@@ -423,21 +476,35 @@ def _load_frames(
                             {"column": fld.name, "file": rel, "type": str(fld.type)},
                         )
                     )
-            t = pq.read_table(f, columns=wanted)
+            n = pf.metadata.num_rows
         except Exception as e:
             raise DatasetError(f"unreadable parquet file {rel}: {e}") from e
-        cols: dict[str, np.ndarray] = {}
-        for name in t.column_names:
-            arr, problem = _column_to_numpy(t.column(name))
+        fid = len(files)
+        widths: dict[str, int] = {}
+        dtypes: dict[str, np.dtype] = {}
+        ep: np.ndarray | None = None
+        for name in wanted:
+            # One column at a time: decoding a whole file at once can take several times its size.
+            try:
+                col = pf.read(columns=[name]).column(0)
+            except Exception as e:
+                raise DatasetError(f"unreadable parquet file {rel}: {e}") from e
+            arr, problem = _column_to_numpy(col)
+            del col
             if arr is None:
                 continue
             if problem:
                 errors.append(
                     ("DATA_COLUMN_INVALID", f"column '{name}' in {rel}: {problem}", {"column": name, "file": rel})
                 )
-            cols[name] = arr
-        n = t.num_rows
-        ep = cols.get("episode_index")
+            widths[name] = 0 if arr.ndim == 1 else arr.shape[1]
+            dtypes[name] = arr.dtype
+            if name == "episode_index":
+                ep = arr
+            if name in hot:
+                cache.put((fid, name), arr)
+            del arr
+        files.append(DataFile(path=f, rel=rel, widths=widths))
         if ep is None:
             errors.append(
                 (
@@ -447,6 +514,7 @@ def _load_frames(
                 )
             )
             continue
+        pos = None
         if ep.dtype.kind == "f" and not np.all(np.isfinite(ep)):
             keep = np.isfinite(ep)
             errors.append(
@@ -456,17 +524,22 @@ def _load_frames(
                     {"file": rel, "rows": int((~keep).sum())},
                 )
             )
-            cols = {k: v[keep] for k, v in cols.items()}
+            pos = np.flatnonzero(keep)
+            ep = ep[keep]
             n = int(keep.sum())
-        cols["episode_index"] = cols["episode_index"].astype(np.int64)
-        pieces.append((rel, n, cols))
+        ep = ep.astype(np.int64)
+        dtypes["episode_index"] = np.dtype(np.int64)
+        pieces.append(_Piece(fid=fid, rows=n, widths=widths, dtypes=dtypes))
+        for e, rows in _episode_runs(ep, pos):
+            segments.setdefault(e, []).append((fid, rows))
         if max_episodes is not None:
-            seen_eps.update(np.unique(cols["episode_index"]).tolist())
+            seen_eps.update(np.unique(ep).tolist())
             if len(seen_eps) > max_episodes:
                 break  # quick mode: enough files read
     if not pieces:
         raise DatasetError("no readable parquet files")
-    return _merge(pieces, errors), all_names
+    names, spec = _plan(pieces, files, errors)
+    return FrameStore(files, spec, names, segments, cache), all_names, len(segments)
 
 
 def _is_numeric(t: pa.DataType) -> bool:
@@ -563,14 +636,93 @@ def _video_refs(
     return refs
 
 
+ACTION, STATE = "action", "observation.state"
+
+
+def _feature_names(features: dict[str, Any], key: str) -> list[str]:
+    names = features.get(key, {}).get("names") if isinstance(features.get(key), dict) else None
+    if isinstance(names, dict):
+        names = next((v for v in names.values() if isinstance(v, list)), None)
+    return [str(x) for x in names] if isinstance(names, list) else []
+
+
+def _part_order(key: str) -> tuple[int, str]:
+    """Left before right, then by name, so action and state parts line up the same way."""
+    k = key.lower()
+    side = 0 if re.search(r"(^|[._])(left|l)([._]|$)", k) else 1 if re.search(r"(^|[._])(right|r)([._]|$)", k) else 2
+    return side, k
+
+
+def resolve_keys(
+    features: dict[str, Any], columns: dict[str, int], action_keys=(), state_keys=()
+) -> tuple[dict[str, list[str]], list[str]]:
+    """Which data columns make up the action and the state.
+
+    Explicit keys are used as given, in that order. Otherwise a column named exactly 'action'
+    ('actions' also works) or 'observation.state' is used; failing that, all numeric columns
+    under 'action.' or 'observation.state.' (for example 'action.left_arm' and 'action.right_arm'
+    in a bimanual recording) are placed side by side, left before right. `columns` maps each
+    numeric data column to its width. Returns {canonical key: source columns} for the keys that are
+    not a single column of the canonical name, and problems with explicit keys.
+    """
+    out: dict[str, list[str]] = {}
+    problems: list[str] = []
+    for canon, given, fallbacks in ((ACTION, action_keys, ("actions",)), (STATE, state_keys, ())):
+        if given:
+            missing = [k for k in given if k not in columns]
+            if missing:
+                problems.append(
+                    f"{canon} key{'s' if len(missing) > 1 else ''} {', '.join(repr(k) for k in missing)} "
+                    "not found among the numeric data columns"
+                )
+            parts = [k for k in given if k in columns]
+        elif canon in columns:
+            continue
+        elif any(f in columns for f in fallbacks):
+            parts = [next(f for f in fallbacks if f in columns)]
+        else:
+            parts = sorted((k for k in columns if k.startswith(canon + ".")), key=_part_order)
+            if canon == ACTION:  # 'action.*' never includes the state, but guard against odd names
+                parts = [k for k in parts if not k.startswith(STATE)]
+        if parts and parts != [canon]:
+            out[canon] = parts
+    return out, problems
+
+
+def _virtual_feature(features: dict[str, Any], canon: str, parts: list[str], widths: dict[str, int]) -> dict:
+    names: list[str] = []
+    for p in parts:
+        w = max(1, widths[p])
+        label = p[len(canon) + 1 :] if p.startswith(canon + ".") else p
+        own = _feature_names(features, p)
+        if widths[p] == 0:
+            names.append(label)
+        elif len(own) == w:
+            names.extend(f"{label}.{n}" if len(parts) > 1 else n for n in own)
+        else:
+            names.extend(f"{label}[{i}]" for i in range(w))
+    return {"dtype": "float32", "shape": [len(names)], "names": names, "assembled_from": parts}
+
+
 def load_dataset(
     root: Path,
     *,
     source: str = "",
     max_episodes: int | None = None,
     hub_blobs: tuple[Path, ...] | None = None,
+    cache_mb: float | None = None,
+    action_keys: tuple[str, ...] | list[str] = (),
+    state_keys: tuple[str, ...] | list[str] = (),
 ) -> Dataset:
     """Load a dataset from a local folder.
+
+    `action_keys` / `state_keys` name the data columns that make up the action and the state when
+    they are not single columns called 'action' and 'observation.state'; by default split columns
+    such as 'action.left_arm' and 'action.right_arm' are found and placed side by side (see
+    resolve_keys).
+
+    Frames are not held in memory: each episode's columns are decoded from the parquet files when a
+    check first reads them, with at most `cache_mb` megabytes (default 512) of decoded columns kept.
 
     Pass hub_blobs (from hub_blob_dirs) only for folders that resolve_source downloaded from
     the Hub; it lets the Hub cache's symlinks into its blob store through the path check.
@@ -584,21 +736,23 @@ def load_dataset(
         raise DatasetError("meta/info.json is not a JSON object")
 
     load_errors: list[tuple[str, str, dict]] = []
-    columns, all_columns = _load_frames(root, max_episodes, hub_blobs, load_errors)
-    if "episode_index" not in columns:
+    cache = ColumnCache(int((DEFAULT_CACHE_MB if cache_mb is None else cache_mb) * 1024 * 1024))
+    store, all_columns, n_found = _scan(root, max_episodes, hub_blobs, load_errors, cache)
+    if "episode_index" not in store.spec:
         raise DatasetError("data has no episode_index column")
 
-    warnings: list[str] = []
-    ep_col = columns["episode_index"].astype(np.int64)
-    order_keys = [ep_col]
-    if "frame_index" in columns:
-        order_keys.insert(0, columns["frame_index"])
-    order = np.lexsort(order_keys)  # sort by episode, then frame
-    sorted_cols = {k: v[order] for k, v in columns.items()}
-    ep_sorted = sorted_cols["episode_index"].astype(np.int64)
-    uniq, starts = np.unique(ep_sorted, return_index=True)
-    ends = list(starts[1:]) + [len(ep_sorted)]
+    features = info.get("features") if isinstance(info.get("features"), dict) else {}
+    widths = {k: v.width for k, v in store.spec.items()}
+    key_sources, problems = resolve_keys(features, widths, tuple(action_keys), tuple(state_keys))
+    if problems:
+        raise DatasetError("; ".join(problems) + f" (numeric columns: {', '.join(sorted(widths))})")
+    virtual: dict[str, Any] = {}
+    for canon, parts in key_sources.items():
+        store.add_alias(canon, parts)
+        all_columns = all_columns | {canon}
+        virtual[canon] = _virtual_feature(features, canon, parts, widths)
 
+    warnings: list[str] = []
     tasks = _load_tasks(root)
     meta = _load_episode_meta(root)
     major = int(m.group(1)) if (m := re.match(r"v?(\d+)", str(info.get("codebase_version", "")))) else 0
@@ -607,7 +761,7 @@ def load_dataset(
     ]
 
     episodes: list[Episode] = []
-    for n, (ep, s, e) in enumerate(zip(uniq.tolist(), starts.tolist(), ends, strict=True)):
+    for n, ep in enumerate(sorted(store.segments)):
         if max_episodes is not None and n >= max_episodes:
             break
         row = meta.get(int(ep), {})
@@ -620,7 +774,8 @@ def load_dataset(
         episodes.append(
             Episode(
                 index=int(ep),
-                frames={k: v[s:e] for k, v in sorted_cols.items()},
+                frames=LazyFrames(store, ep),
+                n_rows=sum(rows_len(r) for _, r in store.segments[ep]),
                 length_meta=int(length_meta) if isinstance(length_meta, (int, float)) else None,
                 tasks=[str(t) for t in ep_tasks],
                 videos=_video_refs(root, info, int(ep), row, video_keys, major, hub_blobs),
@@ -630,7 +785,7 @@ def load_dataset(
         warnings.append("no episode metadata found (meta/episodes or meta/episodes.jsonl)")
     declared = info.get("total_episodes")
     partial = max_episodes is not None and (
-        len(uniq) > len(episodes) or (isinstance(declared, int) and declared > len(episodes))
+        n_found > len(episodes) or (isinstance(declared, int) and declared > len(episodes))
     )
 
     return Dataset(
@@ -643,4 +798,7 @@ def load_dataset(
         load_warnings=warnings,
         load_errors=load_errors,
         partial=partial,
+        store=store,
+        key_sources=key_sources,
+        virtual_features=virtual,
     )
