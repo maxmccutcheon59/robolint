@@ -9,6 +9,8 @@ from pathlib import Path
 
 from . import __version__
 from .api import lint
+from .audit_report import write_audit_report
+from .badge import write_badge
 from .checks import Config
 from .dataset import DatasetError
 from .findings import ScoreWeights, Severity
@@ -97,6 +99,13 @@ def build_parser() -> argparse.ArgumentParser:
     _common(c)
     c.add_argument("--json", type=Path, help="write the full report as JSON")
     c.add_argument("--html", type=Path, help="write a shareable HTML report")
+    c.add_argument(
+        "--audit-report",
+        type=Path,
+        help="write a client-facing audit report (HTML; prints cleanly to PDF)",
+    )
+    c.add_argument("--client", help="client name shown on the audit report")
+    c.add_argument("--badge", type=Path, help="write an SVG badge with the grade, for a dataset card or README")
     c.add_argument("--exclude-out", type=Path, help="write flagged episode indices, one per line")
     c.add_argument(
         "--exclude-level",
@@ -141,6 +150,15 @@ def _cmd_check(args: argparse.Namespace) -> int:
     if args.html:
         write_html(result, args.html)
         print(f"  HTML report: {args.html}")
+    if args.audit_report:
+        imp = write_audit_report(result, args.audit_report, client=args.client)
+        print(
+            f"  Audit report: {args.audit_report} "
+            f"({len(imp.drop_episodes)} episodes to remove, {imp.trim_frames:,} idle frames to trim)"
+        )
+    if args.badge:
+        write_badge(result.scores.grade, result.scores.dataset_score, args.badge)
+        print(f"  Badge: {args.badge}")
     if args.exclude_out:
         level = Severity.ERROR if args.exclude_level == "error" else Severity.WARNING
         n = write_exclude(result, args.exclude_out, level)

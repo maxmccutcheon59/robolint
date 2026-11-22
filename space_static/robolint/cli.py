@@ -9,8 +9,11 @@ from pathlib import Path
 
 from . import __version__
 from .api import lint
+from .audit_report import write_audit_report
+from .badge import write_badge
+from .checks import Config
 from .dataset import DatasetError
-from .findings import Severity
+from .findings import ScoreWeights, Severity
 from .report import audit_markdown, write_exclude, write_html, write_json, write_text
 
 
@@ -19,6 +22,68 @@ def _common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--revision", help="Hub revision (branch, tag, or commit)")
     p.add_argument("--cache-dir", help="where to cache Hub downloads")
     p.add_argument("--max-episodes", type=int, help="only check the first N episodes (quick look)")
+    p.add_argument(
+        "--cache-mb",
+        type=float,
+        help="decoded frame data kept in memory, in MB (default 512); larger datasets are streamed from disk",
+    )
+    p.add_argument(
+        "--weight",
+        action="append",
+        metavar="KEY=W",
+        help="change how much of the score a finding takes (0 to 1): KEY is error, warning or info "
+        "(episode findings), dataset-error, dataset-warning or dataset-info, or a finding code "
+        "such as IDLE_PADDING; repeatable",
+    )
+    k = p.add_argument_group("columns (found automatically unless given)")
+    k.add_argument(
+        "--action-key",
+        action="append",
+        metavar="COLUMN",
+        help="data column that makes up the action; repeat to join several side by side, in order "
+        "(e.g. --action-key action.left --action-key action.right)",
+    )
+    k.add_argument("--state-key", action="append", metavar="COLUMN", help="the same for observation.state")
+    k.add_argument(
+        "--gripper",
+        action="append",
+        metavar="DIM",
+        help="action dimension that is a gripper, by name or 0-based index; repeat for each gripper",
+    )
+    k.add_argument(
+        "--state-gripper",
+        action="append",
+        metavar="DIM",
+        help="state dimension that is a gripper (default: the same name, or the same index if action "
+        "and state have the same width)",
+    )
+
+
+def _dim(v: str) -> str | int:
+    return int(v) if v.lstrip("-").isdigit() else v
+
+
+def _weights(items: list[str] | None) -> ScoreWeights:
+    overrides: dict[str, float] = {}
+    for item in items or ():
+        key, sep, value = item.partition("=")
+        try:
+            overrides[key] = float(value)
+        except ValueError:
+            raise ValueError(f"--weight expects KEY=W with a number W, got {item!r}") from None
+        if not sep:
+            raise ValueError(f"--weight expects KEY=W, got {item!r}")
+    return ScoreWeights().with_overrides(overrides)
+
+
+def _config(args: argparse.Namespace) -> Config:
+    return Config(
+        score_weights=_weights(args.weight),
+        action_keys=tuple(args.action_key or ()),
+        state_keys=tuple(args.state_key or ()),
+        gripper_dims=tuple(_dim(v) for v in args.gripper or ()),
+        state_gripper_dims=tuple(_dim(v) for v in args.state_gripper or ()),
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,6 +99,13 @@ def build_parser() -> argparse.ArgumentParser:
     _common(c)
     c.add_argument("--json", type=Path, help="write the full report as JSON")
     c.add_argument("--html", type=Path, help="write a shareable HTML report")
+    c.add_argument(
+        "--audit-report",
+        type=Path,
+        help="write a client-facing audit report (HTML; prints cleanly to PDF)",
+    )
+    c.add_argument("--client", help="client name shown on the audit report")
+    c.add_argument("--badge", type=Path, help="write an SVG badge with the grade, for a dataset card or README")
     c.add_argument("--exclude-out", type=Path, help="write flagged episode indices, one per line")
     c.add_argument(
         "--exclude-level",
@@ -54,12 +126,19 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _cmd_check(args: argparse.Namespace) -> int:
     try:
+        cfg = _config(args)
+    except ValueError as e:
+        print(f"robolint: {e}", file=sys.stderr)
+        return 2
+    try:
         result = lint(
             args.source,
             videos=args.videos,
             revision=args.revision,
             cache_dir=args.cache_dir,
             max_episodes=args.max_episodes,
+            cache_mb=args.cache_mb,
+            config=cfg,
         )
     except DatasetError as e:
         print(f"robolint: {e}", file=sys.stderr)
@@ -71,6 +150,15 @@ def _cmd_check(args: argparse.Namespace) -> int:
     if args.html:
         write_html(result, args.html)
         print(f"  HTML report: {args.html}")
+    if args.audit_report:
+        imp = write_audit_report(result, args.audit_report, client=args.client)
+        print(
+            f"  Audit report: {args.audit_report} "
+            f"({len(imp.drop_episodes)} episodes to remove, {imp.trim_frames:,} idle frames to trim)"
+        )
+    if args.badge:
+        write_badge(result.scores.grade, result.scores.dataset_score, args.badge)
+        print(f"  Badge: {args.badge}")
     if args.exclude_out:
         level = Severity.ERROR if args.exclude_level == "error" else Severity.WARNING
         n = write_exclude(result, args.exclude_out, level)
@@ -90,6 +178,11 @@ def _cmd_audit(args: argparse.Namespace) -> int:
     if not sources:
         print("robolint audit: no datasets given", file=sys.stderr)
         return 2
+    try:
+        cfg = _config(args)
+    except ValueError as e:
+        print(f"robolint audit: {e}", file=sys.stderr)
+        return 2
     out: Path = args.out
     (out / "reports").mkdir(parents=True, exist_ok=True)
     summary = []
@@ -103,6 +196,8 @@ def _cmd_audit(args: argparse.Namespace) -> int:
                 revision=args.revision,
                 cache_dir=args.cache_dir,
                 max_episodes=args.max_episodes,
+                cache_mb=args.cache_mb,
+                config=cfg,
             )
         except Exception as e:  # noqa: BLE001 - keep going across many datasets
             msg = str(e).replace("|", "/").replace("\n", " ")[:200]

@@ -40,6 +40,8 @@ HELP: dict[str, str] = {
     "VIDEO_FROZEN": "Camera image never changes while the robot moves: stale or frozen feed.",
     "VIDEO_UNREADABLE": "Video cannot be decoded.",
     "VIDEO_FPS_MISMATCH": "Camera frame rate differs from the dataset fps.",
+    "VIDEO_ACTION_OFFSET": "This camera shows motion noticeably earlier or later relative to the commanded actions than in other episodes: video and actions are likely out of sync. Re-align or drop the episode.",
+    "VIDEO_LAG": "How long after a motion is commanded this camera typically shows it, across the dataset. For reference, not a problem.",
     "VIDEO_SHAPE_MISMATCH": "Camera resolution differs from what info.json declares.",
     "EPISODE_COUNT_MISMATCH": "info.json disagrees with the data about how many episodes exist.",
     "FRAME_COUNT_MISMATCH": "info.json disagrees with the data about how many frames exist.",
@@ -58,10 +60,12 @@ HELP: dict[str, str] = {
     "TIMESTAMP_NONFINITE": "Timestamps contain NaN or infinite values.",
     "EMPTY_EPISODE": "Episode contains no frames.",
     "NO_EPISODES": "Dataset contains no episodes.",
-    "NO_ACTIONS": "No action column: the dataset cannot train a policy.",
+    "NO_ACTIONS": "No action column: the dataset cannot train a policy. If it is named differently, pass --action-key.",
     "NO_TIMESTAMPS": "No timestamp column: timing cannot be verified.",
     "FPS_MISSING": "No valid fps in info.json.",
     "METADATA_INCOMPLETE": "Episode metadata files are missing.",
+    "STATE_LAG_OUTLIER": "The measured state follows the commanded action with a very different delay than in other episodes: the state stream was likely buffered, stalled or stamped late. Check the recording; drop or re-align the episode.",
+    "STATE_LAG": "How many frames the measured state typically trails the commanded action, across the dataset. For reference, not a problem.",
     "FAILED_GRASP": "The gripper's last grasp closed all the way on nothing, while other episodes stop on an object: a failed demo. Drop it; it teaches the policy to grasp air.",
     "REGRASP": "A grasp missed and the operator retried successfully. Keep it if you want recovery behavior; drop it if not.",
     "OLD_FORMAT": "Dataset predates LeRobot v2.",
@@ -116,6 +120,8 @@ def write_text(
         f"with warnings {sc.episodes_with_warnings} ({_pct(sc.episodes_with_warnings, n_eps)}) · "
         f"with errors {sc.episodes_with_errors} ({_pct(sc.episodes_with_errors, n_eps)})\n"
     )
+    for key, parts in ds.key_sources.items():
+        w(c(f"  {key} read from {' + '.join(parts)}\n", _DIM))
     if not r.videos_checked and ds.video_keys:
         w(c("  video not checked (add --videos to check camera streams)\n", _DIM))
 
@@ -190,6 +196,7 @@ def write_html(r: Result, path: Path) -> None:
         f"<div class='muted'>LeRobot {e(ds.version)} · robot {e(str(ds.info.get('robot_type') or 'unknown'))} · "
         f"{ds.fps or '?'} fps · cameras: {e(', '.join(ds.video_keys) or 'none')}"
         f"{'' if r.videos_checked or not ds.video_keys else ' · video not checked'}</div>",
+        *(f"<div class='muted'>{e(k)} read from {e(' + '.join(v))}</div>" for k, v in ds.key_sources.items()),
         "<div class='cards'>",
         f"<div class='card'><div class='muted'>Score</div><div class='big {grade_cls}'>{sc.dataset_score:.1f}</div><div>grade {e(sc.grade)}</div></div>",
         f"<div class='card'><div class='muted'>Episodes</div><div class='big'>{n_eps:,}</div><div>{ds.total_frames:,} frames</div></div>",

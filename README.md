@@ -68,6 +68,10 @@ robolint check your-org/your-dataset --videos
 
 # Shareable reports
 robolint check your-org/your-dataset --json report.json --html report.html
+# one-page audit for a team lead (prints to PDF)
+robolint check your-org/your-dataset --audit-report audit.html --client "Your Team"
+# grade badge for your dataset card
+robolint check your-org/your-dataset --badge robolint.svg
 
 # List bad episodes so you can drop them before training
 robolint check your-org/your-dataset --exclude-out bad_episodes.txt

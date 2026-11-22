@@ -58,7 +58,7 @@ code{background:var(--code);border-radius:4px;padding:1px 5px;font-size:13px}
   <p class="muted">Runs robolint entirely in your browser with <a href="https://pyodide.org">Pyodide</a>: nothing is uploaded anywhere. The first run downloads the Python runtime (tens of MB). Camera checks are not available here. Large datasets can be slow; use quick mode or the <a href="https://github.com/maxmccutcheon59/robolint#usage">command-line tool</a>.</p>
   <div class="card">
     <div class="row">
-      <input id="repo" type="text" placeholder="lerobot/svla_so100_sorting" aria-label="Dataset id" autocomplete="off" spellcheck="false">
+      <input id="repo" type="text" placeholder="lerobot/svla_so100_sorting  or  owner/name/subfolder" aria-label="Dataset id" autocomplete="off" spellcheck="false">
       <label class="chk"><input id="quick" type="checkbox" checked> Quick mode (first 300 episodes)</label>
       <button id="go">Check dataset</button>
     </div>
@@ -183,7 +183,7 @@ async function getPyodide() {
 
 async function runLive() {
   const id = repo.value.trim();
-  if (!/^[A-Za-z0-9][\w.-]*\/[\w.-]+$/.test(id)) { progress.textContent = "Enter a dataset id like lerobot/pusht."; return; }
+  if (!/^[A-Za-z0-9][\w.-]*\/[\w.-]+(\/[\w.-]+)*$/.test(id)) { progress.textContent = "Enter a dataset id like lerobot/pusht (add /folder for datasets kept in subfolders)."; return; }
   go.disabled = true; live.replaceChildren();
   try {
     const py = await getPyodide();
@@ -193,6 +193,23 @@ async function runLive() {
     const parsed = JSON.parse(out);
     HELP = parsed.help;
     render(live, parsed.result);
+    if (parsed.audit_html) {
+      const url = URL.createObjectURL(new Blob([parsed.audit_html], { type: "text/html" }));
+      const bar = document.createElement("div");
+      bar.className = "card"; bar.style.marginTop = "12px";
+      const a = document.createElement("a");
+      a.href = url; a.target = "_blank"; a.rel = "noopener";
+      a.download = id.replaceAll("/", "_") + "-audit.html";
+      a.textContent = "Download the one-page audit report";
+      const note = document.createElement("span");
+      note.className = "muted";
+      note.textContent = " · a summary for your team: grade, what to remove, what to fix. Want this for your private data? ";
+      const mail = document.createElement("a");
+      mail.href = "mailto:MaxMcCutcheon1@outlook.com?subject=" + encodeURIComponent("robolint audit request: " + id);
+      mail.textContent = "Request an audit";
+      bar.append(a, note, mail);
+      live.prepend(bar);
+    }
     progress.textContent = "Done.";
   } catch (e) {
     progress.textContent = "Could not check this dataset: " + (e && e.message ? e.message.split("\n").filter(Boolean).pop() : e);

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Added
+- **Grade badge.** `robolint check DATASET --badge robolint.svg` writes an SVG badge with the
+  grade and score to show on a dataset card or README.
+- **Client-facing audit report.** `robolint check DATASET --audit-report audit.html --client NAME`
+  writes a one-page summary for a team lead: grade and verdict, share of frames usable after
+  cleanup, an action plan (episodes to remove grouped by problem, idle time to trim, episodes to
+  review, dataset-level fixes), recording fixes, the worst episodes, and a copyable drop list. It is
+  a single self-contained HTML file that prints cleanly to PDF. Also available as
+  `robolint.audit_report.write_audit_report`.
+
 ### Changed
 - **Scoring is consistent and its weights can be changed.** Each finding now keeps (1 − weight) of
   the score instead of subtracting fixed points. Episode findings: error 1.0, warning 0.15, info

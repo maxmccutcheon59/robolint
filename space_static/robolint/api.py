@@ -11,7 +11,7 @@ from typing import Any
 from . import __version__
 from .checks import Config, all_checks
 from .dataset import Dataset, hub_blob_dirs, load_dataset, resolve_source
-from .findings import Finding, Scores, Severity, score
+from .findings import Finding, Scores, ScoreWeights, Severity, score
 
 
 @dataclass
@@ -23,6 +23,7 @@ class Result:
     videos_checked: bool
     seconds: float
     extra: dict[str, Any] = field(default_factory=dict)
+    weights: ScoreWeights = field(default_factory=ScoreWeights)
 
     @property
     def dataset_findings(self) -> list[Finding]:
@@ -58,9 +59,11 @@ class Result:
                 "frames": ds.total_frames,
                 "cameras": ds.video_keys,
                 "tasks": len(ds.tasks),
+                "columns": columns_used(ds),
             },
             "score": self.scores.dataset_score,
             "grade": self.scores.grade,
+            "score_weights": self.weights.to_dict(),
             "episodes": {
                 "clean": self.scores.clean_episodes,
                 "with_warnings": self.scores.episodes_with_warnings,
@@ -75,6 +78,12 @@ class Result:
         }
 
 
+def columns_used(ds: Dataset) -> dict[str, list[str]]:
+    """The data columns read as the action and the state, when they are not single columns of
+    those names."""
+    return {k: list(v) for k, v in ds.key_sources.items()}
+
+
 def lint(
     source: str | Path,
     *,
@@ -83,7 +92,10 @@ def lint(
     cache_dir: str | None = None,
     max_episodes: int | None = None,
     config: Config | None = None,
+    cache_mb: float | None = None,
 ) -> Result:
+    """Check a dataset. `cache_mb` caps the decoded frame data kept in memory (default 512 MB);
+    datasets larger than that are re-read from disk as checks need them."""
     t0 = time.perf_counter()
     cfg = config or Config()
     # Only a Hub download gets the relaxed symlink rule; a local folder keeps the strict one.
@@ -92,12 +104,23 @@ def lint(
         str(source), include_videos=videos, revision=revision, cache_dir=cache_dir, max_episodes=max_episodes
     )
     hub_blobs = hub_blob_dirs(root) if from_hub else None
-    ds = load_dataset(root, source=str(source), max_episodes=max_episodes, hub_blobs=hub_blobs)
+    ds = load_dataset(
+        root,
+        source=str(source),
+        max_episodes=max_episodes,
+        hub_blobs=hub_blobs,
+        cache_mb=cache_mb,
+        action_keys=cfg.action_keys,
+        state_keys=cfg.state_keys,
+    )
+    from .checks.signals import configured_grippers
+
+    configured_grippers(ds, cfg)  # an unknown gripper name or index stops here, before any check
     findings: list[Finding] = []
     for check in all_checks(include_video=videos):
         findings.extend(check(ds, cfg))
     findings.sort(key=lambda f: (f.episode if f.episode is not None else -1, -int(f.severity), f.code))
-    scores = score(findings, [ep.index for ep in ds.episodes])
+    scores = score(findings, [ep.index for ep in ds.episodes], cfg.score_weights)
     return Result(
         source=str(source),
         dataset=ds,
@@ -105,4 +128,5 @@ def lint(
         scores=scores,
         videos_checked=videos,
         seconds=time.perf_counter() - t0,
+        weights=cfg.score_weights,
     )
