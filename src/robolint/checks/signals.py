@@ -398,10 +398,42 @@ def _idle(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding
         )
 
 
+REST_SHARE = (
+    0.2  # a value held for at least this share of an episode is a rest value (joystick deadzone, released trigger)
+)
+REST_MIN_RUN = 3  # frames a level must hold on both sides of a step for the step to count as by design
+REST_EDGE = 3  # frames around such a step whose residuals the step itself explains
+
+
+def drop_rest_steps(a: np.ndarray, jumps: np.ndarray) -> np.ndarray:
+    """Clear jumps that are a channel leaving or returning to its rest value and then holding.
+
+    Joystick velocities snap from exactly 0 to past their deadzone, and triggers from released to
+    pressed: a step between two held levels, by design. A glitch is a short excursion that comes
+    back, so a rest run or an active run shorter than REST_MIN_RUN frames keeps its jump."""
+    n = len(a)
+    if n == 0 or not jumps.any():
+        return jumps
+    out = jumps.copy()
+    for j in np.flatnonzero(jumps.any(axis=0)):
+        col = a[:, j]
+        vals, counts = np.unique(col[np.isfinite(col)], return_counts=True)
+        if not len(vals) or counts.max() < REST_SHARE * n:
+            continue
+        at = col == vals[counts.argmax()]
+        starts = np.concatenate(([0], np.flatnonzero(at[1:] != at[:-1]) + 1))
+        lengths = np.diff(np.concatenate((starts, [n])))
+        for k in range(1, len(starts)):
+            if lengths[k - 1] >= REST_MIN_RUN and lengths[k] >= REST_MIN_RUN:
+                b = starts[k]
+                out[max(0, b - REST_EDGE) : min(n, b + REST_EDGE + 1), j] = False
+    return out
+
+
 def _spikes(ep: int, a: np.ndarray, st: DimStats, cfg: Config) -> Iterator[Finding]:
     thr = np.maximum(cfg.spike_multiplier * st.step_scale, cfg.spike_min_range * st.rng)
     thr = np.where(st.active & ~st.discrete & (thr > 0), thr, np.inf)  # on/off channels toggle by design
-    jumps = outlier_residual(a) > thr
+    jumps = drop_rest_steps(a, outlier_residual(a) > thr)
     rows = np.flatnonzero(jumps.any(axis=1))
     if not len(rows):
         return

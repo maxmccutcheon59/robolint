@@ -492,3 +492,30 @@ def test_repeating_motion_one_cycle_over_is_not_an_outlier():
     # ... but an episode that only lines up 20 frames later is.
     curves[8] = LagCurve(bump(20, 0.95), 30)
     assert [o.episode for o in judge(curves, 30.0, **kw).outliers] == [8]
+
+
+def test_rest_steps_are_not_spikes():
+    import numpy as np
+
+    from robolint.checks.signals import drop_rest_steps
+
+    col = np.zeros(60)
+    col[20:40] = 0.3  # joystick pushed past its deadzone and held
+    col[50] = 5.0  # a one-frame glitch out of rest
+    a = col[:, None]
+    jumps = np.zeros_like(a, dtype=bool)
+    jumps[[19, 20, 21, 39, 40, 50], 0] = True
+    kept = drop_rest_steps(a, jumps)
+    assert not kept[[19, 20, 21, 39, 40], 0].any()
+    assert kept[50, 0]
+
+
+def test_rest_steps_leave_continuous_channels_alone():
+    import numpy as np
+
+    from robolint.checks.signals import drop_rest_steps
+
+    a = np.linspace(0, 10, 100)[:, None]  # no value held for a fifth of the episode
+    jumps = np.zeros_like(a, dtype=bool)
+    jumps[50, 0] = True
+    assert drop_rest_steps(a, jumps)[50, 0]
