@@ -170,7 +170,7 @@ def write_audit_report(
     imp = impact(r)
     d = date or _dt.date.today()
     day = f"{d:%B} {d.day}, {d.year}"  # %-d is not portable to Windows
-    grade_cls = "ok" if sc.dataset_score >= 80 else ("warn" if sc.dataset_score >= 60 else "err")
+    grade_cls = "ok" if sc.grade in "AB" else ("warn" if sc.grade in "CD" else "err")
     hours = _dur(imp.seconds(imp.total_frames))
 
     def frames_card(label: str, frames: int, cls: str, sub: str) -> str:
@@ -197,6 +197,7 @@ def write_audit_report(
         f"<div>{e(verdict(r, imp))}</div>",
         f"<div class='muted small'>Quality score {sc.dataset_score:.1f}/100 across {imp.episodes:,} episodes, "
         f"{imp.total_frames:,} frames{(' (' + hours + ' of recording)') if hours else ''}.</div>",
+        f"<div class='muted small'>Grade capped: {e(sc.grade_cap)}.</div>" if sc.grade_cap else "",
         "</div></div>",
         "<div class='cards'>",
         frames_card("Usable after cleanup", imp.usable_frames, "ok", "kept for training"),

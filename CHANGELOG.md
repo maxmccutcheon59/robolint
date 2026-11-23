@@ -13,6 +13,13 @@
   `robolint.audit_report.write_audit_report`.
 
 ### Changed
+- **Episodes with errors cap the grade.** The score is unchanged, but the letter grade can be no
+  better than B when any episode has errors, C over 5%, D over 15%, F over 30%, so an A always
+  means nothing has to be dropped before training. Reports say when a cap lowered the grade
+  (`grade_cap` in the JSON, a line in the text and HTML reports), and the HTML and audit reports
+  color the grade by letter instead of by score. Caps are set with `ScoreWeights.grade_caps`
+  (`()` turns them off). On the published audit: lerobot/svla_so100_stacking A to C (8.9% of
+  episodes with errors), lerobot/svla_so100_sorting A to B; the other 16 grades are unchanged.
 - **Scoring is consistent and its weights can be changed.** Each finding now keeps (1 − weight) of
   the score instead of subtracting fixed points. Episode findings: error 1.0, warning 0.15, info
   0.02, so one warning still gives 85, but warnings stack toward 0 without reaching it (before, 7

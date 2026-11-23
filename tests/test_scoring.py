@@ -88,7 +88,7 @@ def test_weights_reach_the_result_and_the_cli(tmp_path):
     assert main(["check", str(root), "--weight", "warning=2", "--no-color"]) == 2
 
 
-def test_grades_on_the_published_audit_do_not_change():
+def test_grades_on_the_published_audit():
     sys.path.insert(0, str(ROOT / "benchmarks"))
     try:
         from audit_scores import audit_results
@@ -97,9 +97,11 @@ def test_grades_on_the_published_audit_do_not_change():
     results = audit_results(ROOT / "space_static" / "results.json")
     assert len(results) == 18
     moved = {}
+    # The error-episode grade cap lowers two published grades; see the CHANGELOG.
+    regraded = {"lerobot/svla_so100_stacking": "C", "lerobot/svla_so100_sorting": "B"}
     for r, findings, episodes in results:
         s = score(findings, episodes)
-        assert s.grade == r["grade"], r["source"]
+        assert s.grade == regraded.get(r["source"], r["grade"]), r["source"]
         assert s.clean_episodes == r["episodes"]["clean"]
         if s.dataset_score != r["score"]:
             moved[r["source"]] = (r["score"], s.dataset_score)
@@ -111,3 +113,39 @@ def test_grades_on_the_published_audit_do_not_change():
         "SO-101-robot-learning/so101_pick_place": (78.5, 71.1),
         "imstevenpmwork/omx_sentry_1": (82.0, 80.8),
     }
+
+
+def test_episodes_with_errors_cap_the_grade():
+    eps = list(range(100))
+
+    def errors(n):
+        return [Finding("DEAD_EPISODE", Severity.ERROR, "", i) for i in range(n)]
+
+    clean = score([], eps)
+    assert (clean.grade, clean.grade_cap) == ("A", None)
+    one = score(errors(1), eps)  # 99.0: an A by score, but there is an episode to drop
+    assert one.dataset_score == 99.0 and one.grade == "B"
+    assert "any episodes with errors" in one.grade_cap
+    assert score(errors(5), eps).grade == "B"  # exactly 5% is not over 5%
+    six = score(errors(6), eps)
+    assert six.dataset_score == 94.0 and six.grade == "C" and "over 5%" in six.grade_cap
+    assert score(errors(16), eps).grade == "D"
+    assert score(errors(31), eps).grade == "F"
+    # A cap never raises a grade the score already puts lower.
+    warned = [Finding(code, Severity.WARNING, "", i) for i in range(1, 100) for code in ("STATE_FROZEN", "JITTER")]
+    low = score(errors(1) + warned, eps)  # 99 episodes at 72.25 -> 71.5, a C, already below the B cap
+    assert low.grade == "C" and low.grade_cap is None
+
+
+def test_grade_caps_can_be_changed_and_are_reported(tmp_path):
+    eps = list(range(100))
+    findings = [Finding("DEAD_EPISODE", Severity.ERROR, "", 0)]
+    assert score(findings, eps, ScoreWeights(grade_caps=())).grade == "A"
+    assert score(findings, eps, ScoreWeights(grade_caps=((0.0, "D"),))).grade == "D"
+    with pytest.raises(ValueError):
+        ScoreWeights(grade_caps=((0.5, "E"),))
+    with pytest.raises(ValueError):
+        ScoreWeights(grade_caps=((1.5, "C"),))
+    w = ScoreWeights().with_overrides({"warning": 0.2})
+    assert w.grade_caps == ScoreWeights().grade_caps
+    assert {"error_episodes_over": 0.05, "max_grade": "C"} in w.to_dict()["grade_caps"]

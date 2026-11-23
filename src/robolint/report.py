@@ -115,6 +115,8 @@ def write_text(
         f"cameras: {', '.join(ds.video_keys) or 'none'}\n"
     )
     w(c(f"\n  Score {sc.dataset_score:.1f}/100  (grade {sc.grade})\n", _BOLD))
+    if sc.grade_cap:
+        w(f"  grade capped: {sc.grade_cap}\n")
     w(
         f"  clean episodes {sc.clean_episodes} ({_pct(sc.clean_episodes, n_eps)}) · "
         f"with warnings {sc.episodes_with_warnings} ({_pct(sc.episodes_with_warnings, n_eps)}) · "
@@ -187,7 +189,8 @@ def write_html(r: Result, path: Path) -> None:
     e = html.escape
     ds, sc = r.dataset, r.scores
     n_eps = len(ds.episodes)
-    grade_cls = "ok" if sc.dataset_score >= 80 else ("warning" if sc.dataset_score >= 60 else "error")
+    # Colored by the grade, which a cap can lower below what the score alone gives.
+    grade_cls = "ok" if sc.grade in "AB" else ("warning" if sc.grade in "CD" else "error")
     parts = [
         "<!doctype html><html lang='en'><head><meta charset='utf-8'>",
         "<meta name='viewport' content='width=device-width,initial-scale=1'>",
@@ -198,7 +201,9 @@ def write_html(r: Result, path: Path) -> None:
         f"{'' if r.videos_checked or not ds.video_keys else ' · video not checked'}</div>",
         *(f"<div class='muted'>{e(k)} read from {e(' + '.join(v))}</div>" for k, v in ds.key_sources.items()),
         "<div class='cards'>",
-        f"<div class='card'><div class='muted'>Score</div><div class='big {grade_cls}'>{sc.dataset_score:.1f}</div><div>grade {e(sc.grade)}</div></div>",
+        f"<div class='card'><div class='muted'>Score</div><div class='big {grade_cls}'>{sc.dataset_score:.1f}</div><div>grade {e(sc.grade)}</div>"
+        + (f"<div class='muted'>{e(sc.grade_cap)}</div>" if sc.grade_cap else "")
+        + "</div>",
         f"<div class='card'><div class='muted'>Episodes</div><div class='big'>{n_eps:,}</div><div>{ds.total_frames:,} frames</div></div>",
         f"<div class='card'><div class='muted'>Clean</div><div class='big ok'>{_pct(sc.clean_episodes, n_eps)}</div><div>{_eps(sc.clean_episodes)}</div></div>",
         f"<div class='card'><div class='muted'>With errors</div><div class='big error'>{_pct(sc.episodes_with_errors, n_eps)}</div><div>{_eps(sc.episodes_with_errors)}</div></div>",

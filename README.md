@@ -55,7 +55,7 @@ robolint finds them in seconds and tells you exactly which episodes to drop or f
 
 
 
-Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; a **warning** keeps 85% of the score and **info** 98%. The dataset score is the average episode score, scaled down by dataset-level problems. The score is a summary of how many issues were found and how serious they are, not a measure of usable data or a prediction of training results; see [Scoring](#scoring).
+Every episode gets a 0–100 score and the dataset gets a score and letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60). An **error** makes an episode unusable for training, so it scores 0; a **warning** keeps 85% of the score and **info** 98%. The dataset score is the average episode score, scaled down by dataset-level problems. The share of episodes with errors also caps the grade: any at all means no better than B, over 5% no better than C, over 15% D, over 30% F. The score is a summary of how many issues were found and how serious they are, not a measure of usable data or a prediction of training results; see [Scoring](#scoring).
 
 Supports LeRobot **v2.x** (per-episode files) and **v3.x** (chunked files) layouts.
 
@@ -206,9 +206,25 @@ or `Config(score_weights=ScoreWeights(...))` (Python):
 robolint check ./my_dataset --weight warning=0.25 --weight IDLE_PADDING=0.05 --weight dataset-error=0.3
 ```
 
-On the 18-dataset audit, this scoring changes no grade; the 5 datasets with dataset-level
+The letter grade follows the score, except that the share of episodes with errors caps it, since
+those episodes have to be dropped however clean the rest are:
+
+| Episodes with errors | Best grade |
+|---|---|
+| none | A |
+| any | B |
+| over 5% | C |
+| over 15% | D |
+| over 30% | F |
+
+So an A means there is nothing to remove before training. When a cap lowers the grade, the reports
+say so (`grade_cap` in the JSON). Change the caps with `ScoreWeights(grade_caps=((0.0, "B"), ...))`,
+or turn them off with `grade_caps=()`.
+
+On the 18-dataset audit, the multiplicative weights change no grade; the 5 datasets with dataset-level
 findings move by 0.6 to 7.4 points (`benchmarks/audit_scores.py` recomputes them from the
-published findings).
+published findings). The grade caps lower two grades: lerobot/svla_so100_stacking from A to C
+(5 of 56 episodes, 8.9%, have errors) and lerobot/svla_so100_sorting from A to B.
 
 ## Exit codes
 

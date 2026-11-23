@@ -63,6 +63,7 @@ class Result:
             },
             "score": self.scores.dataset_score,
             "grade": self.scores.grade,
+            "grade_cap": self.scores.grade_cap,
             "score_weights": self.weights.to_dict(),
             "episodes": {
                 "clean": self.scores.clean_episodes,

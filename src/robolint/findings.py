@@ -31,6 +31,10 @@ class Finding:
         return d
 
 
+GRADES = "ABCDF"
+DEFAULT_GRADE_CAPS: tuple[tuple[float, str], ...] = ((0.0, "B"), (0.05, "C"), (0.15, "D"), (0.30, "F"))
+
+
 @dataclass(frozen=True)
 class ScoreWeights:
     """How much of a score each finding takes away: a weight w keeps (1 - w) of it.
@@ -51,12 +55,22 @@ class ScoreWeights:
     )
     # Problems that leave nothing to train on zero the whole dataset.
     codes: dict[str, float] = field(default_factory=lambda: {"NO_ACTIONS": 1.0, "NO_EPISODES": 1.0})
+    # The share of episodes with errors caps the grade, whatever the average score: (share, best
+    # grade allowed when the share is above it). An A means there is nothing to drop before
+    # training, and a dataset that has to lose many episodes can't grade well because the rest
+    # are clean.
+    grade_caps: tuple[tuple[float, str], ...] = DEFAULT_GRADE_CAPS
 
     def __post_init__(self) -> None:
         for table in (self.episode, self.dataset, self.codes):
             for k, w in table.items():
                 if not (isinstance(w, (int, float)) and 0.0 <= w <= 1.0):
                     raise ValueError(f"score weight for {getattr(k, 'label', k)} must be between 0 and 1, got {w!r}")
+        for share, letter in self.grade_caps:
+            if not (isinstance(share, (int, float)) and 0.0 <= share < 1.0) or letter not in GRADES:
+                raise ValueError(
+                    f"grade cap must be (share in [0, 1), one of {', '.join(GRADES)}), got {(share, letter)!r}"
+                )
         for table in (self.episode, self.dataset):
             missing = [s.label for s in Severity if s not in table]
             if missing:
@@ -72,6 +86,7 @@ class ScoreWeights:
             "episode": {s.label: self.episode[s] for s in Severity},
             "dataset": {s.label: self.dataset[s] for s in Severity},
             "codes": dict(sorted(self.codes.items())),
+            "grade_caps": [{"error_episodes_over": share, "max_grade": g} for share, g in sorted(self.grade_caps)],
         }
 
     def with_overrides(self, overrides: dict[str, float]) -> ScoreWeights:
@@ -91,7 +106,7 @@ class ScoreWeights:
                     f"unknown score weight {key!r}: use error, warning, info, dataset-error, dataset-warning, "
                     "dataset-info or a finding code such as IDLE_PADDING"
                 )
-        return ScoreWeights(episode=episode, dataset=dataset, codes=codes)
+        return ScoreWeights(episode=episode, dataset=dataset, codes=codes, grade_caps=self.grade_caps)
 
 
 SEVERITY_BY_LABEL = {s.label: s for s in Severity}
@@ -104,6 +119,19 @@ def grade(score: float) -> str:
     return "F"
 
 
+def capped_grade(letter: str, error_share: float, caps: tuple[tuple[float, str], ...]) -> tuple[str, str | None]:
+    """The grade after the error-episode caps, and the cap that lowered it (None if none did)."""
+    worst = None
+    for share, cap in caps:
+        if error_share > share and (worst is None or GRADES.index(cap) > GRADES.index(worst[1])):
+            worst = (share, cap)
+    if worst is None or GRADES.index(worst[1]) <= GRADES.index(letter):
+        return letter, None
+    share, cap = worst
+    limit = "any" if share == 0 else f"over {share:.0%} of"
+    return cap, f"{error_share:.1%} of episodes have errors; {limit} episodes with errors caps the grade at {cap}"
+
+
 @dataclass
 class Scores:
     dataset_score: float
@@ -112,6 +140,7 @@ class Scores:
     clean_episodes: int
     episodes_with_errors: int
     episodes_with_warnings: int
+    grade_cap: str | None = None  # why the grade is lower than the score alone would give
 
 
 def score(findings: list[Finding], episode_indices: list[int], weights: ScoreWeights | None = None) -> Scores:
@@ -151,9 +180,12 @@ def score(findings: list[Finding], episode_indices: list[int], weights: ScoreWei
     for code, sev in dataset_level.items():
         kept *= 1.0 - weights.weight(code, sev, dataset_level=True)
     final = round(max(0.0, min(100.0, base * kept)), 1)
+    error_share = with_err / len(per_ep) if per_ep else 0.0
+    letter, cap = capped_grade(grade(final), error_share, weights.grade_caps)
     return Scores(
         dataset_score=final,
-        grade=grade(final),
+        grade=letter,
+        grade_cap=cap,
         episode_scores=ep_scores,
         clean_episodes=clean,
         episodes_with_errors=with_err,
