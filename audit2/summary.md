@@ -1,8 +1,8 @@
 | Dataset | Format | Episodes | Score | Grade | Clean | With errors | Top issues |
 |---|---|---:|---:|:---:|---:|---:|---|
+| EPITECH-LILLE/eval_training | v3.0 | 60 | 39.9 | F | 65% | 35% | `EPISODE_LENGTH_MISMATCH`, `FRAME_INDEX_DUPLICATE`, `TIMESTAMP_NONMONOTONIC` |
+| kmg0620/so101_bomb_pick_place_v1 | v3.0 | 150 | 52.3 | F | 85% | 15% | `EPISODE_LENGTH_MISMATCH`, `FRAME_INDEX_DUPLICATE`, `TIMESTAMP_NONMONOTONIC` |
 | jchandru08/so100_press_red_button | v2.1 | 29 | 54.9 | F | 52% | 24% | `EPISODE_LENGTH_MISMATCH`, `FRAME_COUNT_MISMATCH`, `JOINT_AT_LIMIT` |
-| kmg0620/so101_bomb_pick_place_v1 | v3.0 | 150 | 58.4 | F | 95% | 5% | `EPISODE_LENGTH_MISMATCH`, `FRAME_INDEX_DUPLICATE`, `TIMESTAMP_NONMONOTONIC` |
-| EPITECH-LILLE/eval_training | v3.0 | 60 | 60.3 | D | 98% | 2% | `EPISODE_COUNT_MISMATCH`, `FAILED_GRASP`, `FRAME_COUNT_MISMATCH` |
 | Embodied-AI-6/blue_so101_color_blocks_10ep_v1_20260526_175604 | v3.0 | 10 | 67.2 | D | 30% | 20% | `FAILED_GRASP`, `IDLE_PADDING`, `EPISODE_SHORT` |
 | SO-101-robot-learning/so101_pick_place | v3.0 | 50 | 71.1 | C | 98% | 0% | `EPISODE_COUNT_MISMATCH`, `FRAME_COUNT_MISMATCH`, `IDLE_PADDING` |
 | cadene/droid_1.0.1 | v2.1 | 300 | 75.0 | C | 68% | 1% | `STATE_FROZEN`, `DEAD_EPISODE`, `EPISODE_TOO_SHORT` |
@@ -47,9 +47,9 @@
 | RoboCOIN/Galbot_G1_use_dryer | v2.1 | 300 | 100.0 | A | 100% | 0% | `PARTIAL_CHECK`, `STATE_LAG` |
 | omkarmayekar555/robot-learning-tutorial-data | v3.0 | 1 | 100.0 | A | 100% | 0% | none |
 | nurtayev-d/seasondish-shake-ag-1000ep | v3.0 | 300 | 100.0 | A | 100% | 0% | `PARTIAL_CHECK`, `STATE_LAG` |
-| configinc/HABIT | — | — | — | — | — | — | failed to load: missing meta/info.json (is this a LeRobot dataset?) |
-| behavior-1k/2025-challenge-demos | — | — | — | — | — | — | failed to load: could not download behavior-1k/2025-challenge-demos: [Errno 104] Connection reset by peer |
-| LeCAR-Lab/Wanda | — | — | — | — | — | — | failed to load: missing meta/info.json (is this a LeRobot dataset?) |
+| configinc/HABIT | — | — | — | — | — | — | failed to load: not in LeRobot format (no meta/info.json) |
+| behavior-1k/2025-challenge-demos | — | — | — | — | — | — | failed to load: skipped: its file names don't follow the LeRobot layout, so a spot-check would download all 119M frames |
+| LeCAR-Lab/Wanda | — | — | — | — | — | — | failed to load: not in LeRobot format (no meta/info.json) |
 
 **47 datasets, 11,128 episodes.** 1% of episodes have errors and 16% more have warnings.
 
@@ -58,10 +58,10 @@ Most common issues (datasets affected):
 - `STATE_LAG`: 38/47 datasets. How many frames the measured state typically trails the commanded action, across the dataset. For reference, not a problem.
 - `PARTIAL_CHECK`: 33/47 datasets. Quick mode: only part of the dataset was checked.
 - `ACTION_SPIKE`: 28/47 datasets. Single-step jumps far larger than normal motion: teleop glitches or bus errors. Smooth or trim.
-- `IDLE_PADDING`: 23/47 datasets. Long idle lead-in/tail. Trim it; idle frames bias policies toward hesitating.
+- `IDLE_PADDING`: 22/47 datasets. Long idle lead-in/tail. Trim it; idle frames bias policies toward hesitating.
 - `EPISODE_LONG`: 9/47 datasets. Much longer than typical: recording may not have been stopped.
 - `EPISODE_SHORT`: 8/47 datasets. Much shorter than typical: possibly truncated.
-- `JOINT_AT_LIMIT`: 7/47 datasets. The operator pushes a joint into its hard stop mid-task; the arm cannot follow the command.
+- `JOINT_AT_LIMIT`: 6/47 datasets. The operator pushes a joint into its hard stop mid-task; the arm cannot follow the command.
+- `CALIBRATION_OFFSET`: 6/47 datasets. Leader and follower calibrations disagree near a joint limit. Usually harmless; recalibrate to be sure.
 - `GRIPPER_NEVER_ACTUATES`: 6/47 datasets. Gripper never moves. Fine for pushing tasks; a red flag for pick-and-place.
-- `FAILED_GRASP`: 5/47 datasets. The gripper's last grasp closed all the way on nothing, while other episodes stop on an object: a failed demo. Drop it; it teaches the policy to grasp air.
-- `CALIBRATION_OFFSET`: 5/47 datasets. Leader and follower calibrations disagree near a joint limit. Usually harmless; recalibrate to be sure.
+- `FAILED_GRASP`: 4/47 datasets. The gripper's last grasp closed all the way on nothing, while other episodes stop on an object: a failed demo. Drop it; it teaches the policy to grasp air.

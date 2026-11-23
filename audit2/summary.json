@@ -1,0 +1,4456 @@
+[
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "recast-robotics/rollout_dagger_r1_s2_b0_20260915_121327",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "maniskill_sim",
+      "fps": 20.0,
+      "episodes": 10,
+      "frames": 5069,
+      "cameras": [
+        "observation.images.base_camera",
+        "observation.images.hand_camera"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 10,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {},
+    "issues": [],
+    "seconds": 1.0
+  },
+  {
+    "source": "configinc/HABIT",
+    "error": "not in LeRobot format (no meta/info.json)"
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "BitRobot/HIW-500-LeRobot",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "unitree_g1",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 543673,
+      "cameras": [
+        "observation.images.head",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist"
+      ],
+      "tasks": 11,
+      "columns": {}
+    },
+    "score": 89.6,
+    "grade": "B",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 99,
+      "with_warnings": 201,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 29,
+      "warning": 206
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 189
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 17
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 28
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 7.98
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "unitreerobotics/G1_WBT_Inspire_Plastic_Box_Parts",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "unitree_g1_inspire",
+      "fps": 30.0,
+      "episodes": 200,
+      "frames": 752988,
+      "cameras": [
+        "observation.images.head_stereo_left",
+        "observation.images.head_stereo_right",
+        "observation.images.wrist_left",
+        "observation.images.wrist_right"
+      ],
+      "tasks": 1,
+      "columns": {
+        "action": [
+          "action.left_arm",
+          "action.left_ee_pose_gripper_base",
+          "action.left_ee_pose_gripper_torso",
+          "action.left_fig6d",
+          "action.left_leg",
+          "action.right_arm",
+          "action.right_ee_pose_gripper_base",
+          "action.right_ee_pose_gripper_torso",
+          "action.right_fig6d",
+          "action.right_leg",
+          "action.action_base_pose",
+          "action.action_base_rot",
+          "action.action_d435",
+          "action.action_torso",
+          "action.base_command",
+          "action.hand_cmd",
+          "action.lower_body",
+          "action.waist_action_joint"
+        ],
+        "observation.state": [
+          "observation.state.left_arm",
+          "observation.state.left_ee_pose_gripper_base",
+          "observation.state.left_ee_pose_gripper_torso",
+          "observation.state.left_fig6d",
+          "observation.state.left_leg",
+          "observation.state.right_arm",
+          "observation.state.right_ee_pose_gripper_base",
+          "observation.state.right_ee_pose_gripper_torso",
+          "observation.state.right_fig6d",
+          "observation.state.right_leg",
+          "observation.state.hand_state",
+          "observation.state.lower_body",
+          "observation.state.recomputed_ee_valid",
+          "observation.state.state_base_pose",
+          "observation.state.state_base_rot",
+          "observation.state.state_base_rot_quat",
+          "observation.state.state_d435",
+          "observation.state.state_torso",
+          "observation.state.waist_state_joint"
+        ]
+      }
+    },
+    "score": 96.0,
+    "grade": "B",
+    "grade_cap": "1.0% of episodes have errors; any episodes with errors caps the grade at B",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 159,
+      "with_warnings": 39,
+      "with_errors": 2
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 4,
+      "warning": 40,
+      "error": 2
+    },
+    "issues": [
+      {
+        "code": "FAILED_GRASP",
+        "severity": "error",
+        "affected": 2
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 40
+      },
+      {
+        "code": "REGRASP",
+        "severity": "info",
+        "affected": 3
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 85.72
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "AivexRoboticsGroup/robomind_agilex-processed",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "agilex_cobot_magic_v2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 204942,
+      "cameras": [
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.external_0"
+      ],
+      "tasks": 54,
+      "columns": {}
+    },
+    "score": 99.7,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 298,
+      "with_warnings": 2,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 35,
+      "warning": 2
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 33
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "TASK_VAGUE",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 3.4
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "yaak-ai/L2D",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "KIA Niro EV 2023",
+      "fps": 10.0,
+      "episodes": 300,
+      "frames": 78570,
+      "cameras": [
+        "observation.images.left_forward",
+        "observation.images.front_left",
+        "observation.images.right_forward",
+        "observation.images.left_backward",
+        "observation.images.rear",
+        "observation.images.right_backward",
+        "observation.images.map"
+      ],
+      "tasks": 4219,
+      "columns": {
+        "action": [
+          "action.continuous",
+          "action.discrete"
+        ],
+        "observation.state": [
+          "observation.state.timestamp",
+          "observation.state.vehicle"
+        ]
+      }
+    },
+    "score": 95.4,
+    "grade": "B",
+    "grade_cap": "2.3% of episodes have errors; any episodes with errors caps the grade at B",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 254,
+      "with_warnings": 39,
+      "with_errors": 7
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 18,
+      "error": 7,
+      "warning": 43
+    },
+    "issues": [
+      {
+        "code": "DEAD_EPISODE",
+        "severity": "error",
+        "affected": 7
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 39
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 11
+      },
+      {
+        "code": "DUPLICATE_EPISODE",
+        "severity": "warning",
+        "affected": 7
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 3
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 3.07
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "lerobot/FineART",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 1129728,
+      "cameras": [
+        "observation.images.cam_high",
+        "observation.images.cam_low",
+        "observation.images.cam_left_wrist",
+        "observation.images.cam_right_wrist"
+      ],
+      "tasks": 151,
+      "columns": {}
+    },
+    "score": 99.9,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 300,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 20
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 17
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 23.35
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "allenai/MolmoAct2-BimanualYAM-Dataset",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "bi_yam_follower",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 572517,
+      "cameras": [
+        "observation.images.right",
+        "observation.images.left",
+        "observation.images.top"
+      ],
+      "tasks": 34,
+      "columns": {}
+    },
+    "score": 99.7,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 295,
+      "with_warnings": 5,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 11,
+      "warning": 5
+    },
+    "issues": [
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 4
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 7
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 2
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 12.46
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "allenai/fetchman-data",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "g1",
+      "fps": 10.0,
+      "episodes": 300,
+      "frames": 44402,
+      "cameras": [
+        "observation.head_image",
+        "observation.wrist_image"
+      ],
+      "tasks": 902,
+      "columns": {}
+    },
+    "score": 99.8,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 296,
+      "with_warnings": 4,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 1,
+      "warning": 4
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 4
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 42.91
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "EgoSteer/EgoSteer-RealWorld",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "egosteer_realman_bimanual",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 195719,
+      "cameras": [
+        "observation.images.head",
+        "observation.images.chest",
+        "observation.images.head_depth",
+        "observation.images.chest_depth"
+      ],
+      "tasks": 193,
+      "columns": {}
+    },
+    "score": 99.9,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 298,
+      "with_warnings": 2,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 2
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 17.07
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "zekaiwang/trex_dataset",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "dexmate_vega1_and_sharpa_wave",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 270618,
+      "cameras": [
+        "observation.images.head_left",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.tactile_left_raw_thumb",
+        "observation.images.tactile_left_raw_index",
+        "observation.images.tactile_left_raw_middle",
+        "observation.images.tactile_left_raw_ring",
+        "observation.images.tactile_left_raw_pinky",
+        "observation.images.tactile_left_deform_thumb",
+        "observation.images.tactile_left_deform_index",
+        "observation.images.tactile_left_deform_middle",
+        "observation.images.tactile_left_deform_ring",
+        "observation.images.tactile_left_deform_pinky",
+        "observation.images.tactile_right_raw_thumb",
+        "observation.images.tactile_right_raw_index",
+        "observation.images.tactile_right_raw_middle",
+        "observation.images.tactile_right_raw_ring",
+        "observation.images.tactile_right_raw_pinky",
+        "observation.images.tactile_right_deform_thumb",
+        "observation.images.tactile_right_deform_index",
+        "observation.images.tactile_right_deform_middle",
+        "observation.images.tactile_right_deform_ring",
+        "observation.images.tactile_right_deform_pinky"
+      ],
+      "tasks": 5370,
+      "columns": {}
+    },
+    "score": 99.4,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 290,
+      "with_warnings": 10,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 12,
+      "warning": 10
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 5
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 5
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 10
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 16.2
+  },
+  {
+    "source": "behavior-1k/2025-challenge-demos",
+    "error": "skipped: its file names don't follow the LeRobot layout, so a spot-check would download all 119M frames"
+  },
+  {
+    "source": "LeCAR-Lab/Wanda",
+    "error": "not in LeRobot format (no meta/info.json)"
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "sii-rhos-ai/vifailback-dataset-lerobot",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 25.0,
+      "episodes": 300,
+      "frames": 75277,
+      "cameras": [
+        "observation.images.cam_high",
+        "observation.images.cam_left_wrist",
+        "observation.images.cam_right_wrist"
+      ],
+      "tasks": 100,
+      "columns": {}
+    },
+    "score": 91.0,
+    "grade": "C",
+    "grade_cap": "7.0% of episodes have errors; over 5% of episodes with errors caps the grade at C",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 245,
+      "with_warnings": 34,
+      "with_errors": 21
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 44,
+      "warning": 34,
+      "error": 21
+    },
+    "issues": [
+      {
+        "code": "DEAD_EPISODE",
+        "severity": "error",
+        "affected": 21
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 76
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 5.05
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "lerobot/abc_130k_v3_smoke",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "yam_bimanual",
+      "fps": 30.0,
+      "episodes": 85,
+      "frames": 313094,
+      "cameras": [
+        "observation.images.top",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 85,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 1
+    },
+    "issues": [
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 6.66
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "lerobot/high_quality_folding",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "openarms_follower",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 791295,
+      "cameras": [
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.base"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.5,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 292,
+      "with_warnings": 8,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 10,
+      "warning": 9
+    },
+    "issues": [
+      {
+        "code": "STATE_LAG_OUTLIER",
+        "severity": "warning",
+        "affected": 6
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 7
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 18.32
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "cadene/droid_1.0.1",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Franka",
+      "fps": 15.0,
+      "episodes": 300,
+      "frames": 88158,
+      "cameras": [
+        "observation.images.wrist_left",
+        "observation.images.exterior_1_left",
+        "observation.images.exterior_2_left"
+      ],
+      "tasks": 49607,
+      "columns": {}
+    },
+    "score": 75.0,
+    "grade": "C",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 204,
+      "with_warnings": 92,
+      "with_errors": 4
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 6,
+      "warning": 124,
+      "info": 51
+    },
+    "issues": [
+      {
+        "code": "STATE_FROZEN",
+        "severity": "error",
+        "affected": 3
+      },
+      {
+        "code": "DEAD_EPISODE",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "EPISODE_TOO_SHORT",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "GLOBAL_INDEX_DUPLICATES",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "EPISODE_TASK_EMPTY",
+        "severity": "warning",
+        "affected": 62
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 34
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 34
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 18
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "TASK_EMPTY",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 21
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "TASK_VAGUE",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 39.8
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "cadene/agibot_alpha_v30",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "AgiBot_A2D",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 301872,
+      "cameras": [
+        "observation.images.top_head",
+        "observation.images.hand_left",
+        "observation.images.hand_right",
+        "observation.images.head_center_fisheye",
+        "observation.images.head_left_fisheye",
+        "observation.images.head_right_fisheye",
+        "observation.images.back_left_fisheye",
+        "observation.images.back_right_fisheye"
+      ],
+      "tasks": 2,
+      "columns": {}
+    },
+    "score": 75.5,
+    "grade": "D",
+    "grade_cap": "16.0% of episodes have errors; over 15% of episodes with errors caps the grade at D",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 251,
+      "with_warnings": 1,
+      "with_errors": 48
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "warning": 4,
+      "info": 50,
+      "error": 48
+    },
+    "issues": [
+      {
+        "code": "TASK_INDEX_UNKNOWN",
+        "severity": "error",
+        "affected": 48
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "EPISODE_INDEX_GAPS",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "GLOBAL_INDEX_GAPS",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 47
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 15.74
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_heat_burger",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 890663,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 90.2,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 104,
+      "with_warnings": 196,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 196
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 196
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 31.45
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_place_towel_flat",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 327166,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 93.7,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 184,
+      "with_warnings": 116,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 81,
+      "warning": 116
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 104
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 91
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 13.19
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_connect_block",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Agilex_Cobot_Magic",
+      "fps": 30.0,
+      "episodes": 238,
+      "frames": 232528,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_front_chest_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 91.8,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 108,
+      "with_warnings": 130,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 1,
+      "warning": 130
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 130
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 9.27
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_heat_sandwich",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 976279,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 89.6,
+    "grade": "B",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 92,
+      "with_warnings": 208,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 208
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 208
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 33.16
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_move_object",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Agilex_Cobot_Magic",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 126365,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 95.7,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 222,
+      "with_warnings": 78,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 63,
+      "warning": 79
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 78
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 62
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 6.88
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_storage_towel",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 123264,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 91.3,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 158,
+      "with_warnings": 142,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 106,
+      "warning": 164
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 201
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 67
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 6.55
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Agilex_Cobot_Magic_make_sandwiche",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "aloha",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 477699,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 94.3,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 186,
+      "with_warnings": 114,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 5,
+      "warning": 114
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 110
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 7
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 17.62
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Unitree_G1edu_u3_place_bread",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Unitree_G1edu-u3",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 101132,
+      "cameras": [
+        "observation.images.cam_high_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 84.2,
+    "grade": "B",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 291,
+      "with_warnings": 9,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 2,
+      "info": 68,
+      "warning": 9
+    },
+    "issues": [
+      {
+        "code": "FEATURE_MISSING",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 7
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 66
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 5.85
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/AI2_Alphabot_2_insert_hose_into_hole",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "AI2_Alphabot_2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 254010,
+      "cameras": [
+        "observation.images.cam_front_chest_rgb",
+        "observation.images.cam_front_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.6,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 298,
+      "with_warnings": 2,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 52,
+      "warning": 2
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 51
+      },
+      {
+        "code": "DUPLICATE_EPISODE",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 12.93
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/AI2_Alphabot_2_insert_water_pipe",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "AI2_Alphabot_2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 253856,
+      "cameras": [
+        "observation.images.cam_front_chest_rgb",
+        "observation.images.cam_front_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.6,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 299,
+      "with_warnings": 1,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 53,
+      "warning": 1
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 52
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 11.45
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/AI2_Alphabot_2_stamp_document",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "AI2_Alphabot_2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 124547,
+      "cameras": [
+        "observation.images.cam_front_chest_rgb",
+        "observation.images.cam_front_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.8,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 296,
+      "with_warnings": 4,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 4
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 4
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 37.7
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/AI2_Alphabot_2_package_fruit",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "AI2_Alphabot_2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 132163,
+      "cameras": [
+        "observation.images.cam_front_chest_rgb",
+        "observation.images.cam_front_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 300,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2
+    },
+    "issues": [
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 38.11
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Galaxea_R1_Lite_classify_object_green_tablecloth",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Galaxea_R1_Lite",
+      "fps": 30.0,
+      "episodes": 224,
+      "frames": 251221,
+      "cameras": [
+        "observation.images.cam_head_left_rgb",
+        "observation.images.cam_head_right_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 224,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 1
+    },
+    "issues": [
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 29.03
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Galbot_G1_load_floor_trash_3",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": null,
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 496712,
+      "cameras": [
+        "observation.images.cam_right_head_rgb",
+        "observation.images.cam_left_head_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_left_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.4,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 288,
+      "with_warnings": 12,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 4,
+      "warning": 12
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 12
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 2
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 50.2
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Galbot_G1_use_dryer",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Galbot_G1",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 158043,
+      "cameras": [
+        "observation.images.cam_front_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 300,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2
+    },
+    "issues": [
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 37.64
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "RoboCOIN/Airbot_MMK2_organize_plate",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "Airbot_MMK2",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 173092,
+      "cameras": [
+        "observation.images.cam_head_rgb",
+        "observation.images.cam_left_wrist_rgb",
+        "observation.images.cam_right_wrist_rgb",
+        "observation.images.cam_front_rgb"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.2,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 284,
+      "with_warnings": 16,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 16
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 16
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 34.26
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "Embodied-AI-6/blue_so101_color_blocks_10ep_v1_20260526_175604",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 10,
+      "frames": 6534,
+      "cameras": [
+        "observation.images.front"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 67.2,
+    "grade": "D",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 3,
+      "with_warnings": 5,
+      "with_errors": 2
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 5,
+      "warning": 10,
+      "error": 2
+    },
+    "issues": [
+      {
+        "code": "FAILED_GRASP",
+        "severity": "error",
+        "affected": 2
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 8
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 3
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 2
+      },
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 2.82
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "robot-learning-group47/eval2_bgr_g",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 4,
+      "frames": 2400,
+      "cameras": [
+        "observation.images.front"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 98.5,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 4,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 4
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 2
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "TASK_VAGUE",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 2.65
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "omkarmayekar555/robot-learning-tutorial-data",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so101_follower",
+      "fps": 30.0,
+      "episodes": 1,
+      "frames": 1776,
+      "cameras": [
+        "observation.images.left",
+        "observation.images.right"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 1,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {},
+    "issues": [],
+    "seconds": 2.76
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "mliu48/telearms-yam-cube-v4",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "bimanual_yam",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 154091,
+      "cameras": [
+        "observation.images.camera_front",
+        "observation.images.camera_left",
+        "observation.images.camera_right"
+      ],
+      "tasks": 48,
+      "columns": {}
+    },
+    "score": 93.7,
+    "grade": "B",
+    "grade_cap": "2.3% of episodes have errors; any episodes with errors caps the grade at B",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 235,
+      "with_warnings": 58,
+      "with_errors": 7
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 128,
+      "warning": 68,
+      "error": 7
+    },
+    "issues": [
+      {
+        "code": "FAILED_GRASP",
+        "severity": "error",
+        "affected": 7
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 94
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 34
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 22
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 5
+      },
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "REGRASP",
+        "severity": "info",
+        "affected": 27
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 11
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 54.28
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "nurtayev-d/seasondish-shake-ag-1000ep",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "ds_fetch",
+      "fps": 10.0,
+      "episodes": 300,
+      "frames": 172276,
+      "cameras": [
+        "observation.images.left_base_camera_link",
+        "observation.images.right_base_camera_link",
+        "observation.images.fetch_hand"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 100.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 300,
+      "with_warnings": 0,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2
+    },
+    "issues": [
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 17.17
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "adityx23/icl-dataset",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "yor",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 402966,
+      "cameras": [
+        "observation.images.zed",
+        "observation.images.fish0",
+        "observation.images.fish1"
+      ],
+      "tasks": 36,
+      "columns": {
+        "action": [
+          "action.left_ee",
+          "action.right_ee",
+          "action.base_vel",
+          "action.gripper",
+          "action.lift_cmd"
+        ]
+      }
+    },
+    "score": 96.1,
+    "grade": "B",
+    "grade_cap": "0.3% of episodes have errors; any episodes with errors caps the grade at B",
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 240,
+      "with_warnings": 59,
+      "with_errors": 1
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 34,
+      "warning": 71,
+      "error": 1
+    },
+    "issues": [
+      {
+        "code": "DEAD_EPISODE",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 48
+      },
+      {
+        "code": "EPISODE_SHORT",
+        "severity": "warning",
+        "affected": 12
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 9
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 6
+      },
+      {
+        "code": "EPISODE_LONG",
+        "severity": "info",
+        "affected": 29
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 37.42
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "brandonyang/artem-pour-water",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": null,
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 503857,
+      "cameras": [
+        "observation.images.umi1",
+        "observation.images.umi2"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 99.5,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 291,
+      "with_warnings": 9,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 1,
+      "warning": 9
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 9
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 157.73
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "jnogga/droid_success",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "franka_emika_panda_robotiq_2F-85",
+      "fps": 15.0,
+      "episodes": 300,
+      "frames": 36348,
+      "cameras": [
+        "observation.images.left_external",
+        "observation.images.wrist",
+        "observation.images.right_external"
+      ],
+      "tasks": 53282,
+      "columns": {
+        "action": [
+          "action.cartesian_position",
+          "action.cartesian_velocity",
+          "action.gripper_position",
+          "action.gripper_velocity",
+          "action.joint_position",
+          "action.joint_velocity"
+        ]
+      }
+    },
+    "score": 95.6,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 213,
+      "with_warnings": 87,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 7,
+      "warning": 87
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 86
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 7
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 9.05
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "Joocjun/GR1-Tabletop-Merged-1000x24",
+    "dataset": {
+      "codebase_version": "v2.0",
+      "robot_type": "GR1ArmsAndWaistFourierHands",
+      "fps": 20.0,
+      "episodes": 300,
+      "frames": 105974,
+      "cameras": [
+        "observation.images.ego_view"
+      ],
+      "tasks": 186,
+      "columns": {}
+    },
+    "score": 84.8,
+    "grade": "B",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 295,
+      "with_warnings": 5,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 1,
+      "info": 2,
+      "warning": 5
+    },
+    "issues": [
+      {
+        "code": "GLOBAL_INDEX_DUPLICATES",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 4
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 55.85
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "GT-111/agibotworld_alpha_v3_eef",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "a2d",
+      "fps": 30.0,
+      "episodes": 300,
+      "frames": 372785,
+      "cameras": [
+        "observation.images.head",
+        "observation.images.wrist_left",
+        "observation.images.wrist_right"
+      ],
+      "tasks": 1057,
+      "columns": {}
+    },
+    "score": 98.8,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 275,
+      "with_warnings": 25,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 2,
+      "warning": 25
+    },
+    "issues": [
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 25
+      },
+      {
+        "code": "PARTIAL_CHECK",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 15.89
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "kmg0620/so101_bomb_pick_place_v1",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 150,
+      "frames": 88782,
+      "cameras": [
+        "observation.images.wrist",
+        "observation.images.overhead"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 52.3,
+    "grade": "F",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 128,
+      "with_warnings": 0,
+      "with_errors": 22
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 69,
+      "info": 9
+    },
+    "issues": [
+      {
+        "code": "EPISODE_LENGTH_MISMATCH",
+        "severity": "error",
+        "affected": 22
+      },
+      {
+        "code": "FRAME_INDEX_DUPLICATE",
+        "severity": "error",
+        "affected": 22
+      },
+      {
+        "code": "TIMESTAMP_NONMONOTONIC",
+        "severity": "error",
+        "affected": 22
+      },
+      {
+        "code": "EPISODE_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "FRAME_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "GLOBAL_INDEX_DUPLICATES",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "REGRASP",
+        "severity": "info",
+        "affected": 4
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "info",
+        "affected": 3
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 6.19
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "jchandru08/so100_press_red_button",
+    "dataset": {
+      "codebase_version": "v2.1",
+      "robot_type": "so100",
+      "fps": 30.0,
+      "episodes": 29,
+      "frames": 17156,
+      "cameras": [
+        "observation.images.back",
+        "observation.images.top",
+        "observation.images.left",
+        "observation.images.right"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 54.9,
+    "grade": "F",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 15,
+      "with_warnings": 7,
+      "with_errors": 7
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 8,
+      "warning": 11,
+      "info": 15
+    },
+    "issues": [
+      {
+        "code": "EPISODE_LENGTH_MISMATCH",
+        "severity": "error",
+        "affected": 7
+      },
+      {
+        "code": "FRAME_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "JOINT_AT_LIMIT",
+        "severity": "warning",
+        "affected": 5
+      },
+      {
+        "code": "ACTION_SPIKE",
+        "severity": "warning",
+        "affected": 3
+      },
+      {
+        "code": "EPISODE_INDEX_GAPS",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "GLOBAL_INDEX_GAPS",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "GRIPPER_NEVER_ACTUATES",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 14
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 4.09
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "Embodied-AI-6/dataset",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 160,
+      "frames": 81786,
+      "cameras": [
+        "observation.images.front"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 91.0,
+    "grade": "A",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 74,
+      "with_warnings": 86,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "info": 75,
+      "warning": 86
+    },
+    "issues": [
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 160
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 4.91
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "SO-101-robot-learning/so101_pick_place",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 50,
+      "frames": 17870,
+      "cameras": [
+        "observation.images.top",
+        "observation.images.side"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 71.1,
+    "grade": "C",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 49,
+      "with_warnings": 1,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 2,
+      "info": 32,
+      "warning": 1
+    },
+    "issues": [
+      {
+        "code": "EPISODE_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "FRAME_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "IDLE_PADDING",
+        "severity": "warning",
+        "affected": 32
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 3.13
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "EPITECH-LILLE/eval_training",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "so_follower",
+      "fps": 30.0,
+      "episodes": 60,
+      "frames": 41686,
+      "cameras": [
+        "observation.images.front",
+        "observation.images.back"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 39.9,
+    "grade": "F",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 39,
+      "with_warnings": 0,
+      "with_errors": 21
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "error": 64,
+      "info": 2
+    },
+    "issues": [
+      {
+        "code": "EPISODE_LENGTH_MISMATCH",
+        "severity": "error",
+        "affected": 20
+      },
+      {
+        "code": "FRAME_INDEX_DUPLICATE",
+        "severity": "error",
+        "affected": 20
+      },
+      {
+        "code": "TIMESTAMP_NONMONOTONIC",
+        "severity": "error",
+        "affected": 20
+      },
+      {
+        "code": "EPISODE_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "FAILED_GRASP",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "FRAME_COUNT_MISMATCH",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "GLOBAL_INDEX_DUPLICATES",
+        "severity": "error",
+        "affected": 1
+      },
+      {
+        "code": "CALIBRATION_OFFSET",
+        "severity": "info",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 4.0
+  },
+  {
+    "tool": {
+      "name": "robolint",
+      "version": "0.1.2"
+    },
+    "source": "imstevenpmwork/omx_sentry_1",
+    "dataset": {
+      "codebase_version": "v3.0",
+      "robot_type": "omx_follower",
+      "fps": 30.0,
+      "episodes": 7,
+      "frames": 1007,
+      "cameras": [
+        "observation.images.top",
+        "observation.images.wrist"
+      ],
+      "tasks": 1,
+      "columns": {}
+    },
+    "score": 80.8,
+    "grade": "B",
+    "grade_cap": null,
+    "score_weights": {
+      "episode": {
+        "info": 0.02,
+        "warning": 0.15,
+        "error": 1.0
+      },
+      "dataset": {
+        "info": 0.0,
+        "warning": 0.05,
+        "error": 0.15
+      },
+      "codes": {
+        "NO_ACTIONS": 1.0,
+        "NO_EPISODES": 1.0
+      },
+      "grade_caps": [
+        {
+          "error_episodes_over": 0.0,
+          "max_grade": "B"
+        },
+        {
+          "error_episodes_over": 0.05,
+          "max_grade": "C"
+        },
+        {
+          "error_episodes_over": 0.15,
+          "max_grade": "D"
+        },
+        {
+          "error_episodes_over": 0.3,
+          "max_grade": "F"
+        }
+      ]
+    },
+    "episodes": {
+      "clean": 0,
+      "with_warnings": 7,
+      "with_errors": 0
+    },
+    "videos_checked": false,
+    "finding_counts": {
+      "warning": 8,
+      "info": 1
+    },
+    "issues": [
+      {
+        "code": "EPISODE_TASK_EMPTY",
+        "severity": "warning",
+        "affected": 7
+      },
+      {
+        "code": "TASK_EMPTY",
+        "severity": "warning",
+        "affected": 1
+      },
+      {
+        "code": "STATE_LAG",
+        "severity": "info",
+        "affected": 1
+      }
+    ],
+    "seconds": 2.56
+  }
+]

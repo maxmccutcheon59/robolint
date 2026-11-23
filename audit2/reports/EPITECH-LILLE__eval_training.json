@@ -9,7 +9,7 @@
     "robot_type": "so_follower",
     "fps": 30.0,
     "episodes": 60,
-    "frames": 32757,
+    "frames": 41686,
     "cameras": [
       "observation.images.front",
       "observation.images.back"
@@ -17,8 +17,8 @@
     "tasks": 1,
     "columns": {}
   },
-  "score": 60.3,
-  "grade": "D",
+  "score": 39.9,
+  "grade": "F",
   "grade_cap": null,
   "score_weights": {
     "episode": {
@@ -55,16 +55,31 @@
     ]
   },
   "episodes": {
-    "clean": 59,
+    "clean": 39,
     "with_warnings": 0,
-    "with_errors": 1
+    "with_errors": 21
   },
   "videos_checked": false,
   "finding_counts": {
-    "error": 4,
-    "info": 3
+    "error": 64,
+    "info": 2
   },
   "issues": [
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "affected": 20
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "affected": 20
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "affected": 20
+    },
     {
       "code": "EPISODE_COUNT_MISMATCH",
       "severity": "error",
@@ -86,9 +101,9 @@
       "affected": 1
     },
     {
-      "code": "IDLE_PADDING",
+      "code": "CALIBRATION_OFFSET",
       "severity": "info",
-      "affected": 2
+      "affected": 1
     },
     {
       "code": "STATE_LAG",
@@ -97,26 +112,26 @@
     }
   ],
   "episode_scores": {
-    "0": 100.0,
-    "1": 100.0,
-    "2": 100.0,
-    "3": 100.0,
-    "4": 100.0,
-    "5": 100.0,
-    "6": 100.0,
-    "7": 98.0,
-    "8": 100.0,
-    "9": 100.0,
-    "10": 100.0,
-    "11": 100.0,
-    "12": 100.0,
-    "13": 100.0,
-    "14": 100.0,
-    "15": 98.0,
-    "16": 100.0,
-    "17": 100.0,
-    "18": 100.0,
-    "19": 100.0,
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0,
+    "7": 0.0,
+    "8": 0.0,
+    "9": 0.0,
+    "10": 0.0,
+    "11": 0.0,
+    "12": 0.0,
+    "13": 0.0,
+    "14": 0.0,
+    "15": 0.0,
+    "16": 0.0,
+    "17": 0.0,
+    "18": 0.0,
+    "19": 0.0,
     "20": 100.0,
     "21": 100.0,
     "22": 100.0,
@@ -132,7 +147,7 @@
     "32": 100.0,
     "33": 100.0,
     "34": 100.0,
-    "35": 100.0,
+    "35": 98.0,
     "36": 100.0,
     "37": 100.0,
     "38": 100.0,
@@ -172,30 +187,30 @@
     {
       "code": "FRAME_COUNT_MISMATCH",
       "severity": "error",
-      "message": "info.json declares 0 frames but the data contains 32757",
+      "message": "info.json declares 0 frames but the data contains 41686",
       "episode": null,
       "details": {
         "declared": 0,
-        "found": 32757
+        "found": 41686
       }
     },
     {
       "code": "GLOBAL_INDEX_DUPLICATES",
       "severity": "error",
-      "message": "2982 duplicate values in the global 'index' column",
+      "message": "11911 duplicate values in the global 'index' column",
       "episode": null,
       "details": {}
     },
     {
       "code": "STATE_LAG",
       "severity": "info",
-      "message": "the measured state typically trails the commanded action by 3.1 frames (103 ms), estimated over 60 episodes",
+      "message": "the measured state typically trails the commanded action by 3.1 frames (103 ms), estimated over 40 episodes",
       "episode": null,
       "details": {
-        "typical_lag_frames": 3.08,
-        "typical_lag_ms": 102.7,
-        "spread_frames": 0.08,
-        "episodes_estimated": 60,
+        "typical_lag_frames": 3.1,
+        "typical_lag_ms": 103.2,
+        "spread_frames": 0.07,
+        "episodes_estimated": 40,
         "joints": [
           "shoulder_pan.pos",
           "shoulder_lift.pos",
@@ -206,25 +221,574 @@
       }
     },
     {
-      "code": "IDLE_PADDING",
-      "severity": "info",
-      "message": "15% of the episode is idle (10 frames before motion starts, 82 after it ends)",
-      "episode": 7,
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 595 frames, data has 1041",
+      "episode": 0,
       "details": {
-        "idle_fraction": 0.154,
-        "lead_frames": 10,
-        "tail_frames": 82
+        "metadata": 595,
+        "data": 1041
       }
     },
     {
-      "code": "IDLE_PADDING",
-      "severity": "info",
-      "message": "15% of the episode is idle (4 frames before motion starts, 88 after it ends)",
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 0,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 0,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 1,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 1,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 1,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1043",
+      "episode": 2,
+      "details": {
+        "metadata": 596,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 2,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 2,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 3,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 3,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 3,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1043",
+      "episode": 4,
+      "details": {
+        "metadata": 596,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 4,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 4,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 5,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 5,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 5,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 6,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 6,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 6,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 7,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 7,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 7,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 597 frames, data has 1043",
+      "episode": 8,
+      "details": {
+        "metadata": 597,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 8,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 8,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 597 frames, data has 1044",
+      "episode": 9,
+      "details": {
+        "metadata": 597,
+        "data": 1044
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 9,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 9,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 597 frames, data has 1042",
+      "episode": 10,
+      "details": {
+        "metadata": 597,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "445 duplicated frame_index values",
+      "episode": 10,
+      "details": {
+        "count": 445
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 445 times",
+      "episode": 10,
+      "details": {
+        "count": 445
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 597 frames, data has 1043",
+      "episode": 11,
+      "details": {
+        "metadata": 597,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 11,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 11,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1042",
+      "episode": 12,
+      "details": {
+        "metadata": 596,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "446 duplicated frame_index values",
+      "episode": 12,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 446 times",
+      "episode": 12,
+      "details": {
+        "count": 446
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 595 frames, data has 1043",
+      "episode": 13,
+      "details": {
+        "metadata": 595,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "448 duplicated frame_index values",
+      "episode": 13,
+      "details": {
+        "count": 448
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 448 times",
+      "episode": 13,
+      "details": {
+        "count": 448
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 596 frames, data has 1043",
+      "episode": 14,
+      "details": {
+        "metadata": 596,
+        "data": 1043
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 14,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 14,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 594 frames, data has 1042",
       "episode": 15,
       "details": {
-        "idle_fraction": 0.155,
-        "lead_frames": 4,
-        "tail_frames": 88
+        "metadata": 594,
+        "data": 1042
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "448 duplicated frame_index values",
+      "episode": 15,
+      "details": {
+        "count": 448
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 448 times",
+      "episode": 15,
+      "details": {
+        "count": 448
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 594 frames, data has 1041",
+      "episode": 16,
+      "details": {
+        "metadata": 594,
+        "data": 1041
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 16,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 16,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 594 frames, data has 1041",
+      "episode": 17,
+      "details": {
+        "metadata": 594,
+        "data": 1041
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 17,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 17,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 593 frames, data has 1038",
+      "episode": 18,
+      "details": {
+        "metadata": 593,
+        "data": 1038
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "445 duplicated frame_index values",
+      "episode": 18,
+      "details": {
+        "count": 445
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 445 times",
+      "episode": 18,
+      "details": {
+        "count": 445
+      }
+    },
+    {
+      "code": "EPISODE_LENGTH_MISMATCH",
+      "severity": "error",
+      "message": "metadata says 594 frames, data has 1041",
+      "episode": 19,
+      "details": {
+        "metadata": 594,
+        "data": 1041
+      }
+    },
+    {
+      "code": "FRAME_INDEX_DUPLICATE",
+      "severity": "error",
+      "message": "447 duplicated frame_index values",
+      "episode": 19,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "TIMESTAMP_NONMONOTONIC",
+      "severity": "error",
+      "message": "timestamps go backwards or repeat 447 times",
+      "episode": 19,
+      "details": {
+        "count": 447
+      }
+    },
+    {
+      "code": "CALIBRATION_OFFSET",
+      "severity": "info",
+      "message": "at rest the command sits past what the arm can reach (leader/follower calibration mismatch): shoulder_lift.pos",
+      "episode": 35,
+      "details": {
+        "joints": [
+          "shoulder_lift.pos"
+        ]
       }
     },
     {
@@ -239,5 +803,5 @@
       }
     }
   ],
-  "seconds": 2.81
+  "seconds": 4.0
 }
