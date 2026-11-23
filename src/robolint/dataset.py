@@ -175,19 +175,21 @@ def quick_patterns(root: Path, n: int, include_videos: bool) -> list[str] | None
     # the metadata to say which ones hold the episodes. Broken metadata is what robolint looks for,
     # and a stale episode index would otherwise hide the very data files that don't match it.
     declared = info.get("total_episodes")
-    if not isinstance(declared, int) or declared <= n:
-        return None
     keys = [k for k, v in (info.get("features") or {}).items() if isinstance(v, dict) and v.get("dtype") == "video"]
     chunks = int(info.get("chunks_size") or 1000)
     out: set[str] = set()
     try:
         if "{episode_index" in data_t:  # v2.x: one file per episode
+            if not isinstance(declared, int) or declared <= n:
+                return None
             for ep in range(n + 1):
                 out.add(data_t.format(episode_chunk=ep // chunks, episode_index=ep))
                 if include_videos and isinstance(video_t, str):
                     for k in keys:
                         out.add(video_t.format(episode_chunk=ep // chunks, episode_index=ep, video_key=k))
         else:  # v3.x: chunked files, mapping lives in meta/episodes
+            # The episode index, not info.json's total, decides: a dataset whose info.json says 6
+            # episodes while its index lists thousands must not be downloaded whole.
             meta = _load_episode_meta(root)
             if not meta or len(meta) <= n:
                 return None

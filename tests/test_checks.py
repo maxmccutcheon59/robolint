@@ -261,7 +261,27 @@ def test_quick_mode_takes_every_file_when_the_whole_dataset_is_wanted(tmp_path, 
     for declared in (0, 5, None):
         info["total_episodes"] = declared
         info_path.write_text(json.dumps(info))
-        assert quick_patterns(root, 8, include_videos=False) is None, declared
+        pats = quick_patterns(root, 8, include_videos=False)
+        if version.startswith("v2"):
+            assert pats is None, declared  # no episode index: the declared total is all there is
+        else:
+            assert pats, declared  # the index lists 12 episodes: still a partial download
+
+
+def test_quick_mode_takes_every_file_when_the_episode_index_is_short(tmp_path):
+    # Real case: info.json and meta/episodes list fewer episodes than the data files hold.
+    import shutil
+
+    import pyarrow.parquet as pq
+
+    from robolint.dataset import quick_patterns
+
+    root = make_dataset(tmp_path / "ds", version="v3.0", n_eps=12, length=40)
+    for p in (root / "meta" / "episodes").rglob("*.parquet"):
+        t = pq.read_table(p)
+        pq.write_table(t.slice(0, 4), p)  # the index now lists only 4 episodes
+    assert quick_patterns(root, 8, include_videos=False) is None
+    shutil.rmtree(root)
 
 
 def test_sample_and_hold_actions_are_not_glitches(tmp_path):

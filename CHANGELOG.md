@@ -7,8 +7,10 @@
   which files to download from `meta/episodes`, so a dataset whose metadata lists fewer episodes
   than its data holds (the kind of problem robolint exists to catch) was graded on only the
   listed files. EPITECH-LILLE/eval_training scored 60.3 (D) with 32,757 of its 41,686 frames
-  instead of 39.9 (F). When the dataset is no bigger than `--max-episodes`, or its metadata
-  doesn't say how big it is, every data file is now downloaded.
+  instead of 39.9 (F). Every data file is now downloaded when the episode index
+  (`meta/episodes`, v3) or the declared total (v2) is no bigger than `--max-episodes`. The index
+  decides for v3, so a dataset whose info.json declares 6 episodes while its index lists
+  thousands is still spot-checked, not downloaded whole.
 
 ### Added
 - **Grade badge.** `robolint check DATASET --badge robolint.svg` writes an SVG badge with the
