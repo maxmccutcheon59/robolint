@@ -1,0 +1,2435 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "RoboCOIN/Agilex_Cobot_Magic_connect_block",
+  "dataset": {
+    "codebase_version": "v2.1",
+    "robot_type": "Agilex_Cobot_Magic",
+    "fps": 30.0,
+    "episodes": 238,
+    "frames": 232528,
+    "cameras": [
+      "observation.images.cam_head_rgb",
+      "observation.images.cam_left_wrist_rgb",
+      "observation.images.cam_right_wrist_rgb",
+      "observation.images.cam_front_chest_rgb"
+    ],
+    "tasks": 1,
+    "columns": {}
+  },
+  "score": 91.8,
+  "grade": "A",
+  "grade_cap": null,
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 108,
+    "with_warnings": 130,
+    "with_errors": 0
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "info": 1,
+    "warning": 130
+  },
+  "issues": [
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "affected": 130
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 100.0,
+    "1": 85.0,
+    "2": 100.0,
+    "3": 85.0,
+    "4": 100.0,
+    "5": 100.0,
+    "6": 85.0,
+    "7": 100.0,
+    "8": 100.0,
+    "9": 100.0,
+    "10": 85.0,
+    "11": 100.0,
+    "12": 85.0,
+    "13": 85.0,
+    "14": 85.0,
+    "15": 100.0,
+    "16": 85.0,
+    "17": 100.0,
+    "18": 85.0,
+    "19": 85.0,
+    "20": 100.0,
+    "21": 85.0,
+    "22": 100.0,
+    "23": 100.0,
+    "24": 100.0,
+    "25": 85.0,
+    "26": 100.0,
+    "27": 85.0,
+    "28": 85.0,
+    "29": 85.0,
+    "30": 100.0,
+    "31": 85.0,
+    "32": 100.0,
+    "33": 100.0,
+    "34": 85.0,
+    "35": 100.0,
+    "36": 85.0,
+    "37": 85.0,
+    "38": 85.0,
+    "39": 100.0,
+    "40": 85.0,
+    "41": 85.0,
+    "42": 85.0,
+    "43": 85.0,
+    "44": 85.0,
+    "45": 85.0,
+    "46": 85.0,
+    "47": 85.0,
+    "48": 100.0,
+    "49": 85.0,
+    "50": 85.0,
+    "51": 85.0,
+    "52": 100.0,
+    "53": 85.0,
+    "54": 100.0,
+    "55": 100.0,
+    "56": 100.0,
+    "57": 85.0,
+    "58": 85.0,
+    "59": 85.0,
+    "60": 85.0,
+    "61": 85.0,
+    "62": 100.0,
+    "63": 100.0,
+    "64": 100.0,
+    "65": 100.0,
+    "66": 85.0,
+    "67": 85.0,
+    "68": 100.0,
+    "69": 85.0,
+    "70": 100.0,
+    "71": 100.0,
+    "72": 100.0,
+    "73": 100.0,
+    "74": 85.0,
+    "75": 85.0,
+    "76": 100.0,
+    "77": 85.0,
+    "78": 85.0,
+    "79": 100.0,
+    "80": 100.0,
+    "81": 100.0,
+    "82": 100.0,
+    "83": 85.0,
+    "84": 85.0,
+    "85": 85.0,
+    "86": 85.0,
+    "87": 100.0,
+    "88": 85.0,
+    "89": 100.0,
+    "90": 85.0,
+    "91": 85.0,
+    "92": 100.0,
+    "93": 100.0,
+    "94": 85.0,
+    "95": 85.0,
+    "96": 85.0,
+    "97": 100.0,
+    "98": 100.0,
+    "99": 85.0,
+    "100": 100.0,
+    "101": 85.0,
+    "102": 100.0,
+    "103": 100.0,
+    "104": 100.0,
+    "105": 85.0,
+    "106": 85.0,
+    "107": 100.0,
+    "108": 85.0,
+    "109": 85.0,
+    "110": 85.0,
+    "111": 100.0,
+    "112": 85.0,
+    "113": 100.0,
+    "114": 100.0,
+    "115": 85.0,
+    "116": 85.0,
+    "117": 85.0,
+    "118": 100.0,
+    "119": 100.0,
+    "120": 100.0,
+    "121": 85.0,
+    "122": 85.0,
+    "123": 85.0,
+    "124": 85.0,
+    "125": 100.0,
+    "126": 100.0,
+    "127": 85.0,
+    "128": 85.0,
+    "129": 85.0,
+    "130": 100.0,
+    "131": 100.0,
+    "132": 100.0,
+    "133": 100.0,
+    "134": 85.0,
+    "135": 100.0,
+    "136": 85.0,
+    "137": 85.0,
+    "138": 100.0,
+    "139": 100.0,
+    "140": 100.0,
+    "141": 85.0,
+    "142": 100.0,
+    "143": 85.0,
+    "144": 100.0,
+    "145": 85.0,
+    "146": 85.0,
+    "147": 100.0,
+    "148": 85.0,
+    "149": 100.0,
+    "150": 85.0,
+    "151": 100.0,
+    "152": 85.0,
+    "153": 85.0,
+    "154": 100.0,
+    "155": 85.0,
+    "156": 85.0,
+    "157": 85.0,
+    "158": 100.0,
+    "159": 100.0,
+    "160": 85.0,
+    "161": 85.0,
+    "162": 85.0,
+    "163": 85.0,
+    "164": 85.0,
+    "165": 85.0,
+    "166": 100.0,
+    "167": 85.0,
+    "168": 85.0,
+    "169": 100.0,
+    "170": 85.0,
+    "171": 100.0,
+    "172": 85.0,
+    "173": 100.0,
+    "174": 100.0,
+    "175": 100.0,
+    "176": 100.0,
+    "177": 100.0,
+    "178": 85.0,
+    "179": 100.0,
+    "180": 85.0,
+    "181": 85.0,
+    "182": 85.0,
+    "183": 85.0,
+    "184": 85.0,
+    "185": 100.0,
+    "186": 100.0,
+    "187": 100.0,
+    "188": 100.0,
+    "189": 100.0,
+    "190": 85.0,
+    "191": 85.0,
+    "192": 85.0,
+    "193": 100.0,
+    "194": 100.0,
+    "195": 85.0,
+    "196": 100.0,
+    "197": 100.0,
+    "198": 85.0,
+    "199": 100.0,
+    "200": 100.0,
+    "201": 100.0,
+    "202": 85.0,
+    "203": 100.0,
+    "204": 85.0,
+    "205": 100.0,
+    "206": 100.0,
+    "207": 100.0,
+    "208": 100.0,
+    "209": 100.0,
+    "210": 85.0,
+    "211": 85.0,
+    "212": 85.0,
+    "213": 85.0,
+    "214": 100.0,
+    "215": 85.0,
+    "216": 85.0,
+    "217": 85.0,
+    "218": 100.0,
+    "219": 85.0,
+    "220": 100.0,
+    "221": 85.0,
+    "222": 85.0,
+    "223": 85.0,
+    "224": 85.0,
+    "225": 85.0,
+    "226": 85.0,
+    "227": 85.0,
+    "228": 85.0,
+    "229": 85.0,
+    "230": 100.0,
+    "231": 100.0,
+    "232": 100.0,
+    "233": 85.0,
+    "234": 85.0,
+    "235": 85.0,
+    "236": 85.0,
+    "237": 100.0
+  },
+  "findings": [
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 1.0 frames (33 ms), estimated over 238 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 1.0,
+        "typical_lag_ms": 33.3,
+        "spread_frames": 0.0,
+        "episodes_estimated": 238,
+        "joints": [
+          "left_arm_joint_1_rad",
+          "left_arm_joint_2_rad",
+          "left_arm_joint_3_rad",
+          "left_arm_joint_4_rad",
+          "left_arm_joint_5_rad",
+          "left_arm_joint_6_rad",
+          "left_eef_pos_x_m",
+          "left_eef_pos_y_m",
+          "left_eef_pos_z_m",
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_y_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_arm_joint_1_rad",
+          "right_arm_joint_2_rad",
+          "right_arm_joint_3_rad",
+          "right_arm_joint_4_rad",
+          "right_arm_joint_5_rad",
+          "right_arm_joint_6_rad",
+          "right_eef_pos_x_m",
+          "right_eef_pos_y_m",
+          "right_eef_pos_z_m",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_y_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 1,
+      "details": {
+        "count": 2,
+        "frames": [
+          468,
+          944
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 3,
+      "details": {
+        "count": 1,
+        "frames": [
+          243
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 6,
+      "details": {
+        "count": 2,
+        "frames": [
+          61,
+          655
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 10,
+      "details": {
+        "count": 1,
+        "frames": [
+          769
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 12,
+      "details": {
+        "count": 2,
+        "frames": [
+          455,
+          737
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 13,
+      "details": {
+        "count": 2,
+        "frames": [
+          437,
+          442
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 14,
+      "details": {
+        "count": 1,
+        "frames": [
+          406
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 16,
+      "details": {
+        "count": 1,
+        "frames": [
+          405
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 18,
+      "details": {
+        "count": 2,
+        "frames": [
+          128,
+          846
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 19,
+      "details": {
+        "count": 1,
+        "frames": [
+          790
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 21,
+      "details": {
+        "count": 1,
+        "frames": [
+          389
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 25,
+      "details": {
+        "count": 1,
+        "frames": [
+          38
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 27,
+      "details": {
+        "count": 1,
+        "frames": [
+          72
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 28,
+      "details": {
+        "count": 1,
+        "frames": [
+          363
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 29,
+      "details": {
+        "count": 2,
+        "frames": [
+          369,
+          530
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 31,
+      "details": {
+        "count": 1,
+        "frames": [
+          868
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 34,
+      "details": {
+        "count": 2,
+        "frames": [
+          107,
+          663
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 36,
+      "details": {
+        "count": 1,
+        "frames": [
+          854
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 37,
+      "details": {
+        "count": 1,
+        "frames": [
+          818
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 38,
+      "details": {
+        "count": 1,
+        "frames": [
+          339
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 40,
+      "details": {
+        "count": 1,
+        "frames": [
+          1063
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 41,
+      "details": {
+        "count": 1,
+        "frames": [
+          276
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 42,
+      "details": {
+        "count": 4,
+        "frames": [
+          423,
+          656,
+          829,
+          833
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 43,
+      "details": {
+        "count": 2,
+        "frames": [
+          49,
+          901
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 44,
+      "details": {
+        "count": 1,
+        "frames": [
+          496
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 45,
+      "details": {
+        "count": 1,
+        "frames": [
+          432
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 46,
+      "details": {
+        "count": 1,
+        "frames": [
+          489
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 47,
+      "details": {
+        "count": 3,
+        "frames": [
+          783,
+          787,
+          807
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 49,
+      "details": {
+        "count": 3,
+        "frames": [
+          511,
+          515,
+          541
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 50,
+      "details": {
+        "count": 2,
+        "frames": [
+          376,
+          821
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 51,
+      "details": {
+        "count": 1,
+        "frames": [
+          107
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 53,
+      "details": {
+        "count": 1,
+        "frames": [
+          829
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 57,
+      "details": {
+        "count": 3,
+        "frames": [
+          865,
+          888,
+          929
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 58,
+      "details": {
+        "count": 2,
+        "frames": [
+          146,
+          174
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 59,
+      "details": {
+        "count": 4,
+        "frames": [
+          336,
+          630,
+          678,
+          716
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 60,
+      "details": {
+        "count": 1,
+        "frames": [
+          391
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 61,
+      "details": {
+        "count": 2,
+        "frames": [
+          74,
+          302
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 66,
+      "details": {
+        "count": 2,
+        "frames": [
+          489,
+          859
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 67,
+      "details": {
+        "count": 1,
+        "frames": [
+          957
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 69,
+      "details": {
+        "count": 1,
+        "frames": [
+          42
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 74,
+      "details": {
+        "count": 1,
+        "frames": [
+          667
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 75,
+      "details": {
+        "count": 1,
+        "frames": [
+          803
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 77,
+      "details": {
+        "count": 1,
+        "frames": [
+          275
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 78,
+      "details": {
+        "count": 1,
+        "frames": [
+          697
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 83,
+      "details": {
+        "count": 1,
+        "frames": [
+          748
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 84,
+      "details": {
+        "count": 1,
+        "frames": [
+          377
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 85,
+      "details": {
+        "count": 1,
+        "frames": [
+          66
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 86,
+      "details": {
+        "count": 1,
+        "frames": [
+          664
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 88,
+      "details": {
+        "count": 3,
+        "frames": [
+          23,
+          460,
+          653
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 90,
+      "details": {
+        "count": 1,
+        "frames": [
+          699
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 91,
+      "details": {
+        "count": 1,
+        "frames": [
+          348
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 94,
+      "details": {
+        "count": 1,
+        "frames": [
+          853
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 95,
+      "details": {
+        "count": 1,
+        "frames": [
+          635
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 96,
+      "details": {
+        "count": 2,
+        "frames": [
+          267,
+          1062
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 99,
+      "details": {
+        "count": 1,
+        "frames": [
+          697
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 101,
+      "details": {
+        "count": 1,
+        "frames": [
+          435
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 105,
+      "details": {
+        "count": 2,
+        "frames": [
+          511,
+          749
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 106,
+      "details": {
+        "count": 1,
+        "frames": [
+          387
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 108,
+      "details": {
+        "count": 2,
+        "frames": [
+          751,
+          844
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 109,
+      "details": {
+        "count": 2,
+        "frames": [
+          59,
+          242
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 110,
+      "details": {
+        "count": 3,
+        "frames": [
+          132,
+          158,
+          782
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 112,
+      "details": {
+        "count": 4,
+        "frames": [
+          455,
+          501,
+          580,
+          740
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 115,
+      "details": {
+        "count": 1,
+        "frames": [
+          590
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 116,
+      "details": {
+        "count": 3,
+        "frames": [
+          246,
+          322,
+          521
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 117,
+      "details": {
+        "count": 2,
+        "frames": [
+          286,
+          772
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 121,
+      "details": {
+        "count": 1,
+        "frames": [
+          71
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 122,
+      "details": {
+        "count": 2,
+        "frames": [
+          615,
+          626
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 123,
+      "details": {
+        "count": 1,
+        "frames": [
+          379
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 124,
+      "details": {
+        "count": 1,
+        "frames": [
+          426
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 127,
+      "details": {
+        "count": 1,
+        "frames": [
+          901
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 128,
+      "details": {
+        "count": 3,
+        "frames": [
+          100,
+          235,
+          748
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 129,
+      "details": {
+        "count": 3,
+        "frames": [
+          272,
+          582,
+          600
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 134,
+      "details": {
+        "count": 2,
+        "frames": [
+          206,
+          251
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 136,
+      "details": {
+        "count": 1,
+        "frames": [
+          451
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 137,
+      "details": {
+        "count": 1,
+        "frames": [
+          307
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 141,
+      "details": {
+        "count": 2,
+        "frames": [
+          280,
+          394
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 143,
+      "details": {
+        "count": 2,
+        "frames": [
+          252,
+          272
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 145,
+      "details": {
+        "count": 2,
+        "frames": [
+          126,
+          130
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 146,
+      "details": {
+        "count": 2,
+        "frames": [
+          77,
+          670
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 148,
+      "details": {
+        "count": 1,
+        "frames": [
+          60
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 150,
+      "details": {
+        "count": 4,
+        "frames": [
+          41,
+          408,
+          414,
+          945
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 152,
+      "details": {
+        "count": 1,
+        "frames": [
+          342
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 153,
+      "details": {
+        "count": 2,
+        "frames": [
+          71,
+          803
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 155,
+      "details": {
+        "count": 1,
+        "frames": [
+          758
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 156,
+      "details": {
+        "count": 1,
+        "frames": [
+          386
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 157,
+      "details": {
+        "count": 2,
+        "frames": [
+          864,
+          943
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 160,
+      "details": {
+        "count": 1,
+        "frames": [
+          122
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 161,
+      "details": {
+        "count": 2,
+        "frames": [
+          348,
+          765
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 162,
+      "details": {
+        "count": 1,
+        "frames": [
+          659
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 163,
+      "details": {
+        "count": 1,
+        "frames": [
+          392
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 164,
+      "details": {
+        "count": 2,
+        "frames": [
+          622,
+          643
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 165,
+      "details": {
+        "count": 1,
+        "frames": [
+          484
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 167,
+      "details": {
+        "count": 2,
+        "frames": [
+          241,
+          650
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 168,
+      "details": {
+        "count": 1,
+        "frames": [
+          623
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 170,
+      "details": {
+        "count": 1,
+        "frames": [
+          36
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 172,
+      "details": {
+        "count": 1,
+        "frames": [
+          519
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 178,
+      "details": {
+        "count": 1,
+        "frames": [
+          262
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad",
+      "episode": 180,
+      "details": {
+        "count": 2,
+        "frames": [
+          49,
+          381
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 181,
+      "details": {
+        "count": 1,
+        "frames": [
+          921
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 182,
+      "details": {
+        "count": 1,
+        "frames": [
+          756
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 183,
+      "details": {
+        "count": 2,
+        "frames": [
+          657,
+          808
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 184,
+      "details": {
+        "count": 3,
+        "frames": [
+          613,
+          690,
+          818
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 190,
+      "details": {
+        "count": 1,
+        "frames": [
+          376
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 191,
+      "details": {
+        "count": 2,
+        "frames": [
+          545,
+          852
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 192,
+      "details": {
+        "count": 2,
+        "frames": [
+          613,
+          693
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 195,
+      "details": {
+        "count": 1,
+        "frames": [
+          563
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 198,
+      "details": {
+        "count": 1,
+        "frames": [
+          955
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "6 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 202,
+      "details": {
+        "count": 6,
+        "frames": [
+          134,
+          139,
+          145,
+          157,
+          175,
+          202
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 204,
+      "details": {
+        "count": 1,
+        "frames": [
+          912
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 210,
+      "details": {
+        "count": 1,
+        "frames": [
+          69
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 211,
+      "details": {
+        "count": 2,
+        "frames": [
+          122,
+          456
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 212,
+      "details": {
+        "count": 1,
+        "frames": [
+          687
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 213,
+      "details": {
+        "count": 1,
+        "frames": [
+          867
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 215,
+      "details": {
+        "count": 2,
+        "frames": [
+          624,
+          880
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 216,
+      "details": {
+        "count": 1,
+        "frames": [
+          39
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 217,
+      "details": {
+        "count": 1,
+        "frames": [
+          919
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 219,
+      "details": {
+        "count": 3,
+        "frames": [
+          386,
+          661,
+          832
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 221,
+      "details": {
+        "count": 1,
+        "frames": [
+          813
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 222,
+      "details": {
+        "count": 1,
+        "frames": [
+          461
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 223,
+      "details": {
+        "count": 1,
+        "frames": [
+          237
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 224,
+      "details": {
+        "count": 4,
+        "frames": [
+          366,
+          402,
+          754,
+          894
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 225,
+      "details": {
+        "count": 1,
+        "frames": [
+          476
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 226,
+      "details": {
+        "count": 3,
+        "frames": [
+          445,
+          457,
+          746
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 227,
+      "details": {
+        "count": 1,
+        "frames": [
+          461
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 228,
+      "details": {
+        "count": 1,
+        "frames": [
+          248
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 229,
+      "details": {
+        "count": 1,
+        "frames": [
+          255
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 233,
+      "details": {
+        "count": 4,
+        "frames": [
+          217,
+          403,
+          458,
+          552
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 234,
+      "details": {
+        "count": 1,
+        "frames": [
+          351
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 235,
+      "details": {
+        "count": 1,
+        "frames": [
+          429
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 236,
+      "details": {
+        "count": 2,
+        "frames": [
+          57,
+          551
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    }
+  ],
+  "seconds": 27.46
+}

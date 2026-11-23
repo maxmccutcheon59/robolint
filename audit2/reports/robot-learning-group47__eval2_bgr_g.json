@@ -1,0 +1,135 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "robot-learning-group47/eval2_bgr_g",
+  "dataset": {
+    "codebase_version": "v3.0",
+    "robot_type": "so_follower",
+    "fps": 30.0,
+    "episodes": 4,
+    "frames": 2400,
+    "cameras": [
+      "observation.images.front"
+    ],
+    "tasks": 1,
+    "columns": {}
+  },
+  "score": 98.5,
+  "grade": "A",
+  "grade_cap": null,
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 4,
+    "with_warnings": 0,
+    "with_errors": 0
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "info": 4
+  },
+  "issues": [
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "affected": 2
+    },
+    {
+      "code": "CALIBRATION_OFFSET",
+      "severity": "info",
+      "affected": 1
+    },
+    {
+      "code": "TASK_VAGUE",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 98.0,
+    "1": 100.0,
+    "2": 98.0,
+    "3": 98.0
+  },
+  "findings": [
+    {
+      "code": "TASK_VAGUE",
+      "severity": "info",
+      "message": "1 task descriptions are too vague to condition a language policy",
+      "episode": null,
+      "details": {
+        "examples": [
+          "eval2"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (65 frames before motion starts, 80 after it ends)",
+      "episode": 0,
+      "details": {
+        "idle_fraction": 0.242,
+        "lead_frames": 65,
+        "tail_frames": 80
+      }
+    },
+    {
+      "code": "CALIBRATION_OFFSET",
+      "severity": "info",
+      "message": "at rest the command sits past what the arm can reach (leader/follower calibration mismatch): wrist_flex.pos",
+      "episode": 2,
+      "details": {
+        "joints": [
+          "wrist_flex.pos"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (131 frames before motion starts, 3 after it ends)",
+      "episode": 3,
+      "details": {
+        "idle_fraction": 0.223,
+        "lead_frames": 131,
+        "tail_frames": 3
+      }
+    }
+  ],
+  "seconds": 1.38
+}

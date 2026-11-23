@@ -1,0 +1,1417 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "cadene/agibot_alpha_v30",
+  "dataset": {
+    "codebase_version": "v3.0",
+    "robot_type": "AgiBot_A2D",
+    "fps": 30.0,
+    "episodes": 300,
+    "frames": 301872,
+    "cameras": [
+      "observation.images.top_head",
+      "observation.images.hand_left",
+      "observation.images.hand_right",
+      "observation.images.head_center_fisheye",
+      "observation.images.head_left_fisheye",
+      "observation.images.head_right_fisheye",
+      "observation.images.back_left_fisheye",
+      "observation.images.back_right_fisheye"
+    ],
+    "tasks": 2,
+    "columns": {}
+  },
+  "score": 75.5,
+  "grade": "D",
+  "grade_cap": "16.0% of episodes have errors; over 15% of episodes with errors caps the grade at D",
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 251,
+    "with_warnings": 1,
+    "with_errors": 48
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "warning": 4,
+    "info": 50,
+    "error": 48
+  },
+  "issues": [
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "affected": 48
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "affected": 2
+    },
+    {
+      "code": "EPISODE_INDEX_GAPS",
+      "severity": "warning",
+      "affected": 1
+    },
+    {
+      "code": "GLOBAL_INDEX_GAPS",
+      "severity": "warning",
+      "affected": 1
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "affected": 47
+    },
+    {
+      "code": "EPISODE_LONG",
+      "severity": "info",
+      "affected": 1
+    },
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "affected": 1
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "24550": 100.0,
+    "24551": 100.0,
+    "24552": 100.0,
+    "24553": 100.0,
+    "24554": 100.0,
+    "24555": 100.0,
+    "24556": 100.0,
+    "24557": 100.0,
+    "24558": 100.0,
+    "24559": 100.0,
+    "24560": 100.0,
+    "24561": 100.0,
+    "24562": 100.0,
+    "24563": 100.0,
+    "24564": 100.0,
+    "24565": 100.0,
+    "24566": 100.0,
+    "24567": 100.0,
+    "24568": 100.0,
+    "24569": 100.0,
+    "24570": 100.0,
+    "24571": 100.0,
+    "24572": 100.0,
+    "24573": 100.0,
+    "24574": 100.0,
+    "24575": 100.0,
+    "24576": 100.0,
+    "24577": 100.0,
+    "24578": 100.0,
+    "24579": 100.0,
+    "24580": 100.0,
+    "24581": 100.0,
+    "24582": 100.0,
+    "24583": 100.0,
+    "24584": 100.0,
+    "24585": 100.0,
+    "24586": 100.0,
+    "24587": 100.0,
+    "24588": 100.0,
+    "24589": 100.0,
+    "24590": 100.0,
+    "24591": 100.0,
+    "24592": 100.0,
+    "24593": 100.0,
+    "24594": 100.0,
+    "24595": 100.0,
+    "24596": 100.0,
+    "24597": 100.0,
+    "24598": 100.0,
+    "24599": 100.0,
+    "24600": 100.0,
+    "24601": 100.0,
+    "24602": 100.0,
+    "24603": 100.0,
+    "24604": 100.0,
+    "24605": 100.0,
+    "24606": 100.0,
+    "24607": 100.0,
+    "24608": 100.0,
+    "24609": 100.0,
+    "24610": 100.0,
+    "24611": 98.0,
+    "24612": 100.0,
+    "24613": 100.0,
+    "24614": 100.0,
+    "24615": 100.0,
+    "24616": 100.0,
+    "24617": 100.0,
+    "24618": 100.0,
+    "24619": 100.0,
+    "24620": 100.0,
+    "24621": 100.0,
+    "24622": 100.0,
+    "24623": 100.0,
+    "24624": 100.0,
+    "24625": 98.0,
+    "24626": 100.0,
+    "24627": 100.0,
+    "24628": 98.0,
+    "24629": 100.0,
+    "24630": 98.0,
+    "24631": 100.0,
+    "24632": 100.0,
+    "24633": 100.0,
+    "24634": 100.0,
+    "24635": 100.0,
+    "24636": 100.0,
+    "24637": 100.0,
+    "24638": 100.0,
+    "24639": 100.0,
+    "24640": 100.0,
+    "24641": 100.0,
+    "24642": 100.0,
+    "24643": 100.0,
+    "24644": 100.0,
+    "24645": 100.0,
+    "24646": 100.0,
+    "24647": 100.0,
+    "24648": 100.0,
+    "24649": 100.0,
+    "24650": 100.0,
+    "24651": 100.0,
+    "24652": 100.0,
+    "24653": 100.0,
+    "24654": 100.0,
+    "24655": 100.0,
+    "24656": 100.0,
+    "24657": 100.0,
+    "24658": 98.0,
+    "24659": 100.0,
+    "24660": 100.0,
+    "24661": 100.0,
+    "24662": 98.0,
+    "24663": 100.0,
+    "24664": 100.0,
+    "24665": 98.0,
+    "24666": 100.0,
+    "24667": 100.0,
+    "24668": 100.0,
+    "24669": 100.0,
+    "24670": 100.0,
+    "24671": 100.0,
+    "24672": 98.0,
+    "24673": 100.0,
+    "24674": 98.0,
+    "24675": 100.0,
+    "24676": 100.0,
+    "24677": 98.0,
+    "24678": 100.0,
+    "24679": 100.0,
+    "24680": 100.0,
+    "24681": 100.0,
+    "24682": 100.0,
+    "24683": 98.0,
+    "24684": 100.0,
+    "24685": 100.0,
+    "24686": 100.0,
+    "24687": 100.0,
+    "24688": 100.0,
+    "24689": 100.0,
+    "24690": 100.0,
+    "24691": 100.0,
+    "24692": 100.0,
+    "24693": 100.0,
+    "24694": 100.0,
+    "24695": 98.0,
+    "24696": 98.0,
+    "24697": 98.0,
+    "24698": 100.0,
+    "24699": 100.0,
+    "24700": 100.0,
+    "24701": 100.0,
+    "24702": 98.0,
+    "24703": 100.0,
+    "24704": 100.0,
+    "24705": 98.0,
+    "24706": 100.0,
+    "24707": 100.0,
+    "24708": 100.0,
+    "24709": 100.0,
+    "24710": 98.0,
+    "24711": 98.0,
+    "24712": 98.0,
+    "24713": 100.0,
+    "24714": 98.0,
+    "24715": 98.0,
+    "24716": 100.0,
+    "24717": 98.0,
+    "24718": 100.0,
+    "24719": 100.0,
+    "24720": 100.0,
+    "24721": 98.0,
+    "24722": 98.0,
+    "24723": 100.0,
+    "24724": 100.0,
+    "24725": 100.0,
+    "24726": 100.0,
+    "24727": 100.0,
+    "24728": 100.0,
+    "24729": 98.0,
+    "24730": 98.0,
+    "24731": 100.0,
+    "24732": 98.0,
+    "24733": 98.0,
+    "24734": 100.0,
+    "24735": 100.0,
+    "24736": 100.0,
+    "24737": 98.0,
+    "24738": 100.0,
+    "24739": 100.0,
+    "24740": 100.0,
+    "24741": 100.0,
+    "24742": 98.0,
+    "24743": 100.0,
+    "24744": 100.0,
+    "24745": 98.0,
+    "24746": 98.0,
+    "24747": 100.0,
+    "24748": 98.0,
+    "24749": 98.0,
+    "24750": 98.0,
+    "24751": 100.0,
+    "24752": 100.0,
+    "24753": 98.0,
+    "24754": 98.0,
+    "24755": 100.0,
+    "24756": 98.0,
+    "24757": 98.0,
+    "24758": 98.0,
+    "24759": 100.0,
+    "24760": 98.0,
+    "24761": 83.3,
+    "24762": 100.0,
+    "24763": 100.0,
+    "24764": 100.0,
+    "24765": 100.0,
+    "24766": 100.0,
+    "24767": 100.0,
+    "24768": 100.0,
+    "24769": 98.0,
+    "24770": 98.0,
+    "24771": 98.0,
+    "24772": 100.0,
+    "24773": 100.0,
+    "24774": 98.0,
+    "24775": 100.0,
+    "24776": 98.0,
+    "24777": 100.0,
+    "24778": 100.0,
+    "24779": 100.0,
+    "24780": 100.0,
+    "24781": 100.0,
+    "24782": 100.0,
+    "24783": 100.0,
+    "24784": 100.0,
+    "24785": 100.0,
+    "24786": 100.0,
+    "24787": 100.0,
+    "24788": 100.0,
+    "24789": 100.0,
+    "24790": 100.0,
+    "24791": 100.0,
+    "24792": 100.0,
+    "24793": 100.0,
+    "24794": 100.0,
+    "24795": 100.0,
+    "24796": 100.0,
+    "24797": 100.0,
+    "24798": 100.0,
+    "24799": 100.0,
+    "24800": 100.0,
+    "24801": 100.0,
+    "26999": 0.0,
+    "27000": 0.0,
+    "27001": 0.0,
+    "27002": 0.0,
+    "27003": 0.0,
+    "27004": 0.0,
+    "27005": 0.0,
+    "27006": 0.0,
+    "27007": 0.0,
+    "27008": 0.0,
+    "27009": 0.0,
+    "27010": 0.0,
+    "27011": 0.0,
+    "27012": 0.0,
+    "27013": 0.0,
+    "27014": 0.0,
+    "27015": 0.0,
+    "27016": 0.0,
+    "27017": 0.0,
+    "27018": 0.0,
+    "27019": 0.0,
+    "27020": 0.0,
+    "27021": 0.0,
+    "27022": 0.0,
+    "27023": 0.0,
+    "27024": 0.0,
+    "27025": 0.0,
+    "27026": 0.0,
+    "27027": 0.0,
+    "27028": 0.0,
+    "27029": 0.0,
+    "27030": 0.0,
+    "27031": 0.0,
+    "27032": 0.0,
+    "27033": 0.0,
+    "27034": 0.0,
+    "27035": 0.0,
+    "27036": 0.0,
+    "27037": 0.0,
+    "27038": 0.0,
+    "27039": 0.0,
+    "27040": 0.0,
+    "27041": 0.0,
+    "27042": 0.0,
+    "27043": 0.0,
+    "27044": 0.0,
+    "27045": 0.0,
+    "27046": 0.0
+  },
+  "findings": [
+    {
+      "code": "EPISODE_INDEX_GAPS",
+      "severity": "warning",
+      "message": "2197 episode indices missing between 24550 and 27046",
+      "episode": null,
+      "details": {
+        "missing": [
+          24802,
+          24803,
+          24804,
+          24805,
+          24806,
+          24807,
+          24808,
+          24809,
+          24810,
+          24811,
+          24812,
+          24813,
+          24814,
+          24815,
+          24816,
+          24817,
+          24818,
+          24819,
+          24820,
+          24821,
+          24822,
+          24823,
+          24824,
+          24825,
+          24826,
+          24827,
+          24828,
+          24829,
+          24830,
+          24831,
+          24832,
+          24833,
+          24834,
+          24835,
+          24836,
+          24837,
+          24838,
+          24839,
+          24840,
+          24841,
+          24842,
+          24843,
+          24844,
+          24845,
+          24846,
+          24847,
+          24848,
+          24849,
+          24850,
+          24851
+        ]
+      }
+    },
+    {
+      "code": "GLOBAL_INDEX_GAPS",
+      "severity": "warning",
+      "message": "global 'index' column is not contiguous",
+      "episode": null,
+      "details": {}
+    },
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "message": "quick mode: only the first 300 of 6 episodes were checked",
+      "episode": null,
+      "details": {}
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 0.0 frames (0 ms), estimated over 300 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 0.0,
+        "typical_lag_ms": 0.0,
+        "spread_frames": 0.0,
+        "episodes_estimated": 300,
+        "joints": [
+          "head_yaw",
+          "head_pitch",
+          "left_joint_0",
+          "left_joint_1",
+          "left_joint_2",
+          "left_joint_3",
+          "left_joint_4",
+          "left_joint_5",
+          "left_joint_6",
+          "right_joint_0",
+          "right_joint_1",
+          "right_joint_2",
+          "right_joint_3",
+          "right_joint_4",
+          "right_joint_5",
+          "right_joint_6",
+          "waist_pitch",
+          "waist_lift"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (44 frames before motion starts, 115 after it ends)",
+      "episode": 24611,
+      "details": {
+        "idle_fraction": 0.209,
+        "lead_frames": 44,
+        "tail_frames": 115
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (29 frames before motion starts, 96 after it ends)",
+      "episode": 24625,
+      "details": {
+        "idle_fraction": 0.165,
+        "lead_frames": 29,
+        "tail_frames": 96
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (48 frames before motion starts, 114 after it ends)",
+      "episode": 24628,
+      "details": {
+        "idle_fraction": 0.214,
+        "lead_frames": 48,
+        "tail_frames": 114
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (69 frames before motion starts, 74 after it ends)",
+      "episode": 24630,
+      "details": {
+        "idle_fraction": 0.184,
+        "lead_frames": 69,
+        "tail_frames": 74
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (62 frames before motion starts, 65 after it ends)",
+      "episode": 24658,
+      "details": {
+        "idle_fraction": 0.168,
+        "lead_frames": 62,
+        "tail_frames": 65
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (44 frames before motion starts, 74 after it ends)",
+      "episode": 24662,
+      "details": {
+        "idle_fraction": 0.154,
+        "lead_frames": 44,
+        "tail_frames": 74
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (50 frames before motion starts, 152 after it ends)",
+      "episode": 24665,
+      "details": {
+        "idle_fraction": 0.268,
+        "lead_frames": 50,
+        "tail_frames": 152
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (58 frames before motion starts, 57 after it ends)",
+      "episode": 24672,
+      "details": {
+        "idle_fraction": 0.151,
+        "lead_frames": 58,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (48 frames before motion starts, 90 after it ends)",
+      "episode": 24674,
+      "details": {
+        "idle_fraction": 0.177,
+        "lead_frames": 48,
+        "tail_frames": 90
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (18 frames before motion starts, 132 after it ends)",
+      "episode": 24677,
+      "details": {
+        "idle_fraction": 0.2,
+        "lead_frames": 18,
+        "tail_frames": 132
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (37 frames before motion starts, 103 after it ends)",
+      "episode": 24683,
+      "details": {
+        "idle_fraction": 0.182,
+        "lead_frames": 37,
+        "tail_frames": 103
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (39 frames before motion starts, 81 after it ends)",
+      "episode": 24695,
+      "details": {
+        "idle_fraction": 0.158,
+        "lead_frames": 39,
+        "tail_frames": 81
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (50 frames before motion starts, 122 after it ends)",
+      "episode": 24696,
+      "details": {
+        "idle_fraction": 0.222,
+        "lead_frames": 50,
+        "tail_frames": 122
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (48 frames before motion starts, 70 after it ends)",
+      "episode": 24697,
+      "details": {
+        "idle_fraction": 0.156,
+        "lead_frames": 48,
+        "tail_frames": 70
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (49 frames before motion starts, 111 after it ends)",
+      "episode": 24702,
+      "details": {
+        "idle_fraction": 0.212,
+        "lead_frames": 49,
+        "tail_frames": 111
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (47 frames before motion starts, 107 after it ends)",
+      "episode": 24705,
+      "details": {
+        "idle_fraction": 0.203,
+        "lead_frames": 47,
+        "tail_frames": 107
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (44 frames before motion starts, 168 after it ends)",
+      "episode": 24710,
+      "details": {
+        "idle_fraction": 0.28,
+        "lead_frames": 44,
+        "tail_frames": 168
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (56 frames before motion starts, 58 after it ends)",
+      "episode": 24711,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 56,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (25 frames before motion starts, 106 after it ends)",
+      "episode": 24712,
+      "details": {
+        "idle_fraction": 0.173,
+        "lead_frames": 25,
+        "tail_frames": 106
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (51 frames before motion starts, 113 after it ends)",
+      "episode": 24714,
+      "details": {
+        "idle_fraction": 0.218,
+        "lead_frames": 51,
+        "tail_frames": 113
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (25 frames before motion starts, 111 after it ends)",
+      "episode": 24715,
+      "details": {
+        "idle_fraction": 0.178,
+        "lead_frames": 25,
+        "tail_frames": 111
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (37 frames before motion starts, 104 after it ends)",
+      "episode": 24717,
+      "details": {
+        "idle_fraction": 0.184,
+        "lead_frames": 37,
+        "tail_frames": 104
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (39 frames before motion starts, 122 after it ends)",
+      "episode": 24721,
+      "details": {
+        "idle_fraction": 0.214,
+        "lead_frames": 39,
+        "tail_frames": 122
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (45 frames before motion starts, 141 after it ends)",
+      "episode": 24722,
+      "details": {
+        "idle_fraction": 0.246,
+        "lead_frames": 45,
+        "tail_frames": 141
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (25 frames before motion starts, 130 after it ends)",
+      "episode": 24729,
+      "details": {
+        "idle_fraction": 0.202,
+        "lead_frames": 25,
+        "tail_frames": 130
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (50 frames before motion starts, 109 after it ends)",
+      "episode": 24730,
+      "details": {
+        "idle_fraction": 0.21,
+        "lead_frames": 50,
+        "tail_frames": 109
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (39 frames before motion starts, 77 after it ends)",
+      "episode": 24732,
+      "details": {
+        "idle_fraction": 0.154,
+        "lead_frames": 39,
+        "tail_frames": 77
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (32 frames before motion starts, 81 after it ends)",
+      "episode": 24733,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 32,
+        "tail_frames": 81
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (48 frames before motion starts, 101 after it ends)",
+      "episode": 24737,
+      "details": {
+        "idle_fraction": 0.197,
+        "lead_frames": 48,
+        "tail_frames": 101
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (40 frames before motion starts, 83 after it ends)",
+      "episode": 24742,
+      "details": {
+        "idle_fraction": 0.158,
+        "lead_frames": 40,
+        "tail_frames": 83
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (37 frames before motion starts, 103 after it ends)",
+      "episode": 24745,
+      "details": {
+        "idle_fraction": 0.183,
+        "lead_frames": 37,
+        "tail_frames": 103
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (32 frames before motion starts, 106 after it ends)",
+      "episode": 24746,
+      "details": {
+        "idle_fraction": 0.18,
+        "lead_frames": 32,
+        "tail_frames": 106
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (39 frames before motion starts, 83 after it ends)",
+      "episode": 24748,
+      "details": {
+        "idle_fraction": 0.159,
+        "lead_frames": 39,
+        "tail_frames": 83
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (33 frames before motion starts, 162 after it ends)",
+      "episode": 24749,
+      "details": {
+        "idle_fraction": 0.255,
+        "lead_frames": 33,
+        "tail_frames": 162
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "23% of the episode is idle (38 frames before motion starts, 134 after it ends)",
+      "episode": 24750,
+      "details": {
+        "idle_fraction": 0.227,
+        "lead_frames": 38,
+        "tail_frames": 134
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (33 frames before motion starts, 325 after it ends)",
+      "episode": 24753,
+      "details": {
+        "idle_fraction": 0.268,
+        "lead_frames": 33,
+        "tail_frames": 325
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (49 frames before motion starts, 79 after it ends)",
+      "episode": 24754,
+      "details": {
+        "idle_fraction": 0.17,
+        "lead_frames": 49,
+        "tail_frames": 79
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (88 frames before motion starts, 136 after it ends)",
+      "episode": 24756,
+      "details": {
+        "idle_fraction": 0.291,
+        "lead_frames": 88,
+        "tail_frames": 136
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (34 frames before motion starts, 157 after it ends)",
+      "episode": 24757,
+      "details": {
+        "idle_fraction": 0.247,
+        "lead_frames": 34,
+        "tail_frames": 157
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (54 frames before motion starts, 143 after it ends)",
+      "episode": 24758,
+      "details": {
+        "idle_fraction": 0.26,
+        "lead_frames": 54,
+        "tail_frames": 143
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (19 frames before motion starts, 123 after it ends)",
+      "episode": 24760,
+      "details": {
+        "idle_fraction": 0.184,
+        "lead_frames": 19,
+        "tail_frames": 123
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_gripper",
+      "episode": 24761,
+      "details": {
+        "count": 1,
+        "frames": [
+          126
+        ],
+        "dims": [
+          "left_gripper"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (43 frames before motion starts, 108 after it ends)",
+      "episode": 24761,
+      "details": {
+        "idle_fraction": 0.199,
+        "lead_frames": 43,
+        "tail_frames": 108
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (24 frames before motion starts, 110 after it ends)",
+      "episode": 24769,
+      "details": {
+        "idle_fraction": 0.178,
+        "lead_frames": 24,
+        "tail_frames": 110
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (32 frames before motion starts, 88 after it ends)",
+      "episode": 24770,
+      "details": {
+        "idle_fraction": 0.16,
+        "lead_frames": 32,
+        "tail_frames": 88
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (31 frames before motion starts, 114 after it ends)",
+      "episode": 24771,
+      "details": {
+        "idle_fraction": 0.189,
+        "lead_frames": 31,
+        "tail_frames": 114
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (36 frames before motion starts, 179 after it ends)",
+      "episode": 24774,
+      "details": {
+        "idle_fraction": 0.287,
+        "lead_frames": 36,
+        "tail_frames": 179
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (24 frames before motion starts, 156 after it ends)",
+      "episode": 24776,
+      "details": {
+        "idle_fraction": 0.238,
+        "lead_frames": 24,
+        "tail_frames": 156
+      }
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 26999,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27000,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27001,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27002,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27003,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27004,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27005,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27006,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27007,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27008,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27009,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27010,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27011,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27012,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27013,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27014,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27015,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27016,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27017,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27018,
+      "details": {}
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_gripper",
+      "episode": 27018,
+      "details": {
+        "count": 1,
+        "frames": [
+          1316
+        ],
+        "dims": [
+          "right_gripper"
+        ]
+      }
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27019,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27020,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27021,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27022,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27023,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27024,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27025,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27026,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27027,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27028,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27029,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27030,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27031,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27032,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27033,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27034,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27035,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27036,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_LONG",
+      "severity": "info",
+      "message": "2523 frames, 3.2x the median: recording may not have been stopped",
+      "episode": 27036,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27037,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27038,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27039,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27040,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27041,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27042,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27043,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27044,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27045,
+      "details": {}
+    },
+    {
+      "code": "TASK_INDEX_UNKNOWN",
+      "severity": "error",
+      "message": "task_index values [16] have no task description",
+      "episode": 27046,
+      "details": {}
+    }
+  ],
+  "seconds": 14.86
+}

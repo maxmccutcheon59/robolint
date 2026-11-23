@@ -1,0 +1,2022 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "Embodied-AI-6/dataset",
+  "dataset": {
+    "codebase_version": "v3.0",
+    "robot_type": "so_follower",
+    "fps": 30.0,
+    "episodes": 160,
+    "frames": 81786,
+    "cameras": [
+      "observation.images.front"
+    ],
+    "tasks": 1,
+    "columns": {}
+  },
+  "score": 91.0,
+  "grade": "A",
+  "grade_cap": null,
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 74,
+    "with_warnings": 86,
+    "with_errors": 0
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "info": 75,
+    "warning": 86
+  },
+  "issues": [
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "affected": 160
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 85.0,
+    "1": 98.0,
+    "2": 85.0,
+    "3": 85.0,
+    "4": 98.0,
+    "5": 98.0,
+    "6": 85.0,
+    "7": 98.0,
+    "8": 98.0,
+    "9": 98.0,
+    "10": 98.0,
+    "11": 98.0,
+    "12": 85.0,
+    "13": 98.0,
+    "14": 98.0,
+    "15": 85.0,
+    "16": 98.0,
+    "17": 98.0,
+    "18": 85.0,
+    "19": 85.0,
+    "20": 85.0,
+    "21": 85.0,
+    "22": 85.0,
+    "23": 85.0,
+    "24": 85.0,
+    "25": 85.0,
+    "26": 85.0,
+    "27": 85.0,
+    "28": 98.0,
+    "29": 85.0,
+    "30": 98.0,
+    "31": 85.0,
+    "32": 85.0,
+    "33": 98.0,
+    "34": 98.0,
+    "35": 85.0,
+    "36": 98.0,
+    "37": 98.0,
+    "38": 98.0,
+    "39": 85.0,
+    "40": 85.0,
+    "41": 85.0,
+    "42": 98.0,
+    "43": 85.0,
+    "44": 85.0,
+    "45": 85.0,
+    "46": 85.0,
+    "47": 85.0,
+    "48": 85.0,
+    "49": 98.0,
+    "50": 85.0,
+    "51": 98.0,
+    "52": 98.0,
+    "53": 98.0,
+    "54": 98.0,
+    "55": 98.0,
+    "56": 98.0,
+    "57": 98.0,
+    "58": 98.0,
+    "59": 85.0,
+    "60": 98.0,
+    "61": 98.0,
+    "62": 85.0,
+    "63": 98.0,
+    "64": 85.0,
+    "65": 85.0,
+    "66": 98.0,
+    "67": 98.0,
+    "68": 98.0,
+    "69": 85.0,
+    "70": 85.0,
+    "71": 85.0,
+    "72": 85.0,
+    "73": 98.0,
+    "74": 98.0,
+    "75": 98.0,
+    "76": 98.0,
+    "77": 85.0,
+    "78": 85.0,
+    "79": 98.0,
+    "80": 85.0,
+    "81": 98.0,
+    "82": 98.0,
+    "83": 98.0,
+    "84": 85.0,
+    "85": 98.0,
+    "86": 85.0,
+    "87": 85.0,
+    "88": 98.0,
+    "89": 98.0,
+    "90": 98.0,
+    "91": 85.0,
+    "92": 98.0,
+    "93": 85.0,
+    "94": 85.0,
+    "95": 85.0,
+    "96": 98.0,
+    "97": 98.0,
+    "98": 98.0,
+    "99": 85.0,
+    "100": 85.0,
+    "101": 98.0,
+    "102": 98.0,
+    "103": 85.0,
+    "104": 85.0,
+    "105": 85.0,
+    "106": 98.0,
+    "107": 98.0,
+    "108": 98.0,
+    "109": 98.0,
+    "110": 85.0,
+    "111": 85.0,
+    "112": 85.0,
+    "113": 85.0,
+    "114": 85.0,
+    "115": 98.0,
+    "116": 85.0,
+    "117": 85.0,
+    "118": 98.0,
+    "119": 85.0,
+    "120": 85.0,
+    "121": 98.0,
+    "122": 85.0,
+    "123": 85.0,
+    "124": 98.0,
+    "125": 98.0,
+    "126": 85.0,
+    "127": 85.0,
+    "128": 85.0,
+    "129": 85.0,
+    "130": 85.0,
+    "131": 98.0,
+    "132": 85.0,
+    "133": 85.0,
+    "134": 98.0,
+    "135": 98.0,
+    "136": 98.0,
+    "137": 98.0,
+    "138": 85.0,
+    "139": 98.0,
+    "140": 85.0,
+    "141": 85.0,
+    "142": 85.0,
+    "143": 98.0,
+    "144": 98.0,
+    "145": 85.0,
+    "146": 98.0,
+    "147": 98.0,
+    "148": 85.0,
+    "149": 85.0,
+    "150": 85.0,
+    "151": 85.0,
+    "152": 85.0,
+    "153": 85.0,
+    "154": 98.0,
+    "155": 85.0,
+    "156": 85.0,
+    "157": 85.0,
+    "158": 98.0,
+    "159": 85.0
+  },
+  "findings": [
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 3.7 frames (125 ms), estimated over 160 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 3.74,
+        "typical_lag_ms": 124.6,
+        "spread_frames": 0.16,
+        "episodes_estimated": 160,
+        "joints": [
+          "shoulder_pan.pos",
+          "shoulder_lift.pos",
+          "elbow_flex.pos",
+          "wrist_flex.pos",
+          "wrist_roll.pos"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "53% of the episode is idle (484 frames before motion starts, 45 after it ends)",
+      "episode": 0,
+      "details": {
+        "idle_fraction": 0.526,
+        "lead_frames": 484,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (95 frames before motion starts, 38 after it ends)",
+      "episode": 1,
+      "details": {
+        "idle_fraction": 0.222,
+        "lead_frames": 95,
+        "tail_frames": 38
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (213 frames before motion starts, 46 after it ends)",
+      "episode": 2,
+      "details": {
+        "idle_fraction": 0.374,
+        "lead_frames": 213,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "42% of the episode is idle (226 frames before motion starts, 47 after it ends)",
+      "episode": 3,
+      "details": {
+        "idle_fraction": 0.417,
+        "lead_frames": 226,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (105 frames before motion starts, 48 after it ends)",
+      "episode": 4,
+      "details": {
+        "idle_fraction": 0.281,
+        "lead_frames": 105,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (64 frames before motion starts, 47 after it ends)",
+      "episode": 5,
+      "details": {
+        "idle_fraction": 0.251,
+        "lead_frames": 64,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (101 frames before motion starts, 58 after it ends)",
+      "episode": 6,
+      "details": {
+        "idle_fraction": 0.309,
+        "lead_frames": 101,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (95 frames before motion starts, 41 after it ends)",
+      "episode": 7,
+      "details": {
+        "idle_fraction": 0.274,
+        "lead_frames": 95,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (107 frames before motion starts, 48 after it ends)",
+      "episode": 8,
+      "details": {
+        "idle_fraction": 0.243,
+        "lead_frames": 107,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (119 frames before motion starts, 42 after it ends)",
+      "episode": 9,
+      "details": {
+        "idle_fraction": 0.277,
+        "lead_frames": 119,
+        "tail_frames": 42
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (90 frames before motion starts, 56 after it ends)",
+      "episode": 10,
+      "details": {
+        "idle_fraction": 0.272,
+        "lead_frames": 90,
+        "tail_frames": 56
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (85 frames before motion starts, 47 after it ends)",
+      "episode": 11,
+      "details": {
+        "idle_fraction": 0.253,
+        "lead_frames": 85,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "46% of the episode is idle (180 frames before motion starts, 42 after it ends)",
+      "episode": 12,
+      "details": {
+        "idle_fraction": 0.459,
+        "lead_frames": 180,
+        "tail_frames": 42
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (83 frames before motion starts, 52 after it ends)",
+      "episode": 13,
+      "details": {
+        "idle_fraction": 0.265,
+        "lead_frames": 83,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (66 frames before motion starts, 41 after it ends)",
+      "episode": 14,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 66,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "40% of the episode is idle (185 frames before motion starts, 50 after it ends)",
+      "episode": 15,
+      "details": {
+        "idle_fraction": 0.402,
+        "lead_frames": 185,
+        "tail_frames": 50
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (69 frames before motion starts, 49 after it ends)",
+      "episode": 16,
+      "details": {
+        "idle_fraction": 0.218,
+        "lead_frames": 69,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (101 frames before motion starts, 44 after it ends)",
+      "episode": 17,
+      "details": {
+        "idle_fraction": 0.283,
+        "lead_frames": 101,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (123 frames before motion starts, 42 after it ends)",
+      "episode": 18,
+      "details": {
+        "idle_fraction": 0.347,
+        "lead_frames": 123,
+        "tail_frames": 42
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "40% of the episode is idle (159 frames before motion starts, 39 after it ends)",
+      "episode": 19,
+      "details": {
+        "idle_fraction": 0.401,
+        "lead_frames": 159,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (136 frames before motion starts, 61 after it ends)",
+      "episode": 20,
+      "details": {
+        "idle_fraction": 0.362,
+        "lead_frames": 136,
+        "tail_frames": 61
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (104 frames before motion starts, 48 after it ends)",
+      "episode": 21,
+      "details": {
+        "idle_fraction": 0.348,
+        "lead_frames": 104,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (117 frames before motion starts, 70 after it ends)",
+      "episode": 22,
+      "details": {
+        "idle_fraction": 0.321,
+        "lead_frames": 117,
+        "tail_frames": 70
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "49% of the episode is idle (260 frames before motion starts, 52 after it ends)",
+      "episode": 23,
+      "details": {
+        "idle_fraction": 0.494,
+        "lead_frames": 260,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (137 frames before motion starts, 61 after it ends)",
+      "episode": 24,
+      "details": {
+        "idle_fraction": 0.359,
+        "lead_frames": 137,
+        "tail_frames": 61
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "39% of the episode is idle (135 frames before motion starts, 59 after it ends)",
+      "episode": 25,
+      "details": {
+        "idle_fraction": 0.394,
+        "lead_frames": 135,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "54% of the episode is idle (317 frames before motion starts, 49 after it ends)",
+      "episode": 26,
+      "details": {
+        "idle_fraction": 0.539,
+        "lead_frames": 317,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "41% of the episode is idle (172 frames before motion starts, 39 after it ends)",
+      "episode": 27,
+      "details": {
+        "idle_fraction": 0.411,
+        "lead_frames": 172,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (107 frames before motion starts, 52 after it ends)",
+      "episode": 28,
+      "details": {
+        "idle_fraction": 0.244,
+        "lead_frames": 107,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (98 frames before motion starts, 59 after it ends)",
+      "episode": 29,
+      "details": {
+        "idle_fraction": 0.332,
+        "lead_frames": 98,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (84 frames before motion starts, 56 after it ends)",
+      "episode": 30,
+      "details": {
+        "idle_fraction": 0.276,
+        "lead_frames": 84,
+        "tail_frames": 56
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (82 frames before motion starts, 74 after it ends)",
+      "episode": 31,
+      "details": {
+        "idle_fraction": 0.353,
+        "lead_frames": 82,
+        "tail_frames": 74
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (89 frames before motion starts, 53 after it ends)",
+      "episode": 32,
+      "details": {
+        "idle_fraction": 0.333,
+        "lead_frames": 89,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (108 frames before motion starts, 45 after it ends)",
+      "episode": 33,
+      "details": {
+        "idle_fraction": 0.277,
+        "lead_frames": 108,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (82 frames before motion starts, 53 after it ends)",
+      "episode": 34,
+      "details": {
+        "idle_fraction": 0.251,
+        "lead_frames": 82,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (141 frames before motion starts, 53 after it ends)",
+      "episode": 35,
+      "details": {
+        "idle_fraction": 0.331,
+        "lead_frames": 141,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (94 frames before motion starts, 63 after it ends)",
+      "episode": 36,
+      "details": {
+        "idle_fraction": 0.266,
+        "lead_frames": 94,
+        "tail_frames": 63
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (61 frames before motion starts, 43 after it ends)",
+      "episode": 37,
+      "details": {
+        "idle_fraction": 0.193,
+        "lead_frames": 61,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (87 frames before motion starts, 49 after it ends)",
+      "episode": 38,
+      "details": {
+        "idle_fraction": 0.274,
+        "lead_frames": 87,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (141 frames before motion starts, 58 after it ends)",
+      "episode": 39,
+      "details": {
+        "idle_fraction": 0.325,
+        "lead_frames": 141,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (155 frames before motion starts, 54 after it ends)",
+      "episode": 40,
+      "details": {
+        "idle_fraction": 0.371,
+        "lead_frames": 155,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (133 frames before motion starts, 44 after it ends)",
+      "episode": 41,
+      "details": {
+        "idle_fraction": 0.348,
+        "lead_frames": 133,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (81 frames before motion starts, 44 after it ends)",
+      "episode": 42,
+      "details": {
+        "idle_fraction": 0.29,
+        "lead_frames": 81,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (116 frames before motion starts, 45 after it ends)",
+      "episode": 43,
+      "details": {
+        "idle_fraction": 0.333,
+        "lead_frames": 116,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (154 frames before motion starts, 48 after it ends)",
+      "episode": 44,
+      "details": {
+        "idle_fraction": 0.32,
+        "lead_frames": 154,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (110 frames before motion starts, 54 after it ends)",
+      "episode": 45,
+      "details": {
+        "idle_fraction": 0.3,
+        "lead_frames": 110,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "39% of the episode is idle (110 frames before motion starts, 85 after it ends)",
+      "episode": 46,
+      "details": {
+        "idle_fraction": 0.387,
+        "lead_frames": 110,
+        "tail_frames": 85
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (99 frames before motion starts, 49 after it ends)",
+      "episode": 47,
+      "details": {
+        "idle_fraction": 0.321,
+        "lead_frames": 99,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (125 frames before motion starts, 54 after it ends)",
+      "episode": 48,
+      "details": {
+        "idle_fraction": 0.308,
+        "lead_frames": 125,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "30% of the episode is idle (83 frames before motion starts, 82 after it ends)",
+      "episode": 49,
+      "details": {
+        "idle_fraction": 0.297,
+        "lead_frames": 83,
+        "tail_frames": 82
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (104 frames before motion starts, 57 after it ends)",
+      "episode": 50,
+      "details": {
+        "idle_fraction": 0.326,
+        "lead_frames": 104,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (88 frames before motion starts, 47 after it ends)",
+      "episode": 51,
+      "details": {
+        "idle_fraction": 0.283,
+        "lead_frames": 88,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (85 frames before motion starts, 48 after it ends)",
+      "episode": 52,
+      "details": {
+        "idle_fraction": 0.249,
+        "lead_frames": 85,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (91 frames before motion starts, 48 after it ends)",
+      "episode": 53,
+      "details": {
+        "idle_fraction": 0.273,
+        "lead_frames": 91,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (92 frames before motion starts, 62 after it ends)",
+      "episode": 54,
+      "details": {
+        "idle_fraction": 0.284,
+        "lead_frames": 92,
+        "tail_frames": 62
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (87 frames before motion starts, 53 after it ends)",
+      "episode": 55,
+      "details": {
+        "idle_fraction": 0.282,
+        "lead_frames": 87,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (88 frames before motion starts, 50 after it ends)",
+      "episode": 56,
+      "details": {
+        "idle_fraction": 0.287,
+        "lead_frames": 88,
+        "tail_frames": 50
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (79 frames before motion starts, 45 after it ends)",
+      "episode": 57,
+      "details": {
+        "idle_fraction": 0.281,
+        "lead_frames": 79,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (98 frames before motion starts, 58 after it ends)",
+      "episode": 58,
+      "details": {
+        "idle_fraction": 0.271,
+        "lead_frames": 98,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (100 frames before motion starts, 51 after it ends)",
+      "episode": 59,
+      "details": {
+        "idle_fraction": 0.304,
+        "lead_frames": 100,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (70 frames before motion starts, 44 after it ends)",
+      "episode": 60,
+      "details": {
+        "idle_fraction": 0.262,
+        "lead_frames": 70,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (82 frames before motion starts, 50 after it ends)",
+      "episode": 61,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 82,
+        "tail_frames": 50
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (88 frames before motion starts, 57 after it ends)",
+      "episode": 62,
+      "details": {
+        "idle_fraction": 0.307,
+        "lead_frames": 88,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (73 frames before motion starts, 43 after it ends)",
+      "episode": 63,
+      "details": {
+        "idle_fraction": 0.273,
+        "lead_frames": 73,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (134 frames before motion starts, 43 after it ends)",
+      "episode": 64,
+      "details": {
+        "idle_fraction": 0.366,
+        "lead_frames": 134,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (100 frames before motion starts, 51 after it ends)",
+      "episode": 65,
+      "details": {
+        "idle_fraction": 0.337,
+        "lead_frames": 100,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (65 frames before motion starts, 44 after it ends)",
+      "episode": 66,
+      "details": {
+        "idle_fraction": 0.217,
+        "lead_frames": 65,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (91 frames before motion starts, 48 after it ends)",
+      "episode": 67,
+      "details": {
+        "idle_fraction": 0.284,
+        "lead_frames": 91,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (96 frames before motion starts, 47 after it ends)",
+      "episode": 68,
+      "details": {
+        "idle_fraction": 0.292,
+        "lead_frames": 96,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "48% of the episode is idle (201 frames before motion starts, 43 after it ends)",
+      "episode": 69,
+      "details": {
+        "idle_fraction": 0.48,
+        "lead_frames": 201,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (76 frames before motion starts, 48 after it ends)",
+      "episode": 70,
+      "details": {
+        "idle_fraction": 0.305,
+        "lead_frames": 76,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (86 frames before motion starts, 54 after it ends)",
+      "episode": 71,
+      "details": {
+        "idle_fraction": 0.326,
+        "lead_frames": 86,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (94 frames before motion starts, 43 after it ends)",
+      "episode": 72,
+      "details": {
+        "idle_fraction": 0.304,
+        "lead_frames": 94,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (74 frames before motion starts, 44 after it ends)",
+      "episode": 73,
+      "details": {
+        "idle_fraction": 0.221,
+        "lead_frames": 74,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (74 frames before motion starts, 47 after it ends)",
+      "episode": 74,
+      "details": {
+        "idle_fraction": 0.274,
+        "lead_frames": 74,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (64 frames before motion starts, 37 after it ends)",
+      "episode": 75,
+      "details": {
+        "idle_fraction": 0.212,
+        "lead_frames": 64,
+        "tail_frames": 37
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (77 frames before motion starts, 55 after it ends)",
+      "episode": 76,
+      "details": {
+        "idle_fraction": 0.263,
+        "lead_frames": 77,
+        "tail_frames": 55
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (106 frames before motion starts, 45 after it ends)",
+      "episode": 77,
+      "details": {
+        "idle_fraction": 0.319,
+        "lead_frames": 106,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (94 frames before motion starts, 47 after it ends)",
+      "episode": 78,
+      "details": {
+        "idle_fraction": 0.316,
+        "lead_frames": 94,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (97 frames before motion starts, 67 after it ends)",
+      "episode": 79,
+      "details": {
+        "idle_fraction": 0.293,
+        "lead_frames": 97,
+        "tail_frames": 67
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (100 frames before motion starts, 45 after it ends)",
+      "episode": 80,
+      "details": {
+        "idle_fraction": 0.32,
+        "lead_frames": 100,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "30% of the episode is idle (87 frames before motion starts, 47 after it ends)",
+      "episode": 81,
+      "details": {
+        "idle_fraction": 0.299,
+        "lead_frames": 87,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (88 frames before motion starts, 59 after it ends)",
+      "episode": 82,
+      "details": {
+        "idle_fraction": 0.282,
+        "lead_frames": 88,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (63 frames before motion starts, 63 after it ends)",
+      "episode": 83,
+      "details": {
+        "idle_fraction": 0.25,
+        "lead_frames": 63,
+        "tail_frames": 63
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "38% of the episode is idle (158 frames before motion starts, 44 after it ends)",
+      "episode": 84,
+      "details": {
+        "idle_fraction": 0.379,
+        "lead_frames": 158,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (75 frames before motion starts, 49 after it ends)",
+      "episode": 85,
+      "details": {
+        "idle_fraction": 0.269,
+        "lead_frames": 75,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (149 frames before motion starts, 47 after it ends)",
+      "episode": 86,
+      "details": {
+        "idle_fraction": 0.353,
+        "lead_frames": 149,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (79 frames before motion starts, 58 after it ends)",
+      "episode": 87,
+      "details": {
+        "idle_fraction": 0.341,
+        "lead_frames": 79,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (68 frames before motion starts, 60 after it ends)",
+      "episode": 88,
+      "details": {
+        "idle_fraction": 0.267,
+        "lead_frames": 68,
+        "tail_frames": 60
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (91 frames before motion starts, 44 after it ends)",
+      "episode": 89,
+      "details": {
+        "idle_fraction": 0.278,
+        "lead_frames": 91,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (78 frames before motion starts, 43 after it ends)",
+      "episode": 90,
+      "details": {
+        "idle_fraction": 0.277,
+        "lead_frames": 78,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (137 frames before motion starts, 52 after it ends)",
+      "episode": 91,
+      "details": {
+        "idle_fraction": 0.368,
+        "lead_frames": 137,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "23% of the episode is idle (59 frames before motion starts, 40 after it ends)",
+      "episode": 92,
+      "details": {
+        "idle_fraction": 0.23,
+        "lead_frames": 59,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (139 frames before motion starts, 61 after it ends)",
+      "episode": 93,
+      "details": {
+        "idle_fraction": 0.364,
+        "lead_frames": 139,
+        "tail_frames": 61
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "49% of the episode is idle (266 frames before motion starts, 57 after it ends)",
+      "episode": 94,
+      "details": {
+        "idle_fraction": 0.488,
+        "lead_frames": 266,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "51% of the episode is idle (222 frames before motion starts, 54 after it ends)",
+      "episode": 95,
+      "details": {
+        "idle_fraction": 0.509,
+        "lead_frames": 222,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "30% of the episode is idle (102 frames before motion starts, 46 after it ends)",
+      "episode": 96,
+      "details": {
+        "idle_fraction": 0.296,
+        "lead_frames": 102,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (74 frames before motion starts, 46 after it ends)",
+      "episode": 97,
+      "details": {
+        "idle_fraction": 0.254,
+        "lead_frames": 74,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "30% of the episode is idle (84 frames before motion starts, 51 after it ends)",
+      "episode": 98,
+      "details": {
+        "idle_fraction": 0.299,
+        "lead_frames": 84,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (81 frames before motion starts, 51 after it ends)",
+      "episode": 99,
+      "details": {
+        "idle_fraction": 0.304,
+        "lead_frames": 81,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "55% of the episode is idle (337 frames before motion starts, 70 after it ends)",
+      "episode": 100,
+      "details": {
+        "idle_fraction": 0.554,
+        "lead_frames": 337,
+        "tail_frames": 70
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (90 frames before motion starts, 37 after it ends)",
+      "episode": 101,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 90,
+        "tail_frames": 37
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (67 frames before motion starts, 53 after it ends)",
+      "episode": 102,
+      "details": {
+        "idle_fraction": 0.27,
+        "lead_frames": 67,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "57% of the episode is idle (354 frames before motion starts, 53 after it ends)",
+      "episode": 103,
+      "details": {
+        "idle_fraction": 0.574,
+        "lead_frames": 354,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (70 frames before motion starts, 58 after it ends)",
+      "episode": 104,
+      "details": {
+        "idle_fraction": 0.302,
+        "lead_frames": 70,
+        "tail_frames": 58
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "48% of the episode is idle (282 frames before motion starts, 74 after it ends)",
+      "episode": 105,
+      "details": {
+        "idle_fraction": 0.482,
+        "lead_frames": 282,
+        "tail_frames": 74
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (72 frames before motion starts, 43 after it ends)",
+      "episode": 106,
+      "details": {
+        "idle_fraction": 0.247,
+        "lead_frames": 72,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (84 frames before motion starts, 47 after it ends)",
+      "episode": 107,
+      "details": {
+        "idle_fraction": 0.282,
+        "lead_frames": 84,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (87 frames before motion starts, 44 after it ends)",
+      "episode": 108,
+      "details": {
+        "idle_fraction": 0.275,
+        "lead_frames": 87,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "30% of the episode is idle (76 frames before motion starts, 60 after it ends)",
+      "episode": 109,
+      "details": {
+        "idle_fraction": 0.296,
+        "lead_frames": 76,
+        "tail_frames": 60
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "47% of the episode is idle (217 frames before motion starts, 44 after it ends)",
+      "episode": 110,
+      "details": {
+        "idle_fraction": 0.473,
+        "lead_frames": 217,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (92 frames before motion starts, 45 after it ends)",
+      "episode": 111,
+      "details": {
+        "idle_fraction": 0.337,
+        "lead_frames": 92,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (168 frames before motion starts, 39 after it ends)",
+      "episode": 112,
+      "details": {
+        "idle_fraction": 0.351,
+        "lead_frames": 168,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (85 frames before motion starts, 49 after it ends)",
+      "episode": 113,
+      "details": {
+        "idle_fraction": 0.316,
+        "lead_frames": 85,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (102 frames before motion starts, 49 after it ends)",
+      "episode": 114,
+      "details": {
+        "idle_fraction": 0.343,
+        "lead_frames": 102,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (63 frames before motion starts, 43 after it ends)",
+      "episode": 115,
+      "details": {
+        "idle_fraction": 0.253,
+        "lead_frames": 63,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "53% of the episode is idle (272 frames before motion starts, 46 after it ends)",
+      "episode": 116,
+      "details": {
+        "idle_fraction": 0.532,
+        "lead_frames": 272,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (82 frames before motion starts, 46 after it ends)",
+      "episode": 117,
+      "details": {
+        "idle_fraction": 0.311,
+        "lead_frames": 82,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (95 frames before motion starts, 43 after it ends)",
+      "episode": 118,
+      "details": {
+        "idle_fraction": 0.289,
+        "lead_frames": 95,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "52% of the episode is idle (336 frames before motion starts, 53 after it ends)",
+      "episode": 119,
+      "details": {
+        "idle_fraction": 0.525,
+        "lead_frames": 336,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (109 frames before motion starts, 45 after it ends)",
+      "episode": 120,
+      "details": {
+        "idle_fraction": 0.338,
+        "lead_frames": 109,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (105 frames before motion starts, 45 after it ends)",
+      "episode": 121,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 105,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (130 frames before motion starts, 49 after it ends)",
+      "episode": 122,
+      "details": {
+        "idle_fraction": 0.337,
+        "lead_frames": 130,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "51% of the episode is idle (344 frames before motion starts, 46 after it ends)",
+      "episode": 123,
+      "details": {
+        "idle_fraction": 0.508,
+        "lead_frames": 344,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (86 frames before motion starts, 43 after it ends)",
+      "episode": 124,
+      "details": {
+        "idle_fraction": 0.264,
+        "lead_frames": 86,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (74 frames before motion starts, 45 after it ends)",
+      "episode": 125,
+      "details": {
+        "idle_fraction": 0.282,
+        "lead_frames": 74,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "50% of the episode is idle (257 frames before motion starts, 40 after it ends)",
+      "episode": 126,
+      "details": {
+        "idle_fraction": 0.503,
+        "lead_frames": 257,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (87 frames before motion starts, 63 after it ends)",
+      "episode": 127,
+      "details": {
+        "idle_fraction": 0.373,
+        "lead_frames": 87,
+        "tail_frames": 63
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (102 frames before motion starts, 47 after it ends)",
+      "episode": 128,
+      "details": {
+        "idle_fraction": 0.335,
+        "lead_frames": 102,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (176 frames before motion starts, 41 after it ends)",
+      "episode": 129,
+      "details": {
+        "idle_fraction": 0.363,
+        "lead_frames": 176,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (103 frames before motion starts, 71 after it ends)",
+      "episode": 130,
+      "details": {
+        "idle_fraction": 0.341,
+        "lead_frames": 103,
+        "tail_frames": 71
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (72 frames before motion starts, 48 after it ends)",
+      "episode": 131,
+      "details": {
+        "idle_fraction": 0.249,
+        "lead_frames": 72,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (87 frames before motion starts, 62 after it ends)",
+      "episode": 132,
+      "details": {
+        "idle_fraction": 0.344,
+        "lead_frames": 87,
+        "tail_frames": 62
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (142 frames before motion starts, 45 after it ends)",
+      "episode": 133,
+      "details": {
+        "idle_fraction": 0.325,
+        "lead_frames": 142,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (70 frames before motion starts, 43 after it ends)",
+      "episode": 134,
+      "details": {
+        "idle_fraction": 0.26,
+        "lead_frames": 70,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (66 frames before motion starts, 48 after it ends)",
+      "episode": 135,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 66,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (56 frames before motion starts, 64 after it ends)",
+      "episode": 136,
+      "details": {
+        "idle_fraction": 0.211,
+        "lead_frames": 56,
+        "tail_frames": 64
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (103 frames before motion starts, 61 after it ends)",
+      "episode": 137,
+      "details": {
+        "idle_fraction": 0.293,
+        "lead_frames": 103,
+        "tail_frames": 61
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "45% of the episode is idle (212 frames before motion starts, 57 after it ends)",
+      "episode": 138,
+      "details": {
+        "idle_fraction": 0.449,
+        "lead_frames": 212,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (72 frames before motion starts, 45 after it ends)",
+      "episode": 139,
+      "details": {
+        "idle_fraction": 0.221,
+        "lead_frames": 72,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (88 frames before motion starts, 59 after it ends)",
+      "episode": 140,
+      "details": {
+        "idle_fraction": 0.347,
+        "lead_frames": 88,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (66 frames before motion starts, 57 after it ends)",
+      "episode": 141,
+      "details": {
+        "idle_fraction": 0.309,
+        "lead_frames": 66,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (92 frames before motion starts, 47 after it ends)",
+      "episode": 142,
+      "details": {
+        "idle_fraction": 0.329,
+        "lead_frames": 92,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (79 frames before motion starts, 52 after it ends)",
+      "episode": 143,
+      "details": {
+        "idle_fraction": 0.272,
+        "lead_frames": 79,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (73 frames before motion starts, 48 after it ends)",
+      "episode": 144,
+      "details": {
+        "idle_fraction": 0.256,
+        "lead_frames": 73,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "47% of the episode is idle (235 frames before motion starts, 44 after it ends)",
+      "episode": 145,
+      "details": {
+        "idle_fraction": 0.469,
+        "lead_frames": 235,
+        "tail_frames": 44
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (92 frames before motion starts, 43 after it ends)",
+      "episode": 146,
+      "details": {
+        "idle_fraction": 0.292,
+        "lead_frames": 92,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (79 frames before motion starts, 46 after it ends)",
+      "episode": 147,
+      "details": {
+        "idle_fraction": 0.246,
+        "lead_frames": 79,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "38% of the episode is idle (121 frames before motion starts, 62 after it ends)",
+      "episode": 148,
+      "details": {
+        "idle_fraction": 0.377,
+        "lead_frames": 121,
+        "tail_frames": 62
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "42% of the episode is idle (137 frames before motion starts, 46 after it ends)",
+      "episode": 149,
+      "details": {
+        "idle_fraction": 0.424,
+        "lead_frames": 137,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "38% of the episode is idle (93 frames before motion starts, 60 after it ends)",
+      "episode": 150,
+      "details": {
+        "idle_fraction": 0.38,
+        "lead_frames": 93,
+        "tail_frames": 60
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (85 frames before motion starts, 74 after it ends)",
+      "episode": 151,
+      "details": {
+        "idle_fraction": 0.323,
+        "lead_frames": 85,
+        "tail_frames": 74
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (75 frames before motion starts, 67 after it ends)",
+      "episode": 152,
+      "details": {
+        "idle_fraction": 0.304,
+        "lead_frames": 75,
+        "tail_frames": 67
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (102 frames before motion starts, 54 after it ends)",
+      "episode": 153,
+      "details": {
+        "idle_fraction": 0.32,
+        "lead_frames": 102,
+        "tail_frames": 54
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (78 frames before motion starts, 48 after it ends)",
+      "episode": 154,
+      "details": {
+        "idle_fraction": 0.272,
+        "lead_frames": 78,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "38% of the episode is idle (101 frames before motion starts, 45 after it ends)",
+      "episode": 155,
+      "details": {
+        "idle_fraction": 0.383,
+        "lead_frames": 101,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (69 frames before motion starts, 63 after it ends)",
+      "episode": 156,
+      "details": {
+        "idle_fraction": 0.346,
+        "lead_frames": 69,
+        "tail_frames": 63
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (105 frames before motion starts, 46 after it ends)",
+      "episode": 157,
+      "details": {
+        "idle_fraction": 0.324,
+        "lead_frames": 105,
+        "tail_frames": 46
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (84 frames before motion starts, 53 after it ends)",
+      "episode": 158,
+      "details": {
+        "idle_fraction": 0.292,
+        "lead_frames": 84,
+        "tail_frames": 53
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (70 frames before motion starts, 78 after it ends)",
+      "episode": 159,
+      "details": {
+        "idle_fraction": 0.301,
+        "lead_frames": 70,
+        "tail_frames": 78
+      }
+    }
+  ],
+  "seconds": 3.49
+}

@@ -1,0 +1,175 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "imstevenpmwork/omx_sentry_1",
+  "dataset": {
+    "codebase_version": "v3.0",
+    "robot_type": "omx_follower",
+    "fps": 30.0,
+    "episodes": 7,
+    "frames": 1007,
+    "cameras": [
+      "observation.images.top",
+      "observation.images.wrist"
+    ],
+    "tasks": 1,
+    "columns": {}
+  },
+  "score": 80.8,
+  "grade": "B",
+  "grade_cap": null,
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 0,
+    "with_warnings": 7,
+    "with_errors": 0
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "warning": 8,
+    "info": 1
+  },
+  "issues": [
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "affected": 7
+    },
+    {
+      "code": "TASK_EMPTY",
+      "severity": "warning",
+      "affected": 1
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 85.0,
+    "1": 85.0,
+    "2": 85.0,
+    "3": 85.0,
+    "4": 85.0,
+    "5": 85.0,
+    "6": 85.0
+  },
+  "findings": [
+    {
+      "code": "TASK_EMPTY",
+      "severity": "warning",
+      "message": "1 task descriptions are empty",
+      "episode": null,
+      "details": {
+        "task_indices": [
+          0
+        ]
+      }
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 3.3 frames (109 ms), estimated over 7 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 3.26,
+        "typical_lag_ms": 108.6,
+        "spread_frames": 0.08,
+        "episodes_estimated": 7,
+        "joints": [
+          "shoulder_pan.pos",
+          "shoulder_lift.pos",
+          "elbow_flex.pos",
+          "wrist_flex.pos",
+          "wrist_roll.pos"
+        ]
+      }
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 0,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 1,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 2,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 3,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 4,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 5,
+      "details": {}
+    },
+    {
+      "code": "EPISODE_TASK_EMPTY",
+      "severity": "warning",
+      "message": "episode's task description is empty",
+      "episode": 6,
+      "details": {}
+    }
+  ],
+  "seconds": 1.42
+}

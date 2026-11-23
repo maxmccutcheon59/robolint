@@ -245,6 +245,25 @@ def test_quick_patterns_select_only_needed_files(tmp_path, version):
         assert "data/chunk-000/file-000.parquet" in pats
 
 
+@pytest.mark.parametrize("version", ["v3.0", "v2.1"])
+def test_quick_mode_takes_every_file_when_the_whole_dataset_is_wanted(tmp_path, version):
+    # Real case: a dataset whose metadata lists fewer episodes (or 0) than its data holds. Picking
+    # files from that metadata skipped the unlisted data files and graded part of the dataset.
+    import json
+
+    from robolint.dataset import quick_patterns
+
+    root = make_dataset(tmp_path / "ds", version=version, n_eps=12, length=40)
+    assert quick_patterns(root, 12, include_videos=False) is None
+    assert quick_patterns(root, 300, include_videos=False) is None
+    info_path = root / "meta" / "info.json"
+    info = json.loads(info_path.read_text())
+    for declared in (0, 5, None):
+        info["total_episodes"] = declared
+        info_path.write_text(json.dumps(info))
+        assert quick_patterns(root, 8, include_videos=False) is None, declared
+
+
 def test_sample_and_hold_actions_are_not_glitches(tmp_path):
     # Real case: a dataset whose controller updates every 4th frame was flagged with hundreds of "jumps".
     root = make_dataset(tmp_path / "ds", n_eps=10, faults={i: ["hold"] for i in range(10)})

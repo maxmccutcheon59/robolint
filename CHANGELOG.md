@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Fixed
+- **Quick mode (`--max-episodes`) no longer skips data when the metadata is wrong.** It chose
+  which files to download from `meta/episodes`, so a dataset whose metadata lists fewer episodes
+  than its data holds (the kind of problem robolint exists to catch) was graded on only the
+  listed files. EPITECH-LILLE/eval_training scored 60.3 (D) with 32,757 of its 41,686 frames
+  instead of 39.9 (F). When the dataset is no bigger than `--max-episodes`, or its metadata
+  doesn't say how big it is, every data file is now downloaded.
+
 ### Added
 - **Grade badge.** `robolint check DATASET --badge robolint.svg` writes an SVG badge with the
   grade and score to show on a dataset card or README.

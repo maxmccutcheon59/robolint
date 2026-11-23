@@ -1,0 +1,1414 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "sii-rhos-ai/vifailback-dataset-lerobot",
+  "dataset": {
+    "codebase_version": "v2.1",
+    "robot_type": "aloha",
+    "fps": 25.0,
+    "episodes": 300,
+    "frames": 75277,
+    "cameras": [
+      "observation.images.cam_high",
+      "observation.images.cam_left_wrist",
+      "observation.images.cam_right_wrist"
+    ],
+    "tasks": 100,
+    "columns": {}
+  },
+  "score": 91.0,
+  "grade": "C",
+  "grade_cap": "7.0% of episodes have errors; over 5% of episodes with errors caps the grade at C",
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 245,
+    "with_warnings": 34,
+    "with_errors": 21
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "info": 44,
+    "warning": 34,
+    "error": 21
+  },
+  "issues": [
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "affected": 21
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "affected": 76
+    },
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "affected": 1
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 100.0,
+    "1": 100.0,
+    "2": 100.0,
+    "3": 98.0,
+    "4": 100.0,
+    "5": 100.0,
+    "6": 100.0,
+    "7": 98.0,
+    "8": 100.0,
+    "9": 100.0,
+    "10": 100.0,
+    "11": 100.0,
+    "12": 100.0,
+    "13": 100.0,
+    "14": 100.0,
+    "15": 100.0,
+    "16": 100.0,
+    "17": 100.0,
+    "18": 100.0,
+    "19": 100.0,
+    "20": 100.0,
+    "21": 98.0,
+    "22": 100.0,
+    "23": 100.0,
+    "24": 100.0,
+    "25": 100.0,
+    "26": 100.0,
+    "27": 100.0,
+    "28": 100.0,
+    "29": 98.0,
+    "30": 100.0,
+    "31": 100.0,
+    "32": 100.0,
+    "33": 100.0,
+    "34": 100.0,
+    "35": 100.0,
+    "36": 100.0,
+    "37": 100.0,
+    "38": 100.0,
+    "39": 100.0,
+    "40": 100.0,
+    "41": 100.0,
+    "42": 100.0,
+    "43": 100.0,
+    "44": 100.0,
+    "45": 100.0,
+    "46": 100.0,
+    "47": 100.0,
+    "48": 100.0,
+    "49": 100.0,
+    "50": 100.0,
+    "51": 100.0,
+    "52": 100.0,
+    "53": 100.0,
+    "54": 100.0,
+    "55": 100.0,
+    "56": 100.0,
+    "57": 100.0,
+    "58": 100.0,
+    "59": 100.0,
+    "60": 100.0,
+    "61": 100.0,
+    "62": 100.0,
+    "63": 100.0,
+    "64": 100.0,
+    "65": 100.0,
+    "66": 100.0,
+    "67": 100.0,
+    "68": 100.0,
+    "69": 100.0,
+    "70": 100.0,
+    "71": 100.0,
+    "72": 100.0,
+    "73": 100.0,
+    "74": 100.0,
+    "75": 100.0,
+    "76": 100.0,
+    "77": 100.0,
+    "78": 100.0,
+    "79": 100.0,
+    "80": 100.0,
+    "81": 100.0,
+    "82": 100.0,
+    "83": 100.0,
+    "84": 100.0,
+    "85": 100.0,
+    "86": 100.0,
+    "87": 100.0,
+    "88": 100.0,
+    "89": 100.0,
+    "90": 100.0,
+    "91": 100.0,
+    "92": 100.0,
+    "93": 100.0,
+    "94": 100.0,
+    "95": 100.0,
+    "96": 100.0,
+    "97": 100.0,
+    "98": 100.0,
+    "99": 100.0,
+    "100": 100.0,
+    "101": 100.0,
+    "102": 100.0,
+    "103": 100.0,
+    "104": 100.0,
+    "105": 100.0,
+    "106": 100.0,
+    "107": 100.0,
+    "108": 100.0,
+    "109": 98.0,
+    "110": 100.0,
+    "111": 100.0,
+    "112": 100.0,
+    "113": 98.0,
+    "114": 100.0,
+    "115": 100.0,
+    "116": 100.0,
+    "117": 100.0,
+    "118": 98.0,
+    "119": 98.0,
+    "120": 98.0,
+    "121": 100.0,
+    "122": 100.0,
+    "123": 98.0,
+    "124": 100.0,
+    "125": 100.0,
+    "126": 100.0,
+    "127": 98.0,
+    "128": 98.0,
+    "129": 100.0,
+    "130": 100.0,
+    "131": 100.0,
+    "132": 100.0,
+    "133": 100.0,
+    "134": 100.0,
+    "135": 100.0,
+    "136": 100.0,
+    "137": 100.0,
+    "138": 100.0,
+    "139": 98.0,
+    "140": 100.0,
+    "141": 100.0,
+    "142": 100.0,
+    "143": 100.0,
+    "144": 100.0,
+    "145": 100.0,
+    "146": 100.0,
+    "147": 100.0,
+    "148": 100.0,
+    "149": 98.0,
+    "150": 100.0,
+    "151": 100.0,
+    "152": 100.0,
+    "153": 100.0,
+    "154": 98.0,
+    "155": 98.0,
+    "156": 100.0,
+    "157": 100.0,
+    "158": 100.0,
+    "159": 100.0,
+    "160": 100.0,
+    "161": 100.0,
+    "162": 100.0,
+    "163": 100.0,
+    "164": 100.0,
+    "165": 100.0,
+    "166": 100.0,
+    "167": 100.0,
+    "168": 100.0,
+    "169": 100.0,
+    "170": 100.0,
+    "171": 100.0,
+    "172": 100.0,
+    "173": 100.0,
+    "174": 100.0,
+    "175": 100.0,
+    "176": 100.0,
+    "177": 98.0,
+    "178": 100.0,
+    "179": 100.0,
+    "180": 100.0,
+    "181": 100.0,
+    "182": 100.0,
+    "183": 100.0,
+    "184": 100.0,
+    "185": 100.0,
+    "186": 100.0,
+    "187": 100.0,
+    "188": 100.0,
+    "189": 100.0,
+    "190": 85.0,
+    "191": 85.0,
+    "192": 85.0,
+    "193": 85.0,
+    "194": 100.0,
+    "195": 100.0,
+    "196": 100.0,
+    "197": 100.0,
+    "198": 100.0,
+    "199": 100.0,
+    "200": 100.0,
+    "201": 100.0,
+    "202": 100.0,
+    "203": 100.0,
+    "204": 100.0,
+    "205": 100.0,
+    "206": 100.0,
+    "207": 100.0,
+    "208": 100.0,
+    "209": 100.0,
+    "210": 100.0,
+    "211": 100.0,
+    "212": 100.0,
+    "213": 100.0,
+    "214": 100.0,
+    "215": 0.0,
+    "216": 0.0,
+    "217": 0.0,
+    "218": 0.0,
+    "219": 0.0,
+    "220": 0.0,
+    "221": 85.0,
+    "222": 85.0,
+    "223": 0.0,
+    "224": 0.0,
+    "225": 85.0,
+    "226": 100.0,
+    "227": 0.0,
+    "228": 100.0,
+    "229": 98.0,
+    "230": 85.0,
+    "231": 98.0,
+    "232": 85.0,
+    "233": 98.0,
+    "234": 85.0,
+    "235": 100.0,
+    "236": 85.0,
+    "237": 98.0,
+    "238": 98.0,
+    "239": 98.0,
+    "240": 98.0,
+    "241": 85.0,
+    "242": 85.0,
+    "243": 0.0,
+    "244": 0.0,
+    "245": 98.0,
+    "246": 98.0,
+    "247": 85.0,
+    "248": 0.0,
+    "249": 0.0,
+    "250": 0.0,
+    "251": 100.0,
+    "252": 85.0,
+    "253": 85.0,
+    "254": 98.0,
+    "255": 98.0,
+    "256": 85.0,
+    "257": 98.0,
+    "258": 85.0,
+    "259": 85.0,
+    "260": 85.0,
+    "261": 0.0,
+    "262": 85.0,
+    "263": 98.0,
+    "264": 98.0,
+    "265": 85.0,
+    "266": 100.0,
+    "267": 85.0,
+    "268": 85.0,
+    "269": 98.0,
+    "270": 100.0,
+    "271": 98.0,
+    "272": 85.0,
+    "273": 100.0,
+    "274": 0.0,
+    "275": 85.0,
+    "276": 98.0,
+    "277": 98.0,
+    "278": 98.0,
+    "279": 85.0,
+    "280": 98.0,
+    "281": 85.0,
+    "282": 98.0,
+    "283": 85.0,
+    "284": 0.0,
+    "285": 100.0,
+    "286": 85.0,
+    "287": 0.0,
+    "288": 0.0,
+    "289": 0.0,
+    "290": 100.0,
+    "291": 98.0,
+    "292": 98.0,
+    "293": 85.0,
+    "294": 85.0,
+    "295": 98.0,
+    "296": 98.0,
+    "297": 85.0,
+    "298": 85.0,
+    "299": 0.0
+  },
+  "findings": [
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "message": "quick mode: only the first 300 of 5202 episodes were checked",
+      "episode": null,
+      "details": {}
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 1.0 frames (41 ms), estimated over 279 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 1.02,
+        "typical_lag_ms": 40.9,
+        "spread_frames": 0.0,
+        "episodes_estimated": 279,
+        "joints": [
+          "action[0]",
+          "action[1]",
+          "action[2]",
+          "action[3]",
+          "action[4]",
+          "action[5]",
+          "action[6]",
+          "action[7]",
+          "action[8]",
+          "action[9]",
+          "action[10]",
+          "action[11]",
+          "action[12]",
+          "action[13]"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (14 frames before motion starts, 39 after it ends)",
+      "episode": 3,
+      "details": {
+        "idle_fraction": 0.156,
+        "lead_frames": 14,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (18 frames before motion starts, 40 after it ends)",
+      "episode": 7,
+      "details": {
+        "idle_fraction": 0.176,
+        "lead_frames": 18,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (11 frames before motion starts, 31 after it ends)",
+      "episode": 21,
+      "details": {
+        "idle_fraction": 0.19,
+        "lead_frames": 11,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (1 frames before motion starts, 40 after it ends)",
+      "episode": 29,
+      "details": {
+        "idle_fraction": 0.173,
+        "lead_frames": 1,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (13 frames before motion starts, 21 after it ends)",
+      "episode": 109,
+      "details": {
+        "idle_fraction": 0.154,
+        "lead_frames": 13,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (2 frames before motion starts, 25 after it ends)",
+      "episode": 113,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 2,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (1 frames before motion starts, 21 after it ends)",
+      "episode": 118,
+      "details": {
+        "idle_fraction": 0.161,
+        "lead_frames": 1,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (1 frames before motion starts, 27 after it ends)",
+      "episode": 119,
+      "details": {
+        "idle_fraction": 0.201,
+        "lead_frames": 1,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (6 frames before motion starts, 24 after it ends)",
+      "episode": 120,
+      "details": {
+        "idle_fraction": 0.181,
+        "lead_frames": 6,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (2 frames before motion starts, 25 after it ends)",
+      "episode": 123,
+      "details": {
+        "idle_fraction": 0.191,
+        "lead_frames": 2,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (1 frames before motion starts, 22 after it ends)",
+      "episode": 127,
+      "details": {
+        "idle_fraction": 0.181,
+        "lead_frames": 1,
+        "tail_frames": 22
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (1 frames before motion starts, 21 after it ends)",
+      "episode": 128,
+      "details": {
+        "idle_fraction": 0.176,
+        "lead_frames": 1,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (5 frames before motion starts, 19 after it ends)",
+      "episode": 139,
+      "details": {
+        "idle_fraction": 0.183,
+        "lead_frames": 5,
+        "tail_frames": 19
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (11 frames before motion starts, 16 after it ends)",
+      "episode": 149,
+      "details": {
+        "idle_fraction": 0.214,
+        "lead_frames": 11,
+        "tail_frames": 16
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (5 frames before motion starts, 13 after it ends)",
+      "episode": 154,
+      "details": {
+        "idle_fraction": 0.154,
+        "lead_frames": 5,
+        "tail_frames": 13
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (10 frames before motion starts, 12 after it ends)",
+      "episode": 155,
+      "details": {
+        "idle_fraction": 0.208,
+        "lead_frames": 10,
+        "tail_frames": 12
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (7 frames before motion starts, 24 after it ends)",
+      "episode": 177,
+      "details": {
+        "idle_fraction": 0.161,
+        "lead_frames": 7,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (3 frames before motion starts, 97 after it ends)",
+      "episode": 190,
+      "details": {
+        "idle_fraction": 0.312,
+        "lead_frames": 3,
+        "tail_frames": 97
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (14 frames before motion starts, 108 after it ends)",
+      "episode": 191,
+      "details": {
+        "idle_fraction": 0.327,
+        "lead_frames": 14,
+        "tail_frames": 108
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "75% of the episode is idle (3 frames before motion starts, 250 after it ends)",
+      "episode": 192,
+      "details": {
+        "idle_fraction": 0.751,
+        "lead_frames": 3,
+        "tail_frames": 250
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (1 frames before motion starts, 100 after it ends)",
+      "episode": 193,
+      "details": {
+        "idle_fraction": 0.311,
+        "lead_frames": 1,
+        "tail_frames": 100
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 215,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 216,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 217,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 218,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 219,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 220,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "39% of the episode is idle (15 frames before motion starts, 28 after it ends)",
+      "episode": 221,
+      "details": {
+        "idle_fraction": 0.387,
+        "lead_frames": 15,
+        "tail_frames": 28
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "76% of the episode is idle (16 frames before motion starts, 194 after it ends)",
+      "episode": 222,
+      "details": {
+        "idle_fraction": 0.755,
+        "lead_frames": 16,
+        "tail_frames": 194
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 223,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 224,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (7 frames before motion starts, 30 after it ends)",
+      "episode": 225,
+      "details": {
+        "idle_fraction": 0.319,
+        "lead_frames": 7,
+        "tail_frames": 30
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 227,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (14 frames before motion starts, 13 after it ends)",
+      "episode": 229,
+      "details": {
+        "idle_fraction": 0.185,
+        "lead_frames": 14,
+        "tail_frames": 13
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (19 frames before motion starts, 31 after it ends)",
+      "episode": 230,
+      "details": {
+        "idle_fraction": 0.357,
+        "lead_frames": 19,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (7 frames before motion starts, 21 after it ends)",
+      "episode": 231,
+      "details": {
+        "idle_fraction": 0.22,
+        "lead_frames": 7,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "44% of the episode is idle (19 frames before motion starts, 57 after it ends)",
+      "episode": 232,
+      "details": {
+        "idle_fraction": 0.442,
+        "lead_frames": 19,
+        "tail_frames": 57
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (2 frames before motion starts, 23 after it ends)",
+      "episode": 233,
+      "details": {
+        "idle_fraction": 0.185,
+        "lead_frames": 2,
+        "tail_frames": 23
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "32% of the episode is idle (14 frames before motion starts, 31 after it ends)",
+      "episode": 234,
+      "details": {
+        "idle_fraction": 0.321,
+        "lead_frames": 14,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "71% of the episode is idle (11 frames before motion starts, 171 after it ends)",
+      "episode": 236,
+      "details": {
+        "idle_fraction": 0.711,
+        "lead_frames": 11,
+        "tail_frames": 171
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "23% of the episode is idle (10 frames before motion starts, 25 after it ends)",
+      "episode": 237,
+      "details": {
+        "idle_fraction": 0.235,
+        "lead_frames": 10,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (2 frames before motion starts, 36 after it ends)",
+      "episode": 238,
+      "details": {
+        "idle_fraction": 0.295,
+        "lead_frames": 2,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (7 frames before motion starts, 29 after it ends)",
+      "episode": 239,
+      "details": {
+        "idle_fraction": 0.267,
+        "lead_frames": 7,
+        "tail_frames": 29
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (6 frames before motion starts, 29 after it ends)",
+      "episode": 240,
+      "details": {
+        "idle_fraction": 0.285,
+        "lead_frames": 6,
+        "tail_frames": 29
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "65% of the episode is idle (7 frames before motion starts, 150 after it ends)",
+      "episode": 241,
+      "details": {
+        "idle_fraction": 0.654,
+        "lead_frames": 7,
+        "tail_frames": 150
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "73% of the episode is idle (15 frames before motion starts, 162 after it ends)",
+      "episode": 242,
+      "details": {
+        "idle_fraction": 0.725,
+        "lead_frames": 15,
+        "tail_frames": 162
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 243,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 244,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (14 frames before motion starts, 21 after it ends)",
+      "episode": 245,
+      "details": {
+        "idle_fraction": 0.259,
+        "lead_frames": 14,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (7 frames before motion starts, 16 after it ends)",
+      "episode": 246,
+      "details": {
+        "idle_fraction": 0.193,
+        "lead_frames": 7,
+        "tail_frames": 16
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "74% of the episode is idle (2 frames before motion starts, 198 after it ends)",
+      "episode": 247,
+      "details": {
+        "idle_fraction": 0.738,
+        "lead_frames": 2,
+        "tail_frames": 198
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 248,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 249,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 250,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (10 frames before motion starts, 24 after it ends)",
+      "episode": 252,
+      "details": {
+        "idle_fraction": 0.351,
+        "lead_frames": 10,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (12 frames before motion starts, 29 after it ends)",
+      "episode": 253,
+      "details": {
+        "idle_fraction": 0.345,
+        "lead_frames": 12,
+        "tail_frames": 29
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (17 frames before motion starts, 14 after it ends)",
+      "episode": 254,
+      "details": {
+        "idle_fraction": 0.221,
+        "lead_frames": 17,
+        "tail_frames": 14
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (1 frames before motion starts, 28 after it ends)",
+      "episode": 255,
+      "details": {
+        "idle_fraction": 0.223,
+        "lead_frames": 1,
+        "tail_frames": 28
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (9 frames before motion starts, 30 after it ends)",
+      "episode": 256,
+      "details": {
+        "idle_fraction": 0.336,
+        "lead_frames": 9,
+        "tail_frames": 30
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (8 frames before motion starts, 27 after it ends)",
+      "episode": 257,
+      "details": {
+        "idle_fraction": 0.261,
+        "lead_frames": 8,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "71% of the episode is idle (10 frames before motion starts, 155 after it ends)",
+      "episode": 258,
+      "details": {
+        "idle_fraction": 0.708,
+        "lead_frames": 10,
+        "tail_frames": 155
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "67% of the episode is idle (20 frames before motion starts, 137 after it ends)",
+      "episode": 259,
+      "details": {
+        "idle_fraction": 0.671,
+        "lead_frames": 20,
+        "tail_frames": 137
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "72% of the episode is idle (3 frames before motion starts, 221 after it ends)",
+      "episode": 260,
+      "details": {
+        "idle_fraction": 0.723,
+        "lead_frames": 3,
+        "tail_frames": 221
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 261,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "68% of the episode is idle (6 frames before motion starts, 159 after it ends)",
+      "episode": 262,
+      "details": {
+        "idle_fraction": 0.685,
+        "lead_frames": 6,
+        "tail_frames": 159
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (14 frames before motion starts, 10 after it ends)",
+      "episode": 263,
+      "details": {
+        "idle_fraction": 0.212,
+        "lead_frames": 14,
+        "tail_frames": 10
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (7 frames before motion starts, 13 after it ends)",
+      "episode": 264,
+      "details": {
+        "idle_fraction": 0.247,
+        "lead_frames": 7,
+        "tail_frames": 13
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "75% of the episode is idle (2 frames before motion starts, 195 after it ends)",
+      "episode": 265,
+      "details": {
+        "idle_fraction": 0.752,
+        "lead_frames": 2,
+        "tail_frames": 195
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "30% of the episode is idle (7 frames before motion starts, 26 after it ends)",
+      "episode": 267,
+      "details": {
+        "idle_fraction": 0.303,
+        "lead_frames": 7,
+        "tail_frames": 26
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "72% of the episode is idle (1 frames before motion starts, 172 after it ends)",
+      "episode": 268,
+      "details": {
+        "idle_fraction": 0.724,
+        "lead_frames": 1,
+        "tail_frames": 172
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (2 frames before motion starts, 24 after it ends)",
+      "episode": 269,
+      "details": {
+        "idle_fraction": 0.26,
+        "lead_frames": 2,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (7 frames before motion starts, 21 after it ends)",
+      "episode": 271,
+      "details": {
+        "idle_fraction": 0.267,
+        "lead_frames": 7,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "74% of the episode is idle (1 frames before motion starts, 191 after it ends)",
+      "episode": 272,
+      "details": {
+        "idle_fraction": 0.738,
+        "lead_frames": 1,
+        "tail_frames": 191
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 274,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "37% of the episode is idle (18 frames before motion starts, 25 after it ends)",
+      "episode": 275,
+      "details": {
+        "idle_fraction": 0.374,
+        "lead_frames": 18,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (3 frames before motion starts, 27 after it ends)",
+      "episode": 276,
+      "details": {
+        "idle_fraction": 0.268,
+        "lead_frames": 3,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (11 frames before motion starts, 11 after it ends)",
+      "episode": 277,
+      "details": {
+        "idle_fraction": 0.224,
+        "lead_frames": 11,
+        "tail_frames": 11
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "26% of the episode is idle (8 frames before motion starts, 27 after it ends)",
+      "episode": 278,
+      "details": {
+        "idle_fraction": 0.255,
+        "lead_frames": 8,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "80% of the episode is idle (7 frames before motion starts, 251 after it ends)",
+      "episode": 279,
+      "details": {
+        "idle_fraction": 0.799,
+        "lead_frames": 7,
+        "tail_frames": 251
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "27% of the episode is idle (9 frames before motion starts, 22 after it ends)",
+      "episode": 280,
+      "details": {
+        "idle_fraction": 0.267,
+        "lead_frames": 9,
+        "tail_frames": 22
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "70% of the episode is idle (1 frames before motion starts, 163 after it ends)",
+      "episode": 281,
+      "details": {
+        "idle_fraction": 0.704,
+        "lead_frames": 1,
+        "tail_frames": 163
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (1 frames before motion starts, 16 after it ends)",
+      "episode": 282,
+      "details": {
+        "idle_fraction": 0.172,
+        "lead_frames": 1,
+        "tail_frames": 16
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "78% of the episode is idle (6 frames before motion starts, 222 after it ends)",
+      "episode": 283,
+      "details": {
+        "idle_fraction": 0.781,
+        "lead_frames": 6,
+        "tail_frames": 222
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 284,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "71% of the episode is idle (7 frames before motion starts, 158 after it ends)",
+      "episode": 286,
+      "details": {
+        "idle_fraction": 0.711,
+        "lead_frames": 7,
+        "tail_frames": 158
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 287,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 288,
+      "details": {}
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 289,
+      "details": {}
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (22 frames before motion starts, 14 after it ends)",
+      "episode": 291,
+      "details": {
+        "idle_fraction": 0.293,
+        "lead_frames": 22,
+        "tail_frames": 14
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (14 frames before motion starts, 42 after it ends)",
+      "episode": 292,
+      "details": {
+        "idle_fraction": 0.211,
+        "lead_frames": 14,
+        "tail_frames": 42
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "67% of the episode is idle (9 frames before motion starts, 168 after it ends)",
+      "episode": 293,
+      "details": {
+        "idle_fraction": 0.67,
+        "lead_frames": 9,
+        "tail_frames": 168
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (19 frames before motion starts, 23 after it ends)",
+      "episode": 294,
+      "details": {
+        "idle_fraction": 0.341,
+        "lead_frames": 19,
+        "tail_frames": 23
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (3 frames before motion starts, 19 after it ends)",
+      "episode": 295,
+      "details": {
+        "idle_fraction": 0.22,
+        "lead_frames": 3,
+        "tail_frames": 19
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (3 frames before motion starts, 26 after it ends)",
+      "episode": 296,
+      "details": {
+        "idle_fraction": 0.25,
+        "lead_frames": 3,
+        "tail_frames": 26
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (10 frames before motion starts, 22 after it ends)",
+      "episode": 297,
+      "details": {
+        "idle_fraction": 0.308,
+        "lead_frames": 10,
+        "tail_frames": 22
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "75% of the episode is idle (8 frames before motion starts, 182 after it ends)",
+      "episode": 298,
+      "details": {
+        "idle_fraction": 0.751,
+        "lead_frames": 8,
+        "tail_frames": 182
+      }
+    },
+    {
+      "code": "DEAD_EPISODE",
+      "severity": "error",
+      "message": "the commanded actions never meaningfully change: the robot does not move",
+      "episode": 299,
+      "details": {}
+    }
+  ],
+  "seconds": 34.49
+}

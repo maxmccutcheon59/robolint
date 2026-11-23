@@ -1,0 +1,3075 @@
+{
+  "tool": {
+    "name": "robolint",
+    "version": "0.1.2"
+  },
+  "source": "RoboCOIN/Agilex_Cobot_Magic_place_towel_flat",
+  "dataset": {
+    "codebase_version": "v2.1",
+    "robot_type": "aloha",
+    "fps": 30.0,
+    "episodes": 300,
+    "frames": 327166,
+    "cameras": [
+      "observation.images.cam_head_rgb",
+      "observation.images.cam_right_wrist_rgb",
+      "observation.images.cam_left_wrist_rgb"
+    ],
+    "tasks": 1,
+    "columns": {}
+  },
+  "score": 93.7,
+  "grade": "A",
+  "grade_cap": null,
+  "score_weights": {
+    "episode": {
+      "info": 0.02,
+      "warning": 0.15,
+      "error": 1.0
+    },
+    "dataset": {
+      "info": 0.0,
+      "warning": 0.05,
+      "error": 0.15
+    },
+    "codes": {
+      "NO_ACTIONS": 1.0,
+      "NO_EPISODES": 1.0
+    },
+    "grade_caps": [
+      {
+        "error_episodes_over": 0.0,
+        "max_grade": "B"
+      },
+      {
+        "error_episodes_over": 0.05,
+        "max_grade": "C"
+      },
+      {
+        "error_episodes_over": 0.15,
+        "max_grade": "D"
+      },
+      {
+        "error_episodes_over": 0.3,
+        "max_grade": "F"
+      }
+    ]
+  },
+  "episodes": {
+    "clean": 184,
+    "with_warnings": 116,
+    "with_errors": 0
+  },
+  "videos_checked": false,
+  "finding_counts": {
+    "info": 81,
+    "warning": 116
+  },
+  "issues": [
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "affected": 104
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "affected": 91
+    },
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "affected": 1
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "affected": 1
+    }
+  ],
+  "episode_scores": {
+    "0": 85.0,
+    "1": 100.0,
+    "2": 85.0,
+    "3": 100.0,
+    "4": 85.0,
+    "5": 100.0,
+    "6": 100.0,
+    "7": 100.0,
+    "8": 100.0,
+    "9": 85.0,
+    "10": 100.0,
+    "11": 85.0,
+    "12": 100.0,
+    "13": 85.0,
+    "14": 85.0,
+    "15": 100.0,
+    "16": 100.0,
+    "17": 100.0,
+    "18": 85.0,
+    "19": 100.0,
+    "20": 85.0,
+    "21": 85.0,
+    "22": 100.0,
+    "23": 85.0,
+    "24": 85.0,
+    "25": 100.0,
+    "26": 85.0,
+    "27": 85.0,
+    "28": 85.0,
+    "29": 100.0,
+    "30": 85.0,
+    "31": 100.0,
+    "32": 85.0,
+    "33": 100.0,
+    "34": 100.0,
+    "35": 100.0,
+    "36": 85.0,
+    "37": 100.0,
+    "38": 85.0,
+    "39": 100.0,
+    "40": 100.0,
+    "41": 85.0,
+    "42": 85.0,
+    "43": 100.0,
+    "44": 100.0,
+    "45": 85.0,
+    "46": 100.0,
+    "47": 100.0,
+    "48": 85.0,
+    "49": 100.0,
+    "50": 100.0,
+    "51": 100.0,
+    "52": 100.0,
+    "53": 100.0,
+    "54": 100.0,
+    "55": 100.0,
+    "56": 100.0,
+    "57": 100.0,
+    "58": 85.0,
+    "59": 100.0,
+    "60": 100.0,
+    "61": 85.0,
+    "62": 85.0,
+    "63": 100.0,
+    "64": 100.0,
+    "65": 85.0,
+    "66": 100.0,
+    "67": 100.0,
+    "68": 100.0,
+    "69": 100.0,
+    "70": 85.0,
+    "71": 100.0,
+    "72": 85.0,
+    "73": 100.0,
+    "74": 85.0,
+    "75": 100.0,
+    "76": 85.0,
+    "77": 100.0,
+    "78": 100.0,
+    "79": 100.0,
+    "80": 100.0,
+    "81": 100.0,
+    "82": 100.0,
+    "83": 100.0,
+    "84": 100.0,
+    "85": 100.0,
+    "86": 85.0,
+    "87": 100.0,
+    "88": 100.0,
+    "89": 85.0,
+    "90": 85.0,
+    "91": 100.0,
+    "92": 100.0,
+    "93": 100.0,
+    "94": 100.0,
+    "95": 100.0,
+    "96": 85.0,
+    "97": 85.0,
+    "98": 85.0,
+    "99": 85.0,
+    "100": 85.0,
+    "101": 85.0,
+    "102": 100.0,
+    "103": 100.0,
+    "104": 100.0,
+    "105": 100.0,
+    "106": 85.0,
+    "107": 100.0,
+    "108": 85.0,
+    "109": 100.0,
+    "110": 85.0,
+    "111": 100.0,
+    "112": 85.0,
+    "113": 85.0,
+    "114": 100.0,
+    "115": 100.0,
+    "116": 100.0,
+    "117": 85.0,
+    "118": 85.0,
+    "119": 100.0,
+    "120": 100.0,
+    "121": 100.0,
+    "122": 85.0,
+    "123": 85.0,
+    "124": 85.0,
+    "125": 85.0,
+    "126": 85.0,
+    "127": 100.0,
+    "128": 100.0,
+    "129": 100.0,
+    "130": 83.3,
+    "131": 100.0,
+    "132": 85.0,
+    "133": 85.0,
+    "134": 85.0,
+    "135": 98.0,
+    "136": 85.0,
+    "137": 83.3,
+    "138": 98.0,
+    "139": 85.0,
+    "140": 100.0,
+    "141": 100.0,
+    "142": 98.0,
+    "143": 100.0,
+    "144": 98.0,
+    "145": 85.0,
+    "146": 100.0,
+    "147": 98.0,
+    "148": 85.0,
+    "149": 100.0,
+    "150": 85.0,
+    "151": 100.0,
+    "152": 85.0,
+    "153": 100.0,
+    "154": 98.0,
+    "155": 83.3,
+    "156": 85.0,
+    "157": 100.0,
+    "158": 85.0,
+    "159": 85.0,
+    "160": 85.0,
+    "161": 85.0,
+    "162": 100.0,
+    "163": 85.0,
+    "164": 85.0,
+    "165": 83.3,
+    "166": 100.0,
+    "167": 100.0,
+    "168": 83.3,
+    "169": 85.0,
+    "170": 100.0,
+    "171": 83.3,
+    "172": 83.3,
+    "173": 83.3,
+    "174": 100.0,
+    "175": 85.0,
+    "176": 98.0,
+    "177": 98.0,
+    "178": 83.3,
+    "179": 100.0,
+    "180": 100.0,
+    "181": 85.0,
+    "182": 85.0,
+    "183": 98.0,
+    "184": 98.0,
+    "185": 98.0,
+    "186": 98.0,
+    "187": 98.0,
+    "188": 85.0,
+    "189": 100.0,
+    "190": 85.0,
+    "191": 100.0,
+    "192": 98.0,
+    "193": 100.0,
+    "194": 100.0,
+    "195": 100.0,
+    "196": 98.0,
+    "197": 98.0,
+    "198": 100.0,
+    "199": 83.3,
+    "200": 98.0,
+    "201": 83.3,
+    "202": 100.0,
+    "203": 100.0,
+    "204": 100.0,
+    "205": 98.0,
+    "206": 100.0,
+    "207": 98.0,
+    "208": 100.0,
+    "209": 100.0,
+    "210": 100.0,
+    "211": 85.0,
+    "212": 100.0,
+    "213": 100.0,
+    "214": 100.0,
+    "215": 100.0,
+    "216": 85.0,
+    "217": 100.0,
+    "218": 100.0,
+    "219": 85.0,
+    "220": 83.3,
+    "221": 100.0,
+    "222": 100.0,
+    "223": 100.0,
+    "224": 100.0,
+    "225": 100.0,
+    "226": 100.0,
+    "227": 98.0,
+    "228": 98.0,
+    "229": 100.0,
+    "230": 100.0,
+    "231": 100.0,
+    "232": 100.0,
+    "233": 100.0,
+    "234": 85.0,
+    "235": 100.0,
+    "236": 98.0,
+    "237": 85.0,
+    "238": 98.0,
+    "239": 83.3,
+    "240": 100.0,
+    "241": 98.0,
+    "242": 98.0,
+    "243": 98.0,
+    "244": 98.0,
+    "245": 83.3,
+    "246": 98.0,
+    "247": 98.0,
+    "248": 98.0,
+    "249": 83.3,
+    "250": 83.3,
+    "251": 98.0,
+    "252": 100.0,
+    "253": 83.3,
+    "254": 83.3,
+    "255": 98.0,
+    "256": 98.0,
+    "257": 98.0,
+    "258": 85.0,
+    "259": 98.0,
+    "260": 98.0,
+    "261": 83.3,
+    "262": 98.0,
+    "263": 98.0,
+    "264": 98.0,
+    "265": 98.0,
+    "266": 85.0,
+    "267": 85.0,
+    "268": 85.0,
+    "269": 85.0,
+    "270": 85.0,
+    "271": 85.0,
+    "272": 98.0,
+    "273": 83.3,
+    "274": 85.0,
+    "275": 85.0,
+    "276": 85.0,
+    "277": 98.0,
+    "278": 85.0,
+    "279": 100.0,
+    "280": 85.0,
+    "281": 98.0,
+    "282": 98.0,
+    "283": 83.3,
+    "284": 98.0,
+    "285": 83.3,
+    "286": 98.0,
+    "287": 98.0,
+    "288": 85.0,
+    "289": 98.0,
+    "290": 98.0,
+    "291": 98.0,
+    "292": 83.3,
+    "293": 98.0,
+    "294": 83.3,
+    "295": 100.0,
+    "296": 98.0,
+    "297": 98.0,
+    "298": 98.0,
+    "299": 98.0
+  },
+  "findings": [
+    {
+      "code": "PARTIAL_CHECK",
+      "severity": "info",
+      "message": "quick mode: only the first 300 of 962 episodes were checked",
+      "episode": null,
+      "details": {}
+    },
+    {
+      "code": "STATE_LAG",
+      "severity": "info",
+      "message": "the measured state typically trails the commanded action by 0.0 frames (0 ms), estimated over 300 episodes",
+      "episode": null,
+      "details": {
+        "typical_lag_frames": 0.0,
+        "typical_lag_ms": 0.0,
+        "spread_frames": 0.0,
+        "episodes_estimated": 300,
+        "joints": [
+          "left_arm_joint_1_rad",
+          "left_arm_joint_2_rad",
+          "left_arm_joint_3_rad",
+          "left_arm_joint_4_rad",
+          "left_arm_joint_5_rad",
+          "left_arm_joint_6_rad",
+          "left_eef_pos_x_m",
+          "left_eef_pos_y_m",
+          "left_eef_pos_z_m",
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_y_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_arm_joint_1_rad",
+          "right_arm_joint_2_rad",
+          "right_arm_joint_3_rad",
+          "right_arm_joint_4_rad",
+          "right_arm_joint_5_rad",
+          "right_arm_joint_6_rad",
+          "right_eef_pos_x_m",
+          "right_eef_pos_y_m",
+          "right_eef_pos_z_m",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_y_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 0,
+      "details": {
+        "count": 2,
+        "frames": [
+          1025,
+          1051
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 2,
+      "details": {
+        "count": 1,
+        "frames": [
+          1308
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 4,
+      "details": {
+        "count": 1,
+        "frames": [
+          337
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 9,
+      "details": {
+        "count": 1,
+        "frames": [
+          325
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 11,
+      "details": {
+        "count": 1,
+        "frames": [
+          265
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 13,
+      "details": {
+        "count": 1,
+        "frames": [
+          584
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 14,
+      "details": {
+        "count": 1,
+        "frames": [
+          791
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 18,
+      "details": {
+        "count": 2,
+        "frames": [
+          758,
+          997
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 20,
+      "details": {
+        "count": 1,
+        "frames": [
+          615
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 21,
+      "details": {
+        "count": 2,
+        "frames": [
+          249,
+          839
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 23,
+      "details": {
+        "count": 2,
+        "frames": [
+          933,
+          1276
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 24,
+      "details": {
+        "count": 1,
+        "frames": [
+          912
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 26,
+      "details": {
+        "count": 1,
+        "frames": [
+          89
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 27,
+      "details": {
+        "count": 2,
+        "frames": [
+          1084,
+          1089
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 28,
+      "details": {
+        "count": 1,
+        "frames": [
+          791
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 30,
+      "details": {
+        "count": 1,
+        "frames": [
+          939
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 32,
+      "details": {
+        "count": 1,
+        "frames": [
+          971
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 36,
+      "details": {
+        "count": 2,
+        "frames": [
+          30,
+          554
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 38,
+      "details": {
+        "count": 1,
+        "frames": [
+          1058
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 41,
+      "details": {
+        "count": 1,
+        "frames": [
+          1005
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 42,
+      "details": {
+        "count": 1,
+        "frames": [
+          1063
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 45,
+      "details": {
+        "count": 3,
+        "frames": [
+          53,
+          764,
+          1042
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 48,
+      "details": {
+        "count": 2,
+        "frames": [
+          106,
+          979
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 58,
+      "details": {
+        "count": 3,
+        "frames": [
+          800,
+          1022,
+          1145
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 61,
+      "details": {
+        "count": 1,
+        "frames": [
+          600
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 62,
+      "details": {
+        "count": 1,
+        "frames": [
+          778
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 65,
+      "details": {
+        "count": 1,
+        "frames": [
+          1053
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 70,
+      "details": {
+        "count": 1,
+        "frames": [
+          552
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 72,
+      "details": {
+        "count": 1,
+        "frames": [
+          986
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 74,
+      "details": {
+        "count": 1,
+        "frames": [
+          1440
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 76,
+      "details": {
+        "count": 2,
+        "frames": [
+          438,
+          1042
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "5 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 86,
+      "details": {
+        "count": 5,
+        "frames": [
+          48,
+          64,
+          68,
+          963,
+          1022
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 89,
+      "details": {
+        "count": 1,
+        "frames": [
+          976
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad, right_eef_rot_euler_z_rad",
+      "episode": 90,
+      "details": {
+        "count": 4,
+        "frames": [
+          860,
+          899,
+          1006,
+          1048
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 96,
+      "details": {
+        "count": 1,
+        "frames": [
+          257
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 97,
+      "details": {
+        "count": 1,
+        "frames": [
+          1111
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 98,
+      "details": {
+        "count": 2,
+        "frames": [
+          1,
+          1031
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 99,
+      "details": {
+        "count": 1,
+        "frames": [
+          821
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 100,
+      "details": {
+        "count": 1,
+        "frames": [
+          370
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 101,
+      "details": {
+        "count": 1,
+        "frames": [
+          1229
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 106,
+      "details": {
+        "count": 1,
+        "frames": [
+          719
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 108,
+      "details": {
+        "count": 1,
+        "frames": [
+          450
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 110,
+      "details": {
+        "count": 2,
+        "frames": [
+          1085,
+          1095
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 112,
+      "details": {
+        "count": 1,
+        "frames": [
+          1188
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 113,
+      "details": {
+        "count": 1,
+        "frames": [
+          794
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 117,
+      "details": {
+        "count": 1,
+        "frames": [
+          937
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 118,
+      "details": {
+        "count": 4,
+        "frames": [
+          115,
+          311,
+          315,
+          1001
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 122,
+      "details": {
+        "count": 1,
+        "frames": [
+          437
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 123,
+      "details": {
+        "count": 1,
+        "frames": [
+          281
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 124,
+      "details": {
+        "count": 1,
+        "frames": [
+          789
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 125,
+      "details": {
+        "count": 1,
+        "frames": [
+          216
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 126,
+      "details": {
+        "count": 1,
+        "frames": [
+          378
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 130,
+      "details": {
+        "count": 2,
+        "frames": [
+          492,
+          808
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (133 frames before motion starts, 96 after it ends)",
+      "episode": 130,
+      "details": {
+        "idle_fraction": 0.188,
+        "lead_frames": 133,
+        "tail_frames": 96
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 132,
+      "details": {
+        "count": 1,
+        "frames": [
+          998
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 133,
+      "details": {
+        "count": 2,
+        "frames": [
+          286,
+          476
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 134,
+      "details": {
+        "count": 4,
+        "frames": [
+          593,
+          601,
+          877,
+          1076
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (136 frames before motion starts, 43 after it ends)",
+      "episode": 135,
+      "details": {
+        "idle_fraction": 0.171,
+        "lead_frames": 136,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 136,
+      "details": {
+        "count": 1,
+        "frames": [
+          305
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 137,
+      "details": {
+        "count": 1,
+        "frames": [
+          652
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (111 frames before motion starts, 64 after it ends)",
+      "episode": 137,
+      "details": {
+        "idle_fraction": 0.157,
+        "lead_frames": 111,
+        "tail_frames": 64
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (139 frames before motion starts, 37 after it ends)",
+      "episode": 138,
+      "details": {
+        "idle_fraction": 0.163,
+        "lead_frames": 139,
+        "tail_frames": 37
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 139,
+      "details": {
+        "count": 1,
+        "frames": [
+          310
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (169 frames before motion starts, 50 after it ends)",
+      "episode": 142,
+      "details": {
+        "idle_fraction": 0.182,
+        "lead_frames": 169,
+        "tail_frames": 50
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (175 frames before motion starts, 40 after it ends)",
+      "episode": 144,
+      "details": {
+        "idle_fraction": 0.166,
+        "lead_frames": 175,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 145,
+      "details": {
+        "count": 2,
+        "frames": [
+          431,
+          1126
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (125 frames before motion starts, 82 after it ends)",
+      "episode": 147,
+      "details": {
+        "idle_fraction": 0.16,
+        "lead_frames": 125,
+        "tail_frames": 82
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 148,
+      "details": {
+        "count": 1,
+        "frames": [
+          361
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "4 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 150,
+      "details": {
+        "count": 4,
+        "frames": [
+          113,
+          425,
+          626,
+          958
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 152,
+      "details": {
+        "count": 2,
+        "frames": [
+          487,
+          901
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (147 frames before motion starts, 32 after it ends)",
+      "episode": 154,
+      "details": {
+        "idle_fraction": 0.156,
+        "lead_frames": 147,
+        "tail_frames": 32
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 155,
+      "details": {
+        "count": 1,
+        "frames": [
+          501
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (148 frames before motion starts, 56 after it ends)",
+      "episode": 155,
+      "details": {
+        "idle_fraction": 0.166,
+        "lead_frames": 148,
+        "tail_frames": 56
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 156,
+      "details": {
+        "count": 1,
+        "frames": [
+          454
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad",
+      "episode": 158,
+      "details": {
+        "count": 2,
+        "frames": [
+          459,
+          556
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 159,
+      "details": {
+        "count": 1,
+        "frames": [
+          758
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_z_rad",
+      "episode": 160,
+      "details": {
+        "count": 2,
+        "frames": [
+          268,
+          630
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 161,
+      "details": {
+        "count": 1,
+        "frames": [
+          817
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 163,
+      "details": {
+        "count": 1,
+        "frames": [
+          699
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 164,
+      "details": {
+        "count": 1,
+        "frames": [
+          145
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 165,
+      "details": {
+        "count": 1,
+        "frames": [
+          292
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (131 frames before motion starts, 52 after it ends)",
+      "episode": 165,
+      "details": {
+        "idle_fraction": 0.158,
+        "lead_frames": 131,
+        "tail_frames": 52
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "3 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_x_rad, left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 168,
+      "details": {
+        "count": 3,
+        "frames": [
+          637,
+          865,
+          995
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad",
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (122 frames before motion starts, 51 after it ends)",
+      "episode": 168,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 122,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 169,
+      "details": {
+        "count": 1,
+        "frames": [
+          571
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 171,
+      "details": {
+        "count": 1,
+        "frames": [
+          547
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (141 frames before motion starts, 41 after it ends)",
+      "episode": 171,
+      "details": {
+        "idle_fraction": 0.152,
+        "lead_frames": 141,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 172,
+      "details": {
+        "count": 1,
+        "frames": [
+          1103
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (148 frames before motion starts, 47 after it ends)",
+      "episode": 172,
+      "details": {
+        "idle_fraction": 0.162,
+        "lead_frames": 148,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 173,
+      "details": {
+        "count": 1,
+        "frames": [
+          161
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (124 frames before motion starts, 49 after it ends)",
+      "episode": 173,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 124,
+        "tail_frames": 49
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 175,
+      "details": {
+        "count": 1,
+        "frames": [
+          629
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (142 frames before motion starts, 59 after it ends)",
+      "episode": 176,
+      "details": {
+        "idle_fraction": 0.167,
+        "lead_frames": 142,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (134 frames before motion starts, 35 after it ends)",
+      "episode": 177,
+      "details": {
+        "idle_fraction": 0.152,
+        "lead_frames": 134,
+        "tail_frames": 35
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 178,
+      "details": {
+        "count": 1,
+        "frames": [
+          848
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (126 frames before motion starts, 47 after it ends)",
+      "episode": 178,
+      "details": {
+        "idle_fraction": 0.151,
+        "lead_frames": 126,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 181,
+      "details": {
+        "count": 2,
+        "frames": [
+          495,
+          738
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 182,
+      "details": {
+        "count": 1,
+        "frames": [
+          534
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (327 frames before motion starts, 36 after it ends)",
+      "episode": 183,
+      "details": {
+        "idle_fraction": 0.284,
+        "lead_frames": 327,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "28% of the episode is idle (275 frames before motion starts, 45 after it ends)",
+      "episode": 184,
+      "details": {
+        "idle_fraction": 0.279,
+        "lead_frames": 275,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (274 frames before motion starts, 40 after it ends)",
+      "episode": 185,
+      "details": {
+        "idle_fraction": 0.288,
+        "lead_frames": 274,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (287 frames before motion starts, 41 after it ends)",
+      "episode": 186,
+      "details": {
+        "idle_fraction": 0.287,
+        "lead_frames": 287,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (299 frames before motion starts, 35 after it ends)",
+      "episode": 187,
+      "details": {
+        "idle_fraction": 0.292,
+        "lead_frames": 299,
+        "tail_frames": 35
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 188,
+      "details": {
+        "count": 1,
+        "frames": [
+          436
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 190,
+      "details": {
+        "count": 1,
+        "frames": [
+          383
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (112 frames before motion starts, 51 after it ends)",
+      "episode": 192,
+      "details": {
+        "idle_fraction": 0.18,
+        "lead_frames": 112,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (111 frames before motion starts, 14 after it ends)",
+      "episode": 196,
+      "details": {
+        "idle_fraction": 0.154,
+        "lead_frames": 111,
+        "tail_frames": 14
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (104 frames before motion starts, 48 after it ends)",
+      "episode": 197,
+      "details": {
+        "idle_fraction": 0.17,
+        "lead_frames": 104,
+        "tail_frames": 48
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 199,
+      "details": {
+        "count": 1,
+        "frames": [
+          774
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (105 frames before motion starts, 38 after it ends)",
+      "episode": 199,
+      "details": {
+        "idle_fraction": 0.166,
+        "lead_frames": 105,
+        "tail_frames": 38
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (125 frames before motion starts, 47 after it ends)",
+      "episode": 200,
+      "details": {
+        "idle_fraction": 0.202,
+        "lead_frames": 125,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 201,
+      "details": {
+        "count": 1,
+        "frames": [
+          704
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (114 frames before motion starts, 40 after it ends)",
+      "episode": 201,
+      "details": {
+        "idle_fraction": 0.187,
+        "lead_frames": 114,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (122 frames before motion starts, 34 after it ends)",
+      "episode": 205,
+      "details": {
+        "idle_fraction": 0.188,
+        "lead_frames": 122,
+        "tail_frames": 34
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (113 frames before motion starts, 36 after it ends)",
+      "episode": 207,
+      "details": {
+        "idle_fraction": 0.176,
+        "lead_frames": 113,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 211,
+      "details": {
+        "count": 1,
+        "frames": [
+          346
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 216,
+      "details": {
+        "count": 1,
+        "frames": [
+          699
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 219,
+      "details": {
+        "count": 1,
+        "frames": [
+          493
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 220,
+      "details": {
+        "count": 1,
+        "frames": [
+          354
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (115 frames before motion starts, 37 after it ends)",
+      "episode": 220,
+      "details": {
+        "idle_fraction": 0.174,
+        "lead_frames": 115,
+        "tail_frames": 37
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (108 frames before motion starts, 32 after it ends)",
+      "episode": 227,
+      "details": {
+        "idle_fraction": 0.153,
+        "lead_frames": 108,
+        "tail_frames": 32
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (114 frames before motion starts, 26 after it ends)",
+      "episode": 228,
+      "details": {
+        "idle_fraction": 0.178,
+        "lead_frames": 114,
+        "tail_frames": 26
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 234,
+      "details": {
+        "count": 1,
+        "frames": [
+          657
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (110 frames before motion starts, 45 after it ends)",
+      "episode": 236,
+      "details": {
+        "idle_fraction": 0.206,
+        "lead_frames": 110,
+        "tail_frames": 45
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 237,
+      "details": {
+        "count": 1,
+        "frames": [
+          356
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (118 frames before motion starts, 39 after it ends)",
+      "episode": 238,
+      "details": {
+        "idle_fraction": 0.163,
+        "lead_frames": 118,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "2 sudden action jumps (likely teleoperation glitches) in left_eef_rot_euler_z_rad, right_eef_rot_euler_x_rad",
+      "episode": 239,
+      "details": {
+        "count": 2,
+        "frames": [
+          157,
+          792
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad",
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (149 frames before motion starts, 30 after it ends)",
+      "episode": 239,
+      "details": {
+        "idle_fraction": 0.205,
+        "lead_frames": 149,
+        "tail_frames": 30
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (116 frames before motion starts, 30 after it ends)",
+      "episode": 241,
+      "details": {
+        "idle_fraction": 0.172,
+        "lead_frames": 116,
+        "tail_frames": 30
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (107 frames before motion starts, 31 after it ends)",
+      "episode": 242,
+      "details": {
+        "idle_fraction": 0.155,
+        "lead_frames": 107,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (133 frames before motion starts, 13 after it ends)",
+      "episode": 243,
+      "details": {
+        "idle_fraction": 0.159,
+        "lead_frames": 133,
+        "tail_frames": 13
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (117 frames before motion starts, 37 after it ends)",
+      "episode": 244,
+      "details": {
+        "idle_fraction": 0.186,
+        "lead_frames": 117,
+        "tail_frames": 37
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 245,
+      "details": {
+        "count": 1,
+        "frames": [
+          875
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (147 frames before motion starts, 28 after it ends)",
+      "episode": 245,
+      "details": {
+        "idle_fraction": 0.174,
+        "lead_frames": 147,
+        "tail_frames": 28
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (144 frames before motion starts, 25 after it ends)",
+      "episode": 246,
+      "details": {
+        "idle_fraction": 0.18,
+        "lead_frames": 144,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (114 frames before motion starts, 27 after it ends)",
+      "episode": 247,
+      "details": {
+        "idle_fraction": 0.163,
+        "lead_frames": 114,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (153 frames before motion starts, 59 after it ends)",
+      "episode": 248,
+      "details": {
+        "idle_fraction": 0.209,
+        "lead_frames": 153,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 249,
+      "details": {
+        "count": 1,
+        "frames": [
+          506
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (139 frames before motion starts, 32 after it ends)",
+      "episode": 249,
+      "details": {
+        "idle_fraction": 0.189,
+        "lead_frames": 139,
+        "tail_frames": 32
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 250,
+      "details": {
+        "count": 1,
+        "frames": [
+          211
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (130 frames before motion starts, 21 after it ends)",
+      "episode": 250,
+      "details": {
+        "idle_fraction": 0.15,
+        "lead_frames": 130,
+        "tail_frames": 21
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (122 frames before motion starts, 23 after it ends)",
+      "episode": 251,
+      "details": {
+        "idle_fraction": 0.159,
+        "lead_frames": 122,
+        "tail_frames": 23
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 253,
+      "details": {
+        "count": 1,
+        "frames": [
+          544
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (122 frames before motion starts, 27 after it ends)",
+      "episode": 253,
+      "details": {
+        "idle_fraction": 0.166,
+        "lead_frames": 122,
+        "tail_frames": 27
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 254,
+      "details": {
+        "count": 1,
+        "frames": [
+          121
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (121 frames before motion starts, 43 after it ends)",
+      "episode": 254,
+      "details": {
+        "idle_fraction": 0.164,
+        "lead_frames": 121,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (136 frames before motion starts, 36 after it ends)",
+      "episode": 255,
+      "details": {
+        "idle_fraction": 0.18,
+        "lead_frames": 136,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (140 frames before motion starts, 33 after it ends)",
+      "episode": 256,
+      "details": {
+        "idle_fraction": 0.207,
+        "lead_frames": 140,
+        "tail_frames": 33
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (137 frames before motion starts, 32 after it ends)",
+      "episode": 257,
+      "details": {
+        "idle_fraction": 0.161,
+        "lead_frames": 137,
+        "tail_frames": 32
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (119 frames before motion starts, 192 after it ends)",
+      "episode": 258,
+      "details": {
+        "idle_fraction": 0.327,
+        "lead_frames": 119,
+        "tail_frames": 192
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (119 frames before motion starts, 35 after it ends)",
+      "episode": 259,
+      "details": {
+        "idle_fraction": 0.189,
+        "lead_frames": 119,
+        "tail_frames": 35
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (130 frames before motion starts, 31 after it ends)",
+      "episode": 260,
+      "details": {
+        "idle_fraction": 0.215,
+        "lead_frames": 130,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 261,
+      "details": {
+        "count": 1,
+        "frames": [
+          203
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "21% of the episode is idle (135 frames before motion starts, 36 after it ends)",
+      "episode": 261,
+      "details": {
+        "idle_fraction": 0.208,
+        "lead_frames": 135,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (153 frames before motion starts, 24 after it ends)",
+      "episode": 262,
+      "details": {
+        "idle_fraction": 0.172,
+        "lead_frames": 153,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (134 frames before motion starts, 34 after it ends)",
+      "episode": 263,
+      "details": {
+        "idle_fraction": 0.185,
+        "lead_frames": 134,
+        "tail_frames": 34
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "15% of the episode is idle (126 frames before motion starts, 28 after it ends)",
+      "episode": 264,
+      "details": {
+        "idle_fraction": 0.153,
+        "lead_frames": 126,
+        "tail_frames": 28
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (137 frames before motion starts, 31 after it ends)",
+      "episode": 265,
+      "details": {
+        "idle_fraction": 0.176,
+        "lead_frames": 137,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "35% of the episode is idle (276 frames before motion starts, 33 after it ends)",
+      "episode": 266,
+      "details": {
+        "idle_fraction": 0.351,
+        "lead_frames": 276,
+        "tail_frames": 33
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "44% of the episode is idle (340 frames before motion starts, 32 after it ends)",
+      "episode": 267,
+      "details": {
+        "idle_fraction": 0.444,
+        "lead_frames": 340,
+        "tail_frames": 32
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "34% of the episode is idle (317 frames before motion starts, 25 after it ends)",
+      "episode": 268,
+      "details": {
+        "idle_fraction": 0.336,
+        "lead_frames": 317,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (389 frames before motion starts, 24 after it ends)",
+      "episode": 269,
+      "details": {
+        "idle_fraction": 0.363,
+        "lead_frames": 389,
+        "tail_frames": 24
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (296 frames before motion starts, 15 after it ends)",
+      "episode": 270,
+      "details": {
+        "idle_fraction": 0.362,
+        "lead_frames": 296,
+        "tail_frames": 15
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "46% of the episode is idle (300 frames before motion starts, 43 after it ends)",
+      "episode": 271,
+      "details": {
+        "idle_fraction": 0.462,
+        "lead_frames": 300,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (215 frames before motion starts, 17 after it ends)",
+      "episode": 272,
+      "details": {
+        "idle_fraction": 0.24,
+        "lead_frames": 215,
+        "tail_frames": 17
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 273,
+      "details": {
+        "count": 1,
+        "frames": [
+          547
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "29% of the episode is idle (304 frames before motion starts, 26 after it ends)",
+      "episode": 273,
+      "details": {
+        "idle_fraction": 0.289,
+        "lead_frames": 304,
+        "tail_frames": 26
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "31% of the episode is idle (282 frames before motion starts, 41 after it ends)",
+      "episode": 274,
+      "details": {
+        "idle_fraction": 0.305,
+        "lead_frames": 282,
+        "tail_frames": 41
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "40% of the episode is idle (279 frames before motion starts, 47 after it ends)",
+      "episode": 275,
+      "details": {
+        "idle_fraction": 0.402,
+        "lead_frames": 279,
+        "tail_frames": 47
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "33% of the episode is idle (242 frames before motion starts, 59 after it ends)",
+      "episode": 276,
+      "details": {
+        "idle_fraction": 0.331,
+        "lead_frames": 242,
+        "tail_frames": 59
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (190 frames before motion starts, 38 after it ends)",
+      "episode": 277,
+      "details": {
+        "idle_fraction": 0.19,
+        "lead_frames": 190,
+        "tail_frames": 38
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "36% of the episode is idle (261 frames before motion starts, 101 after it ends)",
+      "episode": 278,
+      "details": {
+        "idle_fraction": 0.361,
+        "lead_frames": 261,
+        "tail_frames": 101
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "warning",
+      "message": "43% of the episode is idle (320 frames before motion starts, 29 after it ends)",
+      "episode": 280,
+      "details": {
+        "idle_fraction": 0.431,
+        "lead_frames": 320,
+        "tail_frames": 29
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "24% of the episode is idle (142 frames before motion starts, 51 after it ends)",
+      "episode": 281,
+      "details": {
+        "idle_fraction": 0.239,
+        "lead_frames": 142,
+        "tail_frames": 51
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (131 frames before motion starts, 8 after it ends)",
+      "episode": 282,
+      "details": {
+        "idle_fraction": 0.194,
+        "lead_frames": 131,
+        "tail_frames": 8
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_z_rad",
+      "episode": 283,
+      "details": {
+        "count": 1,
+        "frames": [
+          376
+        ],
+        "dims": [
+          "right_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (118 frames before motion starts, 31 after it ends)",
+      "episode": 283,
+      "details": {
+        "idle_fraction": 0.188,
+        "lead_frames": 118,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "20% of the episode is idle (136 frames before motion starts, 40 after it ends)",
+      "episode": 284,
+      "details": {
+        "idle_fraction": 0.201,
+        "lead_frames": 136,
+        "tail_frames": 40
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 285,
+      "details": {
+        "count": 1,
+        "frames": [
+          201
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (139 frames before motion starts, 43 after it ends)",
+      "episode": 285,
+      "details": {
+        "idle_fraction": 0.18,
+        "lead_frames": 139,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "18% of the episode is idle (111 frames before motion starts, 31 after it ends)",
+      "episode": 286,
+      "details": {
+        "idle_fraction": 0.177,
+        "lead_frames": 111,
+        "tail_frames": 31
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (118 frames before motion starts, 43 after it ends)",
+      "episode": 287,
+      "details": {
+        "idle_fraction": 0.168,
+        "lead_frames": 118,
+        "tail_frames": 43
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in right_eef_rot_euler_x_rad",
+      "episode": 288,
+      "details": {
+        "count": 1,
+        "frames": [
+          585
+        ],
+        "dims": [
+          "right_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "19% of the episode is idle (128 frames before motion starts, 22 after it ends)",
+      "episode": 289,
+      "details": {
+        "idle_fraction": 0.193,
+        "lead_frames": 128,
+        "tail_frames": 22
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (153 frames before motion starts, 25 after it ends)",
+      "episode": 290,
+      "details": {
+        "idle_fraction": 0.22,
+        "lead_frames": 153,
+        "tail_frames": 25
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (118 frames before motion starts, 33 after it ends)",
+      "episode": 291,
+      "details": {
+        "idle_fraction": 0.157,
+        "lead_frames": 118,
+        "tail_frames": 33
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_x_rad",
+      "episode": 292,
+      "details": {
+        "count": 1,
+        "frames": [
+          582
+        ],
+        "dims": [
+          "left_eef_rot_euler_x_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (131 frames before motion starts, 30 after it ends)",
+      "episode": 292,
+      "details": {
+        "idle_fraction": 0.165,
+        "lead_frames": 131,
+        "tail_frames": 30
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (103 frames before motion starts, 39 after it ends)",
+      "episode": 293,
+      "details": {
+        "idle_fraction": 0.162,
+        "lead_frames": 103,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "ACTION_SPIKE",
+      "severity": "warning",
+      "message": "1 sudden action jump (likely teleoperation glitches) in left_eef_rot_euler_z_rad",
+      "episode": 294,
+      "details": {
+        "count": 1,
+        "frames": [
+          388
+        ],
+        "dims": [
+          "left_eef_rot_euler_z_rad"
+        ]
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "16% of the episode is idle (137 frames before motion starts, 39 after it ends)",
+      "episode": 294,
+      "details": {
+        "idle_fraction": 0.161,
+        "lead_frames": 137,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "17% of the episode is idle (140 frames before motion starts, 36 after it ends)",
+      "episode": 296,
+      "details": {
+        "idle_fraction": 0.167,
+        "lead_frames": 140,
+        "tail_frames": 36
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "23% of the episode is idle (150 frames before motion starts, 39 after it ends)",
+      "episode": 297,
+      "details": {
+        "idle_fraction": 0.232,
+        "lead_frames": 150,
+        "tail_frames": 39
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "25% of the episode is idle (136 frames before motion starts, 66 after it ends)",
+      "episode": 298,
+      "details": {
+        "idle_fraction": 0.254,
+        "lead_frames": 136,
+        "tail_frames": 66
+      }
+    },
+    {
+      "code": "IDLE_PADDING",
+      "severity": "info",
+      "message": "22% of the episode is idle (121 frames before motion starts, 48 after it ends)",
+      "episode": 299,
+      "details": {
+        "idle_fraction": 0.223,
+        "lead_frames": 121,
+        "tail_frames": 48
+      }
+    }
+  ],
+  "seconds": 37.53
+}
