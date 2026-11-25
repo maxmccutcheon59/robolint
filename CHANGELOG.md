@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **Learned quality model (`--model`).** `robolint check DATASET --model` also scores every
+  episode with a gradient-boosted model trained on 26 public LeRobot datasets with realistic
+  faults injected. On held-out datasets, checks plus model caught 82% of injected faults versus 55%
+  for the checks alone, at 1.6% false alarms on clean episodes; the model adds stutter, noisy
+  teleop and hesitation. Needs `pip install 'robolint[model]'`. Also `robolint.quality.score_dataset`.
+  See `studies/quality_model/`.
 - **Grade badge.** `robolint check DATASET --badge robolint.svg` writes an SVG badge with the
   grade and score to show on a dataset card or README.
 - **Client-facing audit report.** `robolint check DATASET --audit-report audit.html --client NAME`

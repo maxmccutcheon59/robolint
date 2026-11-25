@@ -115,6 +115,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     c.add_argument("--fail-under", type=float, help="exit 1 if the score is below this (for CI)")
     c.add_argument("--no-color", action="store_true")
+    c.add_argument(
+        "--model",
+        action="store_true",
+        help="also score episodes with the learned quality model (needs scikit-learn)",
+    )
 
     a = sub.add_parser("audit", help="check many datasets and write a summary table")
     a.add_argument("sources", nargs="*", help="local folders or Hub repo ids")
@@ -143,7 +148,26 @@ def _cmd_check(args: argparse.Namespace) -> int:
     except DatasetError as e:
         print(f"robolint: {e}", file=sys.stderr)
         return 2
+    if args.model:
+        from .quality import score_dataset
+
+        try:
+            q = score_dataset(result.dataset)
+        except RuntimeError as e:
+            print(f"robolint: {e}", file=sys.stderr)
+            return 2
+        result.extra["quality_model"] = [vars(x) for x in q]
     write_text(result, color=False if args.no_color else None)
+    if args.model:
+        flagged = [x for x in result.extra["quality_model"] if x["flagged"]]
+        rule_bad = set(result.bad_episodes(Severity.WARNING))
+        new = [x for x in flagged if x["episode"] not in rule_bad]
+        print(
+            f"  Quality model: {len(flagged)} of {len(result.extra['quality_model'])} episodes flagged"
+            f" ({len(new)} not already flagged by the checks)"
+        )
+        for x in sorted(new, key=lambda x: -x["p_bad"])[:20]:
+            print(f"    episode {x['episode']}: likely {x['likely_fault']} (p={x['p_bad']:.2f})")
     if args.json:
         write_json(result, args.json)
         print(f"  JSON report: {args.json}")

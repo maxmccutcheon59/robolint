@@ -32,8 +32,9 @@ classifiers = [
 [project.optional-dependencies]
 hub = ["huggingface_hub>=0.23"]
 video = ["av>=12"]
+model = ["scikit-learn>=1.5"]
 all = ["huggingface_hub>=0.23", "av>=12"]
-dev = ["pytest>=8", "ruff>=0.5", "huggingface_hub>=0.23", "av>=12"]
+dev = ["pytest>=8", "ruff>=0.5", "huggingface_hub>=0.23", "av>=12", "scikit-learn>=1.5"]
 
 [project.scripts]
 robolint = "robolint.cli:main"

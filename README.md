@@ -109,6 +109,13 @@ for f in result.findings:
 
 Install options: `robolint` (local datasets), `robolint[hub]` (Hub downloads), `robolint[video]` (camera checks), `robolint[all]`.
 
+## Learned quality model
+
+`robolint check DATASET --model` (after `pip install 'robolint[model]'`) also scores each episode
+with a model trained on 26 public datasets. It catches stutter, noisy teleop and mid-episode
+hesitation that the rule checks miss; on held-out datasets, checks plus model caught 82% of faults
+versus 55% for the checks alone. Method and results: [studies/quality_model](studies/quality_model/README.md).
+
 ## Choosing columns
 
 robolint reads the action from a column called `action` and the measured state from

@@ -75,6 +75,7 @@ class Result:
             "episode_scores": {str(k): v for k, v in sorted(self.scores.episode_scores.items())},
             "findings": [f.to_dict() for f in self.findings],
             "seconds": round(self.seconds, 2),
+            **({"quality_model": self.extra["quality_model"]} if "quality_model" in self.extra else {}),
         }
 
 

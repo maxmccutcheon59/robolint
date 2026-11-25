@@ -1,0 +1,82 @@
+{
+ "faults": {
+  "aborted": {
+   "n": 60,
+   "rules": 1.0,
+   "model": 0.9,
+   "either": 1.0
+  },
+  "anomalous": {
+   "n": 54,
+   "rules": 0.204,
+   "model": 0.241,
+   "either": 0.407
+  },
+  "hesitation": {
+   "n": 65,
+   "rules": 0.015,
+   "model": 0.769,
+   "either": 0.785
+  },
+  "noisy": {
+   "n": 71,
+   "rules": 0.155,
+   "model": 0.817,
+   "either": 0.831
+  },
+  "false_start": {
+   "n": 42,
+   "rules": 0.762,
+   "model": 0.548,
+   "either": 0.81
+  },
+  "stacked": {
+   "n": 52,
+   "rules": 0.0,
+   "model": 0.327,
+   "either": 0.327
+  },
+  "stutter": {
+   "n": 52,
+   "rules": 0.038,
+   "model": 0.846,
+   "either": 0.865
+  },
+  "glitch": {
+   "n": 62,
+   "rules": 0.968,
+   "model": 0.371,
+   "either": 0.968
+  },
+  "idle_pad": {
+   "n": 57,
+   "rules": 1.0,
+   "model": 0.807,
+   "either": 1.0
+  },
+  "frozen_state": {
+   "n": 51,
+   "rules": 1.0,
+   "model": 0.588,
+   "either": 1.0
+  },
+  "dead": {
+   "n": 55,
+   "rules": 1.0,
+   "model": 0.891,
+   "either": 1.0
+  }
+ },
+ "all_faults": {
+  "n": 621,
+  "rules": 0.548,
+  "model": 0.655,
+  "either": 0.823
+ },
+ "false_alarms_on_clean": {
+  "n": 1868,
+  "rules": 0.01,
+  "model": 0.006,
+  "either": 0.016
+ }
+}
