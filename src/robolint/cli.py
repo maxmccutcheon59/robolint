@@ -116,6 +116,11 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--fail-under", type=float, help="exit 1 if the score is below this (for CI)")
     c.add_argument("--no-color", action="store_true")
     c.add_argument(
+        "--clean-plan",
+        type=Path,
+        help="write a fault-specific cleaning plan (remove / repair / trim / label / review) as JSON",
+    )
+    c.add_argument(
         "--model",
         action="store_true",
         help="also score episodes with the learned quality model (needs scikit-learn)",
@@ -168,6 +173,19 @@ def _cmd_check(args: argparse.Namespace) -> int:
         )
         for x in sorted(new, key=lambda x: -x["p_bad"])[:20]:
             print(f"    episode {x['episode']}: likely {x['likely_fault']} (p={x['p_bad']:.2f})")
+    if args.clean_plan:
+        from .cleaning import plan, write_plan
+
+        qm = None
+        if args.model:
+            from .quality import EpisodeQuality
+
+            qm = [EpisodeQuality(**x) for x in result.extra["quality_model"]]
+        s = write_plan(plan(result, quality=qm), args.clean_plan)
+        print(
+            f"  Cleaning plan: {args.clean_plan} (remove {s['remove']}, repair {s['repair']}, "
+            f"trim {s['trim']}, label {s['label']}, review {s['review']})"
+        )
     if args.json:
         write_json(result, args.json)
         print(f"  JSON report: {args.json}")

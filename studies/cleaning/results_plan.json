@@ -1,0 +1,47 @@
+{
+ "kmg0620/so101_bomb_pick_place_v1": {
+  "episodes": 120,
+  "flagged": 24,
+  "plan_removes": 22,
+  "plan_trims": 2,
+  "mean_error": {
+   "all": 0.055193934589624405,
+   "drop_flagged": 0.0347181111574173,
+   "plan": 0.033741798251867294,
+   "random": 0.05621706694364548
+  },
+  "drop_flagged_vs_all_pct": -37.09795937623958,
+  "plan_vs_all_pct": -38.86683654147348,
+  "random_vs_all_pct": 1.8537043275284188
+ },
+ "jchandru08/so100_press_red_button": {
+  "episodes": 29,
+  "flagged": 14,
+  "plan_removes": 0,
+  "plan_trims": 0,
+  "mean_error": {
+   "all": 0.11357694864273071,
+   "drop_flagged": 0.20905453463395438,
+   "plan": 0.11357694864273071,
+   "random": 0.11357694864273071
+  },
+  "drop_flagged_vs_all_pct": 84.06422881773248,
+  "plan_vs_all_pct": 0.0,
+  "random_vs_all_pct": 0.0
+ },
+ "mliu48/telearms-yam-cube-v4": {
+  "episodes": 120,
+  "flagged": 54,
+  "plan_removes": 0,
+  "plan_trims": 37,
+  "mean_error": {
+   "all": 0.1005150352915128,
+   "drop_flagged": 0.24661718805631003,
+   "plan": 0.1025482639670372,
+   "random": 0.1005150352915128
+  },
+  "drop_flagged_vs_all_pct": 145.35353078380072,
+  "plan_vs_all_pct": 2.022810487632668,
+  "random_vs_all_pct": 0.0
+ }
+}

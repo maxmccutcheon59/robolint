@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **Fault-specific cleaning plans (`--clean-plan`).** `robolint check DATASET --clean-plan plan.json`
+  writes what to do with each flagged episode: remove broken recordings (dead, frozen follower,
+  stacked recordings, non-finite values), repair bookkeeping errors (length or index mismatches),
+  trim idle edges, label failed attempts, and send the rest to review. On real datasets, dropping
+  every flagged episode raised a policy's imitation error by up to 145%; the plan matched or beat
+  it on all three tested. See `studies/cleaning/`. Also `robolint.cleaning.plan`.
 - **Learned quality model (`--model`).** `robolint check DATASET --model` also scores every
   episode with a gradient-boosted model trained on 26 public LeRobot datasets with realistic
   faults injected. On held-out datasets, checks plus model caught 82% of injected faults versus 55%
