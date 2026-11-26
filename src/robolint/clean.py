@@ -20,7 +20,6 @@ from pathlib import Path
 
 import numpy as np
 import pyarrow as pa
-import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
 from .cleaning import EpisodePlan
@@ -57,7 +56,9 @@ def _read_all_data(root: Path) -> pa.Table:
     t = pa.concat_tables(tables, promote_options="default")
     if "episode_index" not in t.column_names:
         raise CleanError("data has no episode_index column")
-    sort = [("episode_index", "ascending")] + [(c, "ascending") for c in ("frame_index", "index") if c in t.column_names][:1]
+    sort = [("episode_index", "ascending")] + [
+        (c, "ascending") for c in ("frame_index", "index") if c in t.column_names
+    ][:1]
     return t.sort_by(sort)
 
 
@@ -83,7 +84,9 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
     info = json.loads((src / "meta" / "info.json").read_text())
     major = int(str(info.get("codebase_version", "v0")).lstrip("v").split(".")[0] or 0)
     fps = float(info.get("fps") or 0) or None
-    video_keys = [k for k, v in (info.get("features") or {}).items() if isinstance(v, dict) and v.get("dtype") == "video"]
+    video_keys = [
+        k for k, v in (info.get("features") or {}).items() if isinstance(v, dict) and v.get("dtype") == "video"
+    ]
     by_ep = {p.episode: p for p in plans}
     notes: list[str] = []
 
@@ -105,7 +108,7 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
     for k, old in enumerate(kept_eps):
         s, e = runs[old]
         n = e - s
-        lead, tail = (by_ep[old].trim if old in by_ep and by_ep[old].trim else (0, 0))
+        lead, tail = by_ep[old].trim if old in by_ep and by_ep[old].trim else (0, 0)
         if major < 3 and video_keys and lead:
             lead = 0
             if "v2_video_lead" not in notes:
@@ -118,7 +121,11 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
         ts = piece.column("timestamp").to_numpy().astype(np.float64) if "timestamp" in piece.column_names else None
         t0 = float(ts[0]) if ts is not None else (lead / fps if fps else 0.0)
         cols = {c: piece.column(c) for c in piece.column_names}
-        typ = lambda c, default: cols[c].type if c in cols else default  # noqa: E731
+        types = {c: cols[c].type for c in cols}
+
+        def typ(c: str, default: pa.DataType, types: dict = types) -> pa.DataType:
+            return types.get(c, default)
+
         cols["episode_index"] = pa.array(np.full(m, k), typ("episode_index", pa.int64()))
         cols["frame_index"] = pa.array(np.arange(m), typ("frame_index", pa.int64()))
         cols["index"] = pa.array(np.arange(g, g + m), typ("index", pa.int64()))
@@ -131,9 +138,16 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
         cut_end = tail / fps if fps else 0.0
         shifts[old] = (cut_start, cut_end)
         pieces.append(pa.table({c: cols[c] for c in piece.column_names}))
-        mapping.append({"episode": k, "original_episode": old, "frames": m, "frames_trimmed": n - m,
-                        "labels": by_ep[old].labels if old in by_ep else [],
-                        "actions": by_ep[old].actions if old in by_ep else []})
+        mapping.append(
+            {
+                "episode": k,
+                "original_episode": old,
+                "frames": m,
+                "frames_trimmed": n - m,
+                "labels": by_ep[old].labels if old in by_ep else [],
+                "actions": by_ep[old].actions if old in by_ep else [],
+            }
+        )
         new_meta.append((k, old, g, m))
         g += m
 
@@ -147,8 +161,16 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
         out_rows = []
         for k, old, gfrom, m in new_meta:
             r = dict(rows.get(old, {"episode_index": old}))
-            r.update({"episode_index": k, "length": m, "dataset_from_index": gfrom, "dataset_to_index": gfrom + m,
-                      "data/chunk_index": 0, "data/file_index": 0})
+            r.update(
+                {
+                    "episode_index": k,
+                    "length": m,
+                    "dataset_from_index": gfrom,
+                    "dataset_to_index": gfrom + m,
+                    "data/chunk_index": 0,
+                    "data/file_index": 0,
+                }
+            )
             if "meta/episodes/chunk_index" in r:
                 r["meta/episodes/chunk_index"], r["meta/episodes/file_index"] = 0, 0
             a, b = shifts[old]
@@ -159,7 +181,10 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
                     r[f"videos/{key}/to_timestamp"] = float(r[f"videos/{key}/to_timestamp"]) - b
             out_rows.append(r)
         (out / "meta" / "episodes" / "chunk-000").mkdir(parents=True)
-        pq.write_table(pa.Table.from_pylist(out_rows, schema=meta.schema), out / "meta" / "episodes" / "chunk-000" / "file-000.parquet")
+        pq.write_table(
+            pa.Table.from_pylist(out_rows, schema=meta.schema),
+            out / "meta" / "episodes" / "chunk-000" / "file-000.parquet",
+        )
         for name in ("tasks.parquet", "stats.json"):
             if (src / "meta" / name).exists():
                 shutil.copyfile(src / "meta" / name, out / "meta" / name)
@@ -184,12 +209,21 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
                     vd.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(vs, vd)
         old_rows = {int(r["episode_index"]): r for r in _jsonl(src / "meta" / "episodes.jsonl")}
-        (out / "meta" / "episodes.jsonl").write_text("".join(
-            json.dumps({**old_rows.get(old, {}), "episode_index": k, "length": m}) + "\n" for k, old, _, m in new_meta))
+        (out / "meta" / "episodes.jsonl").write_text(
+            "".join(
+                json.dumps({**old_rows.get(old, {}), "episode_index": k, "length": m}) + "\n"
+                for k, old, _, m in new_meta
+            )
+        )
         old_stats = {int(r["episode_index"]): r for r in _jsonl(src / "meta" / "episodes_stats.jsonl")}
         if old_stats:
-            (out / "meta" / "episodes_stats.jsonl").write_text("".join(
-                json.dumps({**old_stats[old], "episode_index": k}) + "\n" for k, old, _, _ in new_meta if old in old_stats))
+            (out / "meta" / "episodes_stats.jsonl").write_text(
+                "".join(
+                    json.dumps({**old_stats[old], "episode_index": k}) + "\n"
+                    for k, old, _, _ in new_meta
+                    if old in old_stats
+                )
+            )
         for name in ("tasks.jsonl", "stats.json"):
             if (src / "meta" / name).exists():
                 shutil.copyfile(src / "meta" / name, out / "meta" / name)
@@ -204,9 +238,19 @@ def write_cleaned(src: Path, plans: list[EpisodePlan], out: Path) -> CleanReport
     if (src / "README.md").exists():
         shutil.copyfile(src / "README.md", out / "README.md")
     report = CleanReport(out, len(kept_eps), removed, trimmed, len(ep_col), g, notes)
-    (out / "meta" / "robolint_cleaning.json").write_text(json.dumps({
-        "source_episodes": len(runs), "kept": len(kept_eps), "removed_original_episodes": removed,
-        "frames_before": len(ep_col), "frames_after": g, "frames_trimmed": trimmed,
-        "notes": {"v2_video_lead": "v2 episodes with video keep their leading idle frames"} if notes else {},
-        "episodes": mapping}, indent=1))
+    (out / "meta" / "robolint_cleaning.json").write_text(
+        json.dumps(
+            {
+                "source_episodes": len(runs),
+                "kept": len(kept_eps),
+                "removed_original_episodes": removed,
+                "frames_before": len(ep_col),
+                "frames_after": g,
+                "frames_trimmed": trimmed,
+                "notes": {"v2_video_lead": "v2 episodes with video keep their leading idle frames"} if notes else {},
+                "episodes": mapping,
+            },
+            indent=1,
+        )
+    )
     return report

@@ -9,6 +9,7 @@ import pytest
 from robolint import lint
 from robolint.clean import CleanError, write_cleaned
 from robolint.cleaning import plan
+
 from .synth import make_dataset
 
 FAULTS = {1: ["dead"], 3: ["idle"], 5: ["nonmono"], 6: ["length_meta"]}

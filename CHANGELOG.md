@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **`robolint clean`.** `robolint clean DATASET --out DIR` applies the cleaning plan and writes a
+  cleaned copy in the same layout (v2.x or v3.x): broken episodes removed, idle edges trimmed (v3
+  video offsets moved to match), episode/frame/global indices, lengths and timestamps rewritten
+  from the data, and `meta/robolint_cleaning.json` mapping every kept episode to the original with
+  its labels and actions. The source is never modified. On kmg0620/so101_bomb_pick_place_v1 it
+  removed 22 stacked recordings: the cleaned copy re-checks at 99.8 (A) with no errors.
 - **Fault-specific cleaning plans (`--clean-plan`).** `robolint check DATASET --clean-plan plan.json`
   writes what to do with each flagged episode: remove broken recordings (dead, frozen follower,
   stacked recordings, non-finite values), repair bookkeeping errors (length or index mismatches),

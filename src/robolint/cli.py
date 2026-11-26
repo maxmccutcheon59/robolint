@@ -12,7 +12,7 @@ from .api import lint
 from .audit_report import write_audit_report
 from .badge import write_badge
 from .checks import Config
-from .dataset import resolve_source, DatasetError
+from .dataset import DatasetError, resolve_source
 from .findings import ScoreWeights, Severity
 from .report import audit_markdown, write_exclude, write_html, write_json, write_text
 
@@ -128,7 +128,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     k = sub.add_parser("clean", help="write a cleaned copy of a dataset by applying the cleaning plan")
     k.add_argument("source")
-    k.add_argument("--out", type=Path, required=True, help="folder for the cleaned dataset (must not exist or be empty)")
+    k.add_argument(
+        "--out", type=Path, required=True, help="folder for the cleaned dataset (must not exist or be empty)"
+    )
     k.add_argument("--model", action="store_true", help="also use the learned quality model (flags go to review)")
     k.add_argument("--revision", help="Hub revision (branch, tag, or commit)")
     k.add_argument("--cache-dir", help="where to cache Hub downloads")
