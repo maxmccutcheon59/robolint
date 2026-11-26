@@ -12,7 +12,7 @@ from .api import lint
 from .audit_report import write_audit_report
 from .badge import write_badge
 from .checks import Config
-from .dataset import DatasetError
+from .dataset import resolve_source, DatasetError
 from .findings import ScoreWeights, Severity
 from .report import audit_markdown, write_exclude, write_html, write_json, write_text
 
@@ -125,6 +125,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="also score episodes with the learned quality model (needs scikit-learn)",
     )
+
+    k = sub.add_parser("clean", help="write a cleaned copy of a dataset by applying the cleaning plan")
+    k.add_argument("source")
+    k.add_argument("--out", type=Path, required=True, help="folder for the cleaned dataset (must not exist or be empty)")
+    k.add_argument("--model", action="store_true", help="also use the learned quality model (flags go to review)")
+    k.add_argument("--revision", help="Hub revision (branch, tag, or commit)")
+    k.add_argument("--cache-dir", help="where to cache Hub downloads")
 
     a = sub.add_parser("audit", help="check many datasets and write a summary table")
     a.add_argument("sources", nargs="*", help="local folders or Hub repo ids")
@@ -262,10 +269,40 @@ def _cmd_audit(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_clean(args: argparse.Namespace) -> int:
+    from .clean import CleanError, write_cleaned
+    from .cleaning import plan, summary
+
+    try:
+        result = lint(args.source, revision=args.revision, cache_dir=args.cache_dir, videos=False)
+        q = None
+        if args.model:
+            from .quality import score_dataset
+
+            q = score_dataset(result.dataset)
+        plans = plan(result, quality=q)
+        has_video = bool(result.dataset.video_keys)
+        root = resolve_source(args.source, include_videos=has_video, revision=args.revision, cache_dir=args.cache_dir)
+        rep = write_cleaned(root, plans, args.out)
+    except (DatasetError, CleanError, RuntimeError) as e:
+        print(f"robolint clean: {e}", file=sys.stderr)
+        return 2
+    s = summary(plans)
+    print(f"Cleaned {args.source} -> {rep.out}")
+    print(f"  episodes: {rep.kept} kept, {len(rep.removed)} removed")
+    print(f"  frames: {rep.frames_before:,} -> {rep.frames_after:,} ({rep.trimmed_frames:,} idle frames trimmed)")
+    print(f"  plan: repair {s['repair']}, label {s['label']}, review {s['review']} (see meta/robolint_cleaning.json)")
+    if rep.notes:
+        print("  note: v2 episodes with video keep their leading idle frames (trimming them needs re-encoding)")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "check":
         return _cmd_check(args)
+    if args.command == "clean":
+        return _cmd_clean(args)
     return _cmd_audit(args)
 
 
